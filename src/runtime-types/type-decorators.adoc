@@ -1,0 +1,22 @@
+= Typen-Dekoratoren
+
+Typen-Dekoratoren sind normale TypeScript-Typen, die Meta-Informationen beinhalten, um meist zur Laufzeit das Verhalten festzulegen. So kann zum Beispiel eine Klassen-Eigenschaft als Primary-Key, als Referenz, oder Index markiert werden.  Die Datenbank Library kann diese Information nutzen, um die korrekten SQL Queries zu erstellen.
+Es können auch Validator-Einschränkungen wie zum Beispiel MaxLength, Maximum, oder Positive an einen beliebigen Typen hinzugefügt werden. Auch kann dem Serializer mitgeteilt werden, wie ein bestimmter Wert zu serialisieren bzw deserialisieren ist.
+
+Deepkit kommt mit einer ganzen Reihe von Typen-Dekoratoren, die alle direkt aus @deepkit/type benutzt werden können. Sie sind designt, nicht aus einer bestimmten Library zu kommen, um so Typen nicht an eine Library wie zum Beispiel Deepkit RPC oder Deepkit Database zu koppelt. Das erlaubt das einfachere Wiederverwenden von Typen, auch im Frontend, obwohl zum Beispiel Datenbank Typen-Dekoratoren genutzt werden.
+
+=== Enhanced Types
+
+integer, float, UUID, MongoId, BinaryBigint, SignedBigInt, .
+
+=== Meta
+
+MapName, Group, Data, Entity, InlineRuntimeType.
+
+=== Serializer
+
+Excluded, Embedded.
+
+=== Database
+
+PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, DatabaseField.
