@@ -1,0 +1,9 @@
+= High-Performance Enterprise TypeScript
+:url-wolpertinger: https://deepkit.io/
+
+:leveloffset: 1
+
+include::dependency-injection.adoc[]
+
+// Return to normal title levels.
+:leveloffset: 0
