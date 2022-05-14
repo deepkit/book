@@ -66,6 +66,7 @@ deserialize<Date>('Sat Oct 13 2018 14:17:35 GMT+0200');
 deserialize<string | number>(23);
 ```
 
+[#serialisation-loosely-convertion]
 === Weiche Typenkonvertierung
 
 In dem Deserialisierungsprozess ist eine weiche Typenkonvertierung implementiert. Das bedeutet, dass String und Number für String-Typen oder eine Number für einen String-Typen akzeptiert und automatisch umgewandelt werden kann. Dies ist zum Beispiel nützlich, wenn Daten über eine URL angenommen und an den Deserialisierer übergeben werden. Da es sich bei der URL immer um einen String handelt, versucht Deepkit Type, die Typen dennoch für Number und Boolean aufzulösen.
@@ -126,3 +127,4 @@ Die Funktion `serialize` wandelt die übergebenen Daten per default mit dem JSON
 [#serialisation-custom-serialiser]
 == Benutzerdefinierter Serializer
 
+Todo

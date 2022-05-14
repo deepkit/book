@@ -1,8 +1,10 @@
 = High-Performance Enterprise TypeScript
+Deepkit
 Marc J. Schmidt
 :url-wolpertinger: https://deepkit.io/
 :toc:
 :doctype: book
+:xrefstyle: full
 
 stem:[\pagebreak]
 
@@ -26,10 +28,9 @@ include::dependency-injection.adoc[leveloffset=+1]
 
 stem:[\pagebreak]
 
-[#cli]
-== CLI
-=== Installation
-=== Controller
+include::cli.adoc[leveloffset=+1]
+
+stem:[\pagebreak]
 
 [#http]
 == HTTP

@@ -1,0 +1,422 @@
+[#cli]
+= CLI
+
+Command-line Interface (CLI) Programme sind Programme, die über das Terminal in Form von Text-Eingabe und Text-Ausgabe interagieren. Der Vorteil in dieser Variante mit der Anwendung zu interagieren, ist, dass lediglich ein Terminal entweder lokal oder über eine SSH-Verbindung bestehen muss.
+
+Eine CLI-Anwendung in Deepkit hat den vollen Zugriff auf den DI-Container und kann so auf alle Provider und Konfigurationsoptionen zugreifen.
+
+Die Argumente und Optionen der CLI-Anwendung werden über Methoden-Parameter via TypeScript Typen gesteuert und werden automatisch serialisiert und validiert.
+
+CLI ist einer von drei Einstiegspunkten zu einer Deepkit Framework Anwendung. Im Deepkit Framework wird die Anwendung immer über ein CLI-Program gestartet, das selbst vom User in TypeScript geschrieben ist. Es gibt daher keine Deepkit spezifisches globales CLI tool, um eine Deepkit Anwendung zu starten. Auf diese Weise starten Sie den HTTP/RPC-Server, führen Migrationen aus oder führen eigene Befehle aus. Das alles geschieht über denselben Einstiegspunkt, dieselbe Datei. Sobald das Deepkit Framework durch den Import von `FrameworkModule` aus `@deepkit/framework` benutzt wird, erhält die Anwendung zusätzliche Commands für den Application Server, Migrations, und mehr.
+
+
+Das CLI-Framework erlaubt es auf einfache Art eigene Commands zu registrieren und basiert dabei auf einfachen Klassen. Tatsächlich basiert es auf `@deepkit/app`, einem kleinen Paket, das nur für diesen Zweck gedacht ist und auch eigenständig ohne das Deepkit Framework verwendet werden kann. In diesem Paket finden sich Dekoratoren, die benötigt werden, um die CLI-Controller-Klasse zu dekorieren.
+
+Controller werden vom Dependency Injection Container verwaltet beziehungsweise instanziiert und können daher andere Provider verwenden. Siehe das Kapitel <<dependency-injection>> für weitere Details.
+
+== Installation
+
+Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig @deepkit/type bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+
+Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
+
+```sh
+npm install @deekpit/app
+```
+
+Zu beachten ist, dass `@deepkit/app` auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss.
+
+_Datei: tsconfig.json_
+
+```json
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "es6",
+    "moduleResolution": "node",
+    "experimentalDecorators": true
+  },
+  "reflection": true
+}
+```
+
+Sobald die Library installiert ist, kann die API davon direkt benutzt werden.
+
+== Benutzung
+
+Um einen Befehl für Ihre Anwendung zu erstellen, müssen Sie einen CLI-Controller erstellen. Dabei handelt es sich um eine einfache Klasse, die eine Methode `exeecute` hat und mit Informationen über den Befehl ausgestattet ist.
+
+_Datei: app.ts_
+
+```typescript
+#!/usr/bin/env ts-node-script
+import { App, cli } from '@deepkit/app';
+
+@cli.controller('test', {
+    description: 'My first command'
+})
+class TestCommand {
+    async execute() {
+        console.log('Hello World')
+    }
+}
+
+new App({
+    controllers: [TestCommand]
+}).run();
+```
+
+In dem Decorator `@cli.controller` wird als erstes Argument der eindeutige Name der CLI-Anwendung definiert. Weitere Optionen wie eine Beschreibung können im Objekt an der zweiten Stelle optional hinzufügt werden.
+
+Dieser Code ist bereits eine komplette CLI-Anwendung und kann so gestartet werden:
+
+```sh
+$ ts-node ./app.ts
+VERSION
+  Node
+
+USAGE
+  $ ts-node app.ts [COMMAND]
+
+COMMANDS
+  test
+```
+
+Zu sehen ist, dass ein "test" Command verfügbar ist. Um dieses auszuführen, muss der Name als Argument übergeben werden:
+
+```sh
+$ ts-node ./app.ts test
+Hello World
+```
+
+Es ist auch möglich, die Datei mittels `chmod +x app.ts` ausführbar zu machen, sodass der Command `./app.ts` bereits ausreicht, um es zu starten. Zu beachten ist, dass dann ein sogenannter
+Shebang notwendig ist. Shebang bezeichnet die Zeichenkombination `#!` am Anfang eines Skriptprogramms. In dem Beispiel oben ist dies bereits vorhanden: `&#35;!/usr/bin/env ts-node-script` und nutzt den Skript-Modus von `ts-node`.
+
+```sh
+$ ./app.ts test
+Hello World
+```
+
+Auf diese Weise können beliebig viele Commands erstellt und registriert werden. Der in `@cli.controller` angegeben eindeutige Name sollte gut gewählt werden und erlaubt das Gruppieren von Commands mit dem `:` Zeichen (z.B. `user:create`, `user:remove`, etc).
+
+== Argumente
+
+Um Argumente hinzuzufügen, werden neue Parameter auf die Methode `execute` hinzugefügt und mit dem Decorator `@arg` dekoriert.
+
+```typescript
+import { cli, arg } from '@deepkit/app';
+
+@cli.controller('test')
+class TestCommand {
+    async execute(
+        @arg name: string
+    ) {
+        console.log('Hello', name);
+    }
+}
+```
+
+Wenn Sie diesen Befehl jetzt ausführen, ohne einen Namen anzugeben, wird ein Fehler ausgegeben:
+
+```sh
+$ ./app.ts test
+RequiredArgsError: Missing 1 required arg:
+name
+```
+
+Durch die Verwendung von `--help` erhalten Sie weitere Informationen über die erforderlichen Argumente:
+
+```sh
+$ ./app.ts test --help
+USAGE
+  $ ts-node-script app.ts test NAME
+```
+
+Sobald der Name als Argument übergeben wird, wird die Methode `execute` in TestCommand ausgeführt und der Name korrekt übergeben.
+
+```sh
+$ ./app.ts test "beautiful world"
+Hello beautiful world
+```
+
+== Flags
+
+Flags sind eine weitere Möglichkeit, Ihrem Befehl Werte zu übergeben. Meist sind diese Optional, doch müssen es nicht sein. Parameter, die mit `@flag name` dekoriert sind, können via `--name value` oder `--name=value` übergeben werden.
+
+```typescript
+import { flag } from '@deepkit/app';
+
+class TestCommand {
+    async execute(
+        @flag id: number
+    ) {
+        console.log('id', id);
+    }
+}
+```
+
+```sh
+$ ./app.ts test --help
+USAGE
+  $ ts-node app.ts test
+
+OPTIONS
+  --id=id  (required)
+```
+
+In der Hilfe-Ansicht ist in den "OPTIONS" nun zu sehen, dass ein `--id` Flag notwendig ist. Gibt man dieses Korrekt an, erhält der Command diesen Wert.
+
+```sh
+$ ./app.ts test --id 23
+id 23
+
+$ ./app.ts test --id=23
+id 23
+```
+
+== Boolean Flags
+
+Flags haben den Vorteil, dass sie auch als wertlosen Flag verwendet werden können, um so zum Beispiel ein bestimmtes Verhalten zu aktivieren. Sobald ein Parameter als optionaler Boolean markiert ist, wird dieses Verhalten aktiviert.
+
+```typescript
+import { flag } from '@deepkit/app';
+
+class TestCommand {
+    async execute(
+        @flag remove: boolean = false
+    ) {
+        console.log('delete?', remove);
+    }
+}
+```
+
+```sh
+$ ./app.ts test
+delete? false
+
+$ ./app.ts test --remove
+delete? true
+```
+
+== Multiple Flags
+
+Um mehrere Werte demselben Flag zu übergeben, kann ein Flag als Array markiert werden.
+
+```typescript
+import { flag } from '@deepkit/app';
+
+class TestCommand {
+    async execute(
+        @flag id: number[] = []
+    ) {
+        console.log('ids', id);
+    }
+}
+```
+
+```sh
+$ ./app.ts test
+ids: []
+
+$ ./app.ts test --id 12
+ids: [12]
+
+$ ./app.ts test --id 12 --id 23
+ids: [12, 23]
+```
+
+== Single Character Flags
+
+Um einem Flag zu erlauben, auch als ein einzelner Charakter übergeben zu werden, kann `@flag.char('x')` genutzt werden.
+
+```typescript
+import { flag } from '@deepkit/app';
+
+class TestCommand {
+    async execute(
+        @flag.char('o') output: string
+    ) {
+        console.log('output: ', output);
+    }
+}
+```
+
+```sh
+$ ./app.ts test --help
+USAGE
+  $ ts-node app.ts test
+
+OPTIONS
+  -o, --output=output  (required)
+
+
+$ ./app.ts test --output test.txt
+output: test.txt
+
+$ ./app.ts test -o test.txt
+output: test.txt
+```
+
+== Optional / Default
+
+Die Signatur der Methode `execute` definiert, welche Argument oder Flags optional sind. Ist der Parameter als Optional markiert, so muss er nicht angegeben werden.
+
+```typescript
+class TestCommand {
+    async execute(
+        @arg name?: string
+    ) {
+        console.log('Hello', name || 'nobody');
+    }
+}
+```
+
+```sh
+$ ./app.ts test
+Hello nobody
+```
+
+Dasselbe für Parameter mit einem Default-Wert:
+
+```typescript
+class TestCommand {
+    async execute(
+        @arg name: string = 'body'
+    ) {
+        console.log('Hello', name);
+    }
+}
+```
+
+```sh
+$ ./app.ts test
+Hello nobody
+```
+
+Dies gilt auch für Flags in derselben Art und Weise.
+
+== Serialization / Validation
+
+Alle Argumente und Flags werden automatisch basierend auf dessen Typen deserialisiert, validiert und können mit zusätzlichen Einschränkungen versehen werden.
+
+So sind Argument, die als Number definiert sind, in dem Controller auch garantiert immer eine echte Nummer, obwohl das Command-Line Interface auf Text und somit Strings basiert. Die Umwandlung passiert dabei automatisch mit dem Feature <<serialisation-loosely-convertion>>.
+
+```typescript
+class TestCommand {
+    async execute(
+        @arg id: number
+    ) {
+        console.log('id', id, typeof id);
+    }
+}
+```
+
+```sh
+$ ./app.ts test 123
+id 123 number
+```
+
+Zusätzliche Einschränkungen können mit den Typen-Dekoratoren aus `@deepkit/type` definiert werden.
+
+```typescript
+import { Positive } from '@deepkit/type';
+
+class TestCommand {
+    async execute(
+        @arg id: number & Positive
+    ) {
+        console.log('id', id, typeof id);
+    }
+}
+```
+
+Der Typ `Postive` bei `id` gibt an, dass nur positive Nummern gewollt sind. Übergibt der User nun eine negative Zahl, so wird der Code in `execute` gar nicht erst ausgeführt und es wird eine Fehlermeldung präsentiert.
+
+```sh
+$ ./app.ts test -123
+Validation error in id: Number needs to be positive [positive]
+```
+
+Bei einer positiven Nummer funktioniert dies dann wieder wie zuvor. Durch diese zusätzliche sehr einfach zu bewerkstelligende Validierung, wird der Command deutlich robuster gegen Falscheingaben geschützt. Sieh dazu das Kapitel <<validation>> für mehr Informationen.
+
+== Description
+
+Um einen Flag oder Argument zu beschreiben, kann `@flag.description` beziehungsweise `@arg.description` genutzt werden.
+
+```typescript
+import { Positive } from '@deepkit/type';
+
+class TestCommand {
+    async execute(
+        @arg.description('The users identifier') id: number & Positive,
+        @flag.description('Delete the user?') remove: boolean = false,
+    ) {
+        console.log('id', id, typeof id);
+    }
+}
+```
+
+In der Hilfe-Ansicht erscheint diese Beschreibung hinter dem Flag beziehungsweise Argument:
+
+```sh
+$ ./app.ts test --help
+USAGE
+  $ ts-node app.ts test ID
+
+ARGUMENTS
+  ID  The users identifier
+
+OPTIONS
+  --remove  Delete the user?
+```
+
+== Exit code
+
+Der Exit-Code ist standardmäßig 0, was bedeutet, dass der Befehl erfolgreich ausgeführt wurde. Um den Exit-Code zu ändern, sollten in der `exucute`-Methode eine Zahl ungleich 0 zurückgeben werden.
+
+```typescript
+@cli.controller('test')
+export class TestCommand {
+    async execute() {
+        console.error('Error :(');
+        return 12;
+    }
+}
+```
+
+```sh
+$ ./app.ts
+Error :(
+$ echo $?
+12
+```
+
+== Dependency Injection
+
+Die Klasse des Commands wird vom DI Container verwaltet, sodass Abhängigkeiten definiert werden können, die über den DI Container aufgelöst werden.
+
+```typescript
+#!/usr/bin/env ts-node-script
+import { App, cli } from '@deepkit/app';
+import { Logger, ConsoleTransport } from '@deepkit/logger';
+
+@cli.controller('test', {
+    description: 'My super first command'
+})
+class TestCommand {
+    constructor(protected logger: Logger) {
+    }
+
+    async execute() {
+        this.logger.log('Hello World!');
+    }
+}
+
+new App({
+    providers: [{provide: Logger, useValue: new Logger([new ConsoleTransport]}],
+    controllers: [TestCommand]
+}).run();
+```
+
+
+

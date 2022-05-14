@@ -1,3 +1,4 @@
+[#dependency-injection]
 = Dependency Injection
 
 Dependency Injection (DI) ist ein Design-Pattern, bei dem Klassen und Funktionen ihre Abhängigkeiten
@@ -248,133 +249,6 @@ const lowLevelModule = new InjectorModule([HttpClient])
      .forRoot(); //export all Providers to the root
 ```
 
-=== Constructor/Property Injection
-
-In den meisten Fällen wird Constructor-Injection verwendet. Alle Abhängigkeiten werden dabei als Constructor-Argumente angegeben und werden vom DI Container automatisch injiziert.
-
-```typescript
-class MyService {
-    constructor(protected database: Database) {
-    }
-}
-```
-
-Optionale Abhängigkeiten sollten als solche gekennzeichnet werden, da sonst ein Fehler ausgelöst werden könnte, wenn kein Provider gefunden werden kann.
-
-```typescript
-class MyService {
-    constructor(protected database?: Database) {
-    }
-}
-```
-
-Eine Alternative zur Constructor-Injection ist die Property-Injection. Diese wird in der Regel verwendet, wenn die Abhängigkeit optional oder der Constructor sonst zu voll ist. Die Properties werden automatisch zugewiesen, sobald die Instanz erstellt ist (und damit der Constructor ausgeführt wurde).
-
-```typescript
-import { Inject } from '@deepkit/injector';
-
-class MyService {
-    //required
-    protected database!: Inject<Database>;
-
-    //or optional
-    protected database?: Inject<Database>;
-}
-```
-
-=== Konfiguration
-
-Der Dependency Injection Container von Deepkit erlaubt auch das injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
-
-Die Module API unterstützt dabei das Definieren einer Konfiguration-Definition, welche eine reguläre Klasse ist. Durch das Bereitstellen solch einer Klasse mit Properties agiert jedes Property als Konfiguration-Option. Durch die Art und Weise wie in TypeScript Klassen definiert werden können, erlaubt dies das Definieren eines Types und Default-Values pro Property.
-
-```typescript
-class RootConfiguration {
-    domain: string = 'localhost';
-    debug: boolean = false;
-}
-
-const rootModule = new InjectorModule([UserRepository])
-     .setConfigDefinition(RootConfiguration)
-     .addImport(lowLevelModule);
-```
-
-Die Konfigurationsoptionen `domain` und `debug` können nun ganz bequem typen-sicher in Providern genutzt werden.
-
-```typescript
-class UserRepository {
-    constructor(private debug: RootConfiguration['debug']) {}
-
-    getUsers() {
-        if (this.debug) console.debug('fetching users ...');
-    }
-}
-```
-
-Die Werte der Optionen selbst können über `configure()` gesetzt werden.
-
-```typescript
-	rootModule.configure({debug: true});
-```
-
-Optionen, die keinen Default-Value haben, aber trotzdem notwendig sind, können mit einem "!" versehen werden. Dies zwingt den User des Modules dazu, den Wert bereitzustellen, da ansonsten es zu einem Fehler kommt.
-
-```typescript
-class RootConfiguration {
-    domain!: string;
-}
-```
-
-=== Validation
-
-Auch können alle Serialization und Validation Typen aus den vorherigen Kapiteln <<validation>> und <<serialisation>> genutzt werden, um so sehr detailliert festzulegen, welchen Typ und inhaltliche Einschränkungen eine Option haben muss.
-
-```typescript
-class RootConfiguration {
-    domain!: string & MinLength<4>;
-}
-```
-
-=== Injection
-
-Konfigurationsoptionen können wie bereits gezeigt wie andere Abhängigkeiten sicher und einfach durch den DI Container injiziert werden. Als einfachste Methode ist das Referenzieren einer einzigen Option mittels dem Index-Access Operators:
-
-```typescript
-class WebsiteController {
-    constructor(private debug: RootConfiguration['debug']) {}
-
-    home() {
-        if (this.debug) console.debug('visit home page');
-    }
-}
-```
-
-Es können Konfigurationsoptionen nicht nur einzeln, sondern auch als Gruppe referenziert werden. Hierzu wird der TypeScript Utility-Typ `Partial` genutzt:
-
-```typescript
-class WebsiteController {
-    constructor(private options: Partial<RootConfiguration, 'debug' | 'domain'>) {}
-
-    home() {
-        if (this.options.debug) console.debug('visit home page');
-    }
-}
-```
-
-Um alle Konfigurationsoptionen zu erhalten, kann auch die Konfigurationsklasse direkt referenziert werden:
-
-```typescript
-class WebsiteController {
-    constructor(private options: RootConfiguration) {}
-
-    home() {
-        if (this.options.debug) console.debug('visit home page');
-    }
-}
-```
-
-Es wird jedoch empfohlen nur die Konfigurationsoptionen zu referenzieren, die auch wirklich genutzt werden. Das vereinfacht nicht nur Unit-Tests, sondern lässt auch einfacher einsehen, was nun konkret von dem Code gebraucht wird.
-
 === App API
 
 Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, so dass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
@@ -565,6 +439,137 @@ InjectorContext.forProviders([
     provide<Connection>({useFactory: () => myConnection)
 ]);
 ```
+
+
+
+== Constructor/Property Injection
+
+In den meisten Fällen wird Constructor-Injection verwendet. Alle Abhängigkeiten werden dabei als Constructor-Argumente angegeben und werden vom DI Container automatisch injiziert.
+
+```typescript
+class MyService {
+    constructor(protected database: Database) {
+    }
+}
+```
+
+Optionale Abhängigkeiten sollten als solche gekennzeichnet werden, da sonst ein Fehler ausgelöst werden könnte, wenn kein Provider gefunden werden kann.
+
+```typescript
+class MyService {
+    constructor(protected database?: Database) {
+    }
+}
+```
+
+Eine Alternative zur Constructor-Injection ist die Property-Injection. Diese wird in der Regel verwendet, wenn die Abhängigkeit optional oder der Constructor sonst zu voll ist. Die Properties werden automatisch zugewiesen, sobald die Instanz erstellt ist (und damit der Constructor ausgeführt wurde).
+
+```typescript
+import { Inject } from '@deepkit/injector';
+
+class MyService {
+    //required
+    protected database!: Inject<Database>;
+
+    //or optional
+    protected database?: Inject<Database>;
+}
+```
+
+== Konfiguration
+
+Der Dependency Injection Container von Deepkit erlaubt auch das injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
+
+Die Module API unterstützt dabei das Definieren einer Konfiguration-Definition, welche eine reguläre Klasse ist. Durch das Bereitstellen solch einer Klasse mit Properties agiert jedes Property als Konfiguration-Option. Durch die Art und Weise wie in TypeScript Klassen definiert werden können, erlaubt dies das Definieren eines Types und Default-Values pro Property.
+
+```typescript
+class RootConfiguration {
+    domain: string = 'localhost';
+    debug: boolean = false;
+}
+
+const rootModule = new InjectorModule([UserRepository])
+     .setConfigDefinition(RootConfiguration)
+     .addImport(lowLevelModule);
+```
+
+Die Konfigurationsoptionen `domain` und `debug` können nun ganz bequem typen-sicher in Providern genutzt werden.
+
+```typescript
+class UserRepository {
+    constructor(private debug: RootConfiguration['debug']) {}
+
+    getUsers() {
+        if (this.debug) console.debug('fetching users ...');
+    }
+}
+```
+
+Die Werte der Optionen selbst können über `configure()` gesetzt werden.
+
+```typescript
+	rootModule.configure({debug: true});
+```
+
+Optionen, die keinen Default-Value haben, aber trotzdem notwendig sind, können mit einem "!" versehen werden. Dies zwingt den User des Modules dazu, den Wert bereitzustellen, da ansonsten es zu einem Fehler kommt.
+
+```typescript
+class RootConfiguration {
+    domain!: string;
+}
+```
+
+=== Validation
+
+Auch können alle Serialization und Validation Typen aus den vorherigen Kapiteln <<validation>> und <<serialisation>> genutzt werden, um so sehr detailliert festzulegen, welchen Typ und inhaltliche Einschränkungen eine Option haben muss.
+
+```typescript
+class RootConfiguration {
+    domain!: string & MinLength<4>;
+}
+```
+
+=== Injection
+
+Konfigurationsoptionen können wie bereits gezeigt wie andere Abhängigkeiten sicher und einfach durch den DI Container injiziert werden. Als einfachste Methode ist das Referenzieren einer einzigen Option mittels dem Index-Access Operators:
+
+```typescript
+class WebsiteController {
+    constructor(private debug: RootConfiguration['debug']) {}
+
+    home() {
+        if (this.debug) console.debug('visit home page');
+    }
+}
+```
+
+Es können Konfigurationsoptionen nicht nur einzeln, sondern auch als Gruppe referenziert werden. Hierzu wird der TypeScript Utility-Typ `Partial` genutzt:
+
+```typescript
+class WebsiteController {
+    constructor(private options: Partial<RootConfiguration, 'debug' | 'domain'>) {}
+
+    home() {
+        if (this.options.debug) console.debug('visit home page');
+    }
+}
+```
+
+Um alle Konfigurationsoptionen zu erhalten, kann auch die Konfigurationsklasse direkt referenziert werden:
+
+```typescript
+class WebsiteController {
+    constructor(private options: RootConfiguration) {}
+
+    home() {
+        if (this.options.debug) console.debug('visit home page');
+    }
+}
+```
+
+Es wird jedoch empfohlen nur die Konfigurationsoptionen zu referenzieren, die auch wirklich genutzt werden. Das vereinfacht nicht nur Unit-Tests, sondern lässt auch einfacher einsehen, was nun konkret von dem Code gebraucht wird.
+
+
 
 == Scopes
 

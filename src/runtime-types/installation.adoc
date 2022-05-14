@@ -1,3 +1,4 @@
+[#runtime-types-installation]
 = Installation
 
 Um Deepkit's Runtime Typessystem zu installieren werden zwei Pakete benötigt. Der Typen-Compiler in `@deepkit/type-compiler` und die dazu nötige Runtime in `@deepkit/type`. Der Typen-Compiler kann dabei in `package.json` _devDependencies_ installiert werden, da er nur zur Build-Zeit benötigt wird.
