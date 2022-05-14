@@ -14,7 +14,7 @@ app.post('/user', function(request) {
 });
 ```
 
-Dieser oft gesehene Code stellt ein Fehler da, der zum Programmabsturz oder zu einer Sicherheitslücke führen kann, da ein Type-Cast `as number` verwendet wurde, der keinerlei Sicherheiten zur Laufzeit bereitstellt. Der User kann als `limit` einfach einen String übergeben und das Program würde dann mit einem String in `limit` arbeiten, obwohl der Code darauf basiert, dass es eine Nummer sein muss. Um diese Sicherheit zur Laufzeit zu erhalten gibt es Validatoren und Type-Guards. Auch könnte Serializer benutzt werden, um `limit` in eine Nummer umzuwandeln. Hierzu findet sich in dem Kapitel <<serialisation>> mehr Informationen.
+Dieser oft gesehene Code stellt ein Fehler da, der zum Programmabsturz oder zu einer Sicherheitslücke führen kann, da ein Type-Cast `as number` verwendet wurde, der keinerlei Sicherheiten zur Laufzeit bereitstellt. Der User kann als `limit` einfach einen String übergeben und das Program würde dann mit einem String in `limit` arbeiten, obwohl der Code darauf basiert, dass es eine Nummer sein muss. Um diese Sicherheit zur Laufzeit zu erhalten gibt es Validatoren und Type-Guards. Auch könnte ein Serializer benutzt werden, um `limit` in eine Nummer umzuwandeln. Hierzu findet sich in dem Kapitel <<serialisation>> mehr Informationen.
 
 Validation ist essenzieller Bestandteil jeder Anwendung und sollte besser einmal zuviel als einmal zu wenig genutzt werden. Deepkit stellt viele Validationsoptionen bereit und hat eine high-performance Implementierung, sodass sich in den allermeisten Fällen kein Gedanke um die Ausführungszeit gemacht werden muss. Nutzen Sie soviel Validation wie möglich, im Zweifel einmal mehr, um auf der sicheren Seite zu stehen.
 
@@ -375,7 +375,54 @@ Ensures that the number is a integer in the correct range. Is automatically a `n
 
 See Special types: integer/floats for more information
 
-==== Benutzerdefinierte Validator
+=== Benutzerdefinierte Validator
 
-//string & Validate<typeof myValidator>
-//string & Validate<typeof startsWith, 'a'>
+Wenn die eingebauten Validatoren nicht ausreichen, können eigene Validierungsfunktionen erstellt und über den `Validate`-Decorator verwendet werden.
+
+```typescript
+import { ValidatorError, Validate, Type, validates, validate }
+  from '@deepkit/type';
+
+function titleValidation(value: string, type: Type) {
+    value = value.trim();
+    if (value.length < 5) {
+        return new ValidatorError('tooShort', 'Value is too short');
+    }
+}
+
+interface Article {
+    id: number;
+    title: string & Validate<typeof titleValidation>;
+}
+
+console.log(validates<Article>({id: 1})); //false
+console.log(validates<Article>({id: 1, title: 'Peter'})); //true
+console.log(validates<Article>({id: 1, title: ' Pe     '})); //false
+console.log(validate<Article>({id: 1, title: ' Pe     '})); //[ValidationErrorItem]
+```
+
+Beachten Sie, dass Ihre benutzerdefinierte Validierungsfunktion ausgeführt wird, nachdem alle eingebauten Typen-Validierungen aufgerufen wurden. Wenn ein Validator fehlschlägt, werden alle nachfolgenden Validatoren für den aktuellen Typen ausgelassen. Pro Typen ist nur ein Fehler möglich.
+
+==== Generic Validator
+
+In der Validator-Funktion ist das Typen-Objekt verfügbar, das verwendet werden kann, um weitere Informationen über den Typen zu erhalten, der den Validator verwendet. Es gibt auch eine Möglichkeit, eine beliebige Validator-Option zu definieren, die an den Validate-Typen übergeben werden muss und den Validator konfigurierbar macht. Mit diesen Informationen und ihren übergeordneten Referenzen können leistungsfähige generische Validatoren erstellt werden.
+
+```typescript
+import { ValidatorError, Validate, Type, is, validate }
+  from '@deepkit/type';
+
+function startsWith(value: any, type: Type, chars: string) {
+    const valid = 'string' === typeof value && value.startsWith(chars);
+    if (!valid) {
+        return new ValidatorError('startsWith', 'Does not start with ' + chars)
+    }
+}
+
+type MyType = string & Validate<typeof startsWith, 'a'>;
+
+is<MyType>('aah'); //true
+is<MyType>('nope'); //false
+
+const errors = validate<MyType>('nope');
+//[{ path: '', code: 'startsWith', message: `Does not start with a` }]);
+```

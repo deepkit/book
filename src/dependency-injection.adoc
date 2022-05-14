@@ -569,8 +569,7 @@ class WebsiteController {
 
 Es wird jedoch empfohlen nur die Konfigurationsoptionen zu referenzieren, die auch wirklich genutzt werden. Das vereinfacht nicht nur Unit-Tests, sondern lässt auch einfacher einsehen, was nun konkret von dem Code gebraucht wird.
 
-
-
+[#dependency-injection-scopes]
 == Scopes
 
 Per Default sind alle Provider des DI Containers ein Singleton und werden dadurch nur einmal instantiiert. Das bedeutet in dem Beispiel von UserRepository gibt es immer nur eine Instanz von UserRepository während der gesamten Laufzeit. Zu keinem Zeitpunkt wird eine zweite Instanz erzeugt, außer der User macht dies manuell mit dem "new" Keyword.

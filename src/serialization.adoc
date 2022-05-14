@@ -93,7 +93,7 @@ Das Weiche Umwandeln kann auch deaktiviert werden:
 const result = deserialize(data, {loosely: false});
 ```
 
-Es wird bei invaliden Daten dann nicht versucht diese umzuwandeln und stattdessen eine Fehlermeldung geschmissen.
+Es wird bei invaliden Daten dann nicht versucht diese umzuwandeln und stattdessen eine Fehlermeldung geworfen.
 
 [#serialisation-serialise]
 == Serialisierung
