@@ -174,7 +174,7 @@ $ ./app.ts test --id=23
 id 23
 ```
 
-== Boolean Flags
+=== Boolean Flags
 
 Flags haben den Vorteil, dass sie auch als wertlosen Flag verwendet werden können, um so zum Beispiel ein bestimmtes Verhalten zu aktivieren. Sobald ein Parameter als optionaler Boolean markiert ist, wird dieses Verhalten aktiviert.
 
@@ -198,7 +198,7 @@ $ ./app.ts test --remove
 delete? true
 ```
 
-== Multiple Flags
+=== Multiple Flags
 
 Um mehrere Werte demselben Flag zu übergeben, kann ein Flag als Array markiert werden.
 
@@ -225,7 +225,7 @@ $ ./app.ts test --id 12 --id 23
 ids: [12, 23]
 ```
 
-== Single Character Flags
+=== Single Character Flags
 
 Um einem Flag zu erlauben, auch als ein einzelner Charakter übergeben zu werden, kann `@flag.char('x')` genutzt werden.
 

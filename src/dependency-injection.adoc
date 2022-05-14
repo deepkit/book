@@ -253,7 +253,7 @@ const lowLevelModule = new InjectorModule([HttpClient])
 
 Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, so dass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
 
-In dem Kapitel <<framework-module>> ist näheres hierzu beschrieben.
+In dem Kapitel <<framework-modules>> ist näheres hierzu beschrieben.
 
 [#dependency-injection-providers]
 == Providers
@@ -478,7 +478,7 @@ class MyService {
 
 == Konfiguration
 
-Der Dependency Injection Container von Deepkit erlaubt auch das injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
+Der Dependency Injection Container von Deepkit erlaubt auch das Injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
 
 Die Module API unterstützt dabei das Definieren einer Konfiguration-Definition, welche eine reguläre Klasse ist. Durch das Bereitstellen solch einer Klasse mit Properties agiert jedes Property als Konfiguration-Option. Durch die Art und Weise wie in TypeScript Klassen definiert werden können, erlaubt dies das Definieren eines Types und Default-Values pro Property.
 

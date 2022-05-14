@@ -32,14 +32,9 @@ include::cli.adoc[leveloffset=+1]
 
 stem:[\pagebreak]
 
-[#http]
-== HTTP
-=== Installation
-=== Routen
-=== Controller
-=== Events
-=== Middleware
-=== Resolver
+include::http.adoc[leveloffset=+1]
+
+stem:[\pagebreak]
 
 [#database]
 == Database
@@ -79,19 +74,15 @@ stem:[\pagebreak]
 === Key/Value
 === Pub/Sub
 
-== Framework
-=== Installation
-[#framework-module]
-=== Module
-=== Configuration
-=== Application Server
-==== Public Directory
-=== Logger
-=== Auto-CRUD
-=== Template
-=== Events
-=== Workflow
-=== Testing
+stem:[\pagebreak]
+
+include::template.adoc[leveloffset=+1]
+
+stem:[\pagebreak]
+
+include::framework.adoc[leveloffset=+1]
+
+stem:[\pagebreak]
 
 == Debugger
 === Module
