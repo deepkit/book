@@ -1,48 +1,55 @@
 = High-Performance Enterprise TypeScript
-Deepkit
 Marc J. Schmidt
+{docdate}
 :url-wolpertinger: https://deepkit.io/
-:toc:
+:toc: right
+:toc-title: Contents
+:toclevels: 3
 :doctype: book
 :xrefstyle: full
 
-stem:[\pagebreak]
+++++
+<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+++++
+
+
+<<<
 
 include::introduction.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::runtime-types/index.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::validation.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::serialization.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::dependency-injection.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::cli.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::http.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::rpc.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::database.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 == Broker
 === Installation
@@ -50,15 +57,15 @@ stem:[\pagebreak]
 === Key/Value
 === Pub/Sub
 
-stem:[\pagebreak]
+<<<
 
 include::template.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 include::framework.adoc[leveloffset=+1]
 
-stem:[\pagebreak]
+<<<
 
 == Debugger
 === Module

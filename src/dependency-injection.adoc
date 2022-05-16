@@ -1,12 +1,7 @@
 [#dependency-injection]
 = Dependency Injection
 
-Dependency Injection (DI) ist ein Design-Pattern, bei dem Klassen und Funktionen ihre Abhängigkeiten
-_empfangen_. Es folgt dem Prinzip von Inversion of Control (IoC, zu Deutsch "Umkehrung der Steuerung")
-und hilft dabei vor allem komplexen Code besser zu separieren, um so die Testbarkeit, Modularität,
-und Übersichtlichkeit deutlich zu verbessern. Zwar gibt es noch andere Design-Patterns wie zum
-Beispiel den Service-Locator Pattern, um das Prinzip von IoC anzuwenden, jedoch hat sich DI als
-dominantes Pattern vor allem in Enterprise-Software etabliert.
+Dependency Injection (DI) ist ein Design-Pattern, bei dem Klassen und Funktionen ihre Abhängigkeiten _empfangen_. Es folgt dem Prinzip von Inversion of Control (IoC, zu Deutsch "Umkehrung der Steuerung") und hilft dabei vor allem komplexen Code besser zu separieren, um so die Testbarkeit, Modularität, und Übersichtlichkeit deutlich zu verbessern. Zwar gibt es noch andere Design-Patterns wie zum Beispiel den Service-Locator Pattern, um das Prinzip von IoC anzuwenden, jedoch hat sich DI als dominantes Pattern vor allem in Enterprise-Software etabliert.
 
 Um das Prinzip von IoC zu veranschaulichen nachfolgend ein Beispiel:
 
@@ -432,11 +427,11 @@ Als Argument für provide() sind alle anderen Provider möglich.
 const myConnection = {write: (data: any) => undefined};
 
 InjectorContext.forProviders([
-    provide<Connection>({useValue: myConnection)
+    provide<Connection>({useValue: myConnection})
 ]);
 
 InjectorContext.forProviders([
-    provide<Connection>({useFactory: () => myConnection)
+    provide<Connection>({useFactory: () => myConnection})
 ]);
 ```
 
@@ -478,7 +473,7 @@ class MyService {
 
 == Konfiguration
 
-Der Dependency Injection Container von Deepkit erlaubt auch das Injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
+Der Dependency Injection Container erlaubt auch das Injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
 
 Die Module API unterstützt dabei das Definieren einer Konfiguration-Definition, welche eine reguläre Klasse ist. Durch das Bereitstellen solch einer Klasse mit Properties agiert jedes Property als Konfiguration-Option. Durch die Art und Weise wie in TypeScript Klassen definiert werden können, erlaubt dies das Definieren eines Types und Default-Values pro Property.
 

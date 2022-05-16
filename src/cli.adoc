@@ -261,6 +261,9 @@ output: test.txt
 
 Die Signatur der Methode `execute` definiert, welche Argument oder Flags optional sind. Ist der Parameter als Optional markiert, so muss er nicht angegeben werden.
 
+[lang=english]
+The signature of the method `execute` defines which arguments or flags are optional. If the parameter is optional in the type system, the user does not have to provide it.
+
 ```typescript
 class TestCommand {
     async execute(

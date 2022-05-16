@@ -186,7 +186,7 @@ Siehe das Kapitel <<framework-modules>>, um mehr über App Module zu erfahren.
 
 == HTTP Server
 
-Die HTTP-Library kann ohne den Einsatz des Deepkit Frameworks mit einem eigenen HTTP-Server genutzt werden.
+Sofern Deepkit Framework genutzt wird, ist dort ein HTTP Server bereits eingebaut. Die HTTP-Library kann jedoch auch ohne den Einsatz des Deepkit Frameworks mit einem eigenen HTTP-Server genutzt werden.
 
 ```typescript
 import { Server } from 'http';
@@ -208,6 +208,10 @@ new Server(
     console.log('listen at 8080');
 });
 ```
+
+== HTTP Client
+
+todo: fetch API, validation, und cast.
 
 [#http-route-name]
 == Route Names
@@ -556,19 +560,46 @@ Um HTML zu senden, gibt es zwei Möglichkeiten. Entweder wird das Objekt `HtmlRe
 import { HtmlResponse } from '@deepkit/http';
 
 router.get('/', () => {
-    // will be sent as text/html
+    // will be sent as Content-Type: text/html
     return new HtmlResponse('<b>Hello World</b>');
 });
 ```
 
 ```typescript
 router.get('/', () => {
-    // will be sent as text/html
+    // will be sent as Content-Type: text/html
     return <b>Hello World</b>;
 });
 ```
 
 Die Template-Engine Variante mit TSX hat dabei den Vorteil, dass genutzte Variablen automatisch HTML-escaped werden. Siehe dazu das Kapitel <<template>>.
+
+=== Custom Content
+
+Es ist neben HTML und JSON auch möglich Text- oder Binäre-Daten mit einer bestimmten Content-Type zu senden. Dies geschieht über das Objekt `Response`
+
+```typescript
+import { Response } from '@deepkit/http';
+
+router.get('/', () => {
+    return new Response('<title>Hello World</title>', 'text/xml');
+});
+```
+
+=== Zusätzliche Header
+
+Um den Header einer Antwort zu verändert, kann auf den Objekten `Response`, `JSONResponse`, und `HTMLResponse` zusätzliche Methoden aufgerufen werden.
+
+
+```typescript
+import { Response } from '@deepkit/http';
+
+router.get('/', () => {
+    return new Response('Access Denied', 'text/plan')
+        .header('X-Reason', 'unknown')
+        .status(403);
+});
+```
 
 === Redirect
 
@@ -578,12 +609,10 @@ Um eine 301 oder 302 Weiterleitung als Antwort zurückzugeben, kann `Redirect.to
 import { Redirect } from '@deepkit/http';
 
 router.get({url: '/', name: 'homepage'}, () => {
-    // will be sent as text/html
     return <b>Hello World</b>;
 });
 
 router.get({url: '/registration/complete'}, () => {
-    // will be sent as text/html
     return Redirect.toRoute('homepage');
 });
 ```
@@ -690,7 +719,8 @@ class SecretRouteListeners {
             // essentially executing all onAccessDenied listeners.
 
             //since our listener is called before the HTTP kernel one,
-            // the controller action will never be called.
+            // the standard controller action will never be called.
+            //this calls event.next('accessDenied', ...) under the hood
             event.accessDenied();
         }
     }
@@ -739,7 +769,7 @@ class UserResolver implements RouteParameterResolver {
 
     async resolve(context: RouteParameterResolverContext) {
         if (!context.parameters.id) throw new Error('No :id given');
-        return await this.database.getUser(parseInt(context.parameters.id));
+        return await this.database.getUser(parseInt(context.parameters.id, 10));
     }
 }
 
@@ -760,3 +790,4 @@ new App({
 ```
 
 Der User muss hierbei nicht zwingend von einem Parameter abhängen. So könnte er genauso gut von einer Session bzw. einem HTTP-Header abhängen, und nur dann bereitgestellt werden, wenn der User eingeloggt ist. In `RouteParameterResolverContext` sind viele Informationen über den HTTP-Request verfügbar, sodass viele Anwendungsfälle so abbildbar sind.
+Im Prinzip ist es auch möglich, komplexe Parametertypen über den Dependency Injection Container aus dem Scope `http` bereitstellen zu lassen, da diese ebenfalls in der Routen-Funktion bzw. Methode verfügbar sind. Dies hat jedoch den Nachteil, dass kein asynchrone Funktionsaufrufe verwendet werden können, da der DI container durchweg synchron ist.
