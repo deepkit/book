@@ -17,7 +17,7 @@ docbookConverter.register();
 // console.log(files);
 //
 
-const targetLanguage: string = 'german';
+const targetLanguage: string = process.argv[2];
 const languageMap: { [lang: string]: string } = {
     german: 'DE',
     english: 'EN',
@@ -110,6 +110,10 @@ function heading(text: string): string {
     return text.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 }
 
+function isListItem(doc: any): doc is {text: string} {
+    return doc.context === 'list_item' && 'string' === typeof doc.text;
+}
+
 function extractOrApplyTranslations() {
     this.process(function process(this: Asciidoctor.Extensions.TreeProcessor, doc: Asciidoctor.AbstractBlock, depth: number = 0) {
         const context: string = (doc as any).context;
@@ -118,13 +122,21 @@ function extractOrApplyTranslations() {
 
         // console.log(' '.repeat(4 * depth), context);
 
+        if (isListItem(doc)) {
+            if (translations[doc.text]) {
+                doc.text = translations[doc.text];
+            } else {
+                ensureTranslation(doc.text);
+            }
+        }
+
         if (context === 'section') {
-            const title = heading(doc.getTitle());
+            const title = doc.getTitle();
             doc.setTitle(title);
             const keep = doc.getAttribute('keep');
             if (!keep && keep !== '*' && keep !== targetLanguage) {
                 if (translations[title]) {
-                    doc.setTitle(translations[title]);
+                    doc.setTitle(heading(translations[title]));
                 } else {
                     ensureTranslation(title);
                 }
@@ -154,25 +166,6 @@ function extractOrApplyTranslations() {
     });
 }
 
-// function inlineHook() {
-//     this.handles(function (target) {
-//         return target.endsWith('.adoc');
-//     });
-//     this.process(function (doc, reader, target, attrs) {
-//         // const content = ['foo'];
-//         const includeDir = (reader as any).dir as string;
-//         const documentDir = (reader as any).document.base_dir as string;
-//         console.log('import', includeDir, documentDir, target);
-//         const dir = includeDir && isAbsolute(includeDir) ? includeDir : join(documentDir || '', includeDir);
-//         const path = join(dir, target);
-//         if (!existsSync(path)) {
-//             console.log('reader', reader);
-//         }
-//         const content = readFileSync(path).toString('utf8');
-//         return reader.pushInclude(content, target, target, 1, attrs);
-//     });
-// }
-
 function macroPageBreak(this: Asciidoctor.Extensions.InlineMacroProcessorDsl) {
     this.process(function (parent, target) {
         console.log('pageBreak!');
@@ -190,13 +183,14 @@ async function main() {
         extension_registry: registry,
         to_dir: 'build',
         doctype: 'book',
-        safe: 'unsafe',
+        safe: 'server',
         // backend: 'docbook5',
         standalone: true,
         attributes: {
-            'allow-uri-read': true,
+            // 'allow-uri-read': true,
+            'data-uri': true,
             linkcss: true,
-            stylesdir: '../styles/',
+            stylesdir: '../src/assets/',
             stylesheet: 'style.css',
             // stylesheet: '../node_modules/latex.css/style.css'
         }

@@ -1,11 +1,12 @@
 @import url("https://fonts.googleapis.com/css?family=Fondamento:400,400i|Neuton:400,400i,700|Vollkorn:400,400i,700,700i&subset=latin-ext");
 @import "./fonts/CMUSerif/stylesheet.css";
+@import "./fonts/latin-modern/stylesheet.css";
 
 
 body {
   font-family: 'CMU Serif', "Times New Roman", serif;
-  font-size: 0.78rem;
-  line-height: 0.88rem;
+  font-size: 0.8rem;
+  line-height: 1rem;
 
   //-webkit-font-smoothing: antialiased;
   //text-rendering: geometricPrecision;
@@ -16,7 +17,6 @@ body {
 
   --page-margin: 22mm;
 }
-
 
 h1 {
   font-size: 1.35rem;
@@ -43,6 +43,15 @@ h2 {
   string-set: title content(text);
 }
 
+.imageblock {
+  padding: 25px 0;
+  margin: 0 -100px;
+
+  img {
+    max-width: 100%;
+  }
+}
+
 p {
   margin: 0;
   text-align: justify;
@@ -62,6 +71,7 @@ p + p {
     text-align: center;
     margin-top: 1.1rem;
     margin-bottom: 2rem;
+    font-size: 0.91rem;
     line-height: 2.15rem;
   }
 }
@@ -202,4 +212,49 @@ a, a:link {
 .chapter {
   page: chapter;
   break-before: recto;
+}
+
+
+
+
+
+
+
+
+/* Better tables */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: auto;
+  margin: 30px 0;
+  max-width: 100%;
+  border-top: 2.27px solid black;
+  border-bottom: 2.27px solid black;
+  /* display: block; */
+  overflow-x: auto; /* does not work because element is not block */
+  /* white-space: nowrap; */
+  counter-increment: caption;
+}
+/* add bottom border on column table headings  */
+table tr > th[scope='col'] {
+  border-bottom: 1.36px solid black;
+}
+/* add right border on row table headings  */
+table tr > th[scope='row'] {
+  border-right: 1.36px solid black;
+}
+table > tbody > tr:first-child > td,
+table > tbody > tr:first-child > th {
+  border-top: 1.36px solid black;
+}
+table > tbody > tr:last-child > td,
+table > tbody > tr:last-child > th {
+  border-bottom: 1.36px solid black;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem;
+  line-height: 1.1;
 }

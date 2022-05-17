@@ -30,7 +30,7 @@ _Datei: tsconfig.json_
 TypeScript selbst erlaubt es nicht, den Typen-Compiler über eine `tsconfig.json` zu konfigurieren. Es ist entweder nötig, die TypeScript Compiler API direkt oder ein Build-System wie Webpack mit _ts-loader_ zu benutzen. Um diesen unangenehmen Weg den Benutzern von Deepkit zu ersparen, installiert sich der Deepkit Typen-Compiler automatisch selbst in` node_modules/typescript` sobald `@deepkit/type-compiler` installiert wird (dies geschieht über NPM install hooks).
 Dies macht es möglich, dass alle Buildtools, die auf das lokal installierte TypeScript (das in `node_modules/typescript`) zugreifen, automatisch den Typen-Compiler aktiviert haben. Dadurch funktioniert _tsc_, Angular, webpack, _ts-node_, und einige andere Tools automatisch mit dem Deepkit Typen-Compiler.
 
-Falls der Typen-Compiler nicht erfolgreich automatisch installiert werden konnte (weil zum Beispiel NPM install hooks deaktiviert sind), kann dies manuell mit folgenden Kommando nachgeholt werden:
+Falls der Typen-Compiler nicht erfolgreich automatisch installiert werden konnte (weil zum Beispiel NPM install hooks deaktiviert sind), kann dies manuell mit folgendem Kommando nachgeholt werden:
 
 ```
 node_modules/.bin/deepkit-type-install
@@ -48,24 +48,24 @@ _Datei: webpack.config.js_
 const typeCompiler = require('@deepkit/type-compiler');
 
 module.exports = {
-    entry: './app.ts',
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: {
-                    loader: 'ts-loader',
-                    options: {
-                        //this enables @deepkit/type's type compiler
-                        getCustomTransformers: (program, getProgram) => ({
-                            before: [typeCompiler.transformer],
-                            afterDeclarations: [typeCompiler.declarationTransformer],
-                        }),
-                    }
-                },
-                exclude: /node_modules/,
-            },
-        ],
-    },
+  entry: './app.ts',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+          use: {
+            loader: 'ts-loader',
+            options: {
+              //this enables @deepkit/type's type compiler
+              getCustomTransformers: (program, getProgram) => ({
+                before: [typeCompiler.transformer],
+                afterDeclarations: [typeCompiler.declarationTransformer],
+              }),
+            }
+          },
+          exclude: /node_modules/,
+       },
+    ],
+  },
 }
 ```

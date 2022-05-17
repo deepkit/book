@@ -190,7 +190,7 @@ type Object = {
 typeOf<Object>();
 ```
 
-`MyType<string>` ist gecacht solange `Object` berechnet wird. Die PropertySignature von `a` und `b` haben dadurch zwar denselben `type` aus dem Cache, sind jedoch nicht das selbe Type-Objekt.
+`MyType<string>` ist gecacht solange `Object` berechnet wird. Die PropertySignature von `a` und `b` haben dadurch zwar denselben `type` aus dem Cache, sind jedoch nicht dasselbe Type-Objekt.
 
 Alle nicht-root Type-Objekte haben eine parent Eigenschaft, welche in der Regel auf den umschließenden Elternteil zeigen. Dies ist wertvoll, um zum Beispiel herauszufinden, ob ein Type bestandteil eines union ist oder nicht.
 
@@ -210,10 +210,13 @@ typeOf<ID>();
 `Ref 1` zeigt dabei auf das eigentliche union Type-Objekt.
 
 Bei zwischengespeicherten Type-Objekten wie oben exemplarisch aufgezeigt, sind die `parent` Eigenschaften nicht immer die echten Elternteile. So zum Beispiel bei einer Klasse, die mehrfach genutzt wird, zeigen zwar unmittelbaren Typen in `types` (TypePropertySignature und TypeMethodSignature) auf das korrekte TypeClass, aber die `type` dieser Signature-Typen zeigen auf die Signature-Typen des TypeClass des Cache-Eintrages. Das ist wichtig zu wissen, um so nicht unendlich die parent-Struktur auszulesen, sondern nur der unmittelbare Elternteil. Die Tatsache, dass der parent nicht unendliche Genauigkeit hat, ist Performance-Gründen geschuldet.
-JIT cache
+
+== JIT cache
 
 Im weiteren Verlauf werden einige Funktionen und Features beschrieben, die oft auf die Type-Objekte basieren. Um einige davon performant umzusetzen, braucht es einen JIT-Cache (just in time) pro Type-Objekt. Die kann via `getJitContainer(type)` bereitgestellt werden. Diese Funktion gibt ein simples Objekt zurück, auf den beliebig Daten gespeichert werden können. Solange keine Referenz auf das Objekt gehalten wird, löscht es sich automatisch durch den GC sobald das Type-Objekt selbst auch nicht mehr referenziert wird.
-Reflection-Klassen
+
+
+== Reflection-Klassen
 
 Zusätzlich zu der `typeOf<>()` Funktion gibt es diverse Reflection-Klassen, die eine OOP-Alternative zu den Type-Objekten bieten. Die Reflection-Klassen sind nur für Klassen, Interface/Object-literale und Funktionen und deren direkte Unter-Typen (Properties, Methods, Parameter) vorhanden. Alle tieferen Typen müssen wieder mit den Type-Objekten ausgelesen werden.
 
@@ -259,4 +262,4 @@ function validate<T>(data: any, type?: ReceiveType<T>): void {
 }
 ```
 
-Es ist nützlich, das Ergebnis der selben Variable zuzuweisen, um nicht unnötig eine neue anzulegen. In `type` ist nun entweder ein Typen-Objekt abgelegt oder es wird ein Fehler geworfen, wenn zum Beispiel kein Typen-Argument übergeben wurde, Deepkit's Typenkompiler nicht richtig installiert wurde, oder das Emitieren von Typeninformationen nicht aktiviert ist (siehe dazu die Sektion Installation weiter oben).
+Es ist nützlich, das Ergebnis derselben Variable zuzuweisen, um nicht unnötig eine neue anzulegen. In `type` ist nun entweder ein Typen-Objekt abgelegt oder es wird ein Fehler geworfen, wenn zum Beispiel kein Typen-Argument übergeben wurde, Deepkit's Typen-Compiler nicht richtig installiert wurde, oder das Emitieren von Typeninformationen nicht aktiviert ist (siehe dazu die Sektion Installation weiter oben).

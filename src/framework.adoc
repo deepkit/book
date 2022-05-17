@@ -12,6 +12,12 @@
 
 === Public Directory
 
+== File Structure
+
+== Database
+
+=== Migration
+
 == Logger
 
 == Auto-CRUD

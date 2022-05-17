@@ -8,11 +8,6 @@ Marc J. Schmidt
 :doctype: book
 :xrefstyle: full
 
-++++
-<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
-++++
-
-
 <<<
 
 include::introduction.adoc[leveloffset=+1]
@@ -53,9 +48,10 @@ include::database.adoc[leveloffset=+1]
 
 == Broker
 === Installation
-=== Server/Client
+=== Server
+=== Client
 === Key/Value
-=== Pub/Sub
+=== Publish / Subscribe
 
 <<<
 
@@ -73,3 +69,26 @@ include::framework.adoc[leveloffset=+1]
 === Database
 
 == Deployment
+
+=== Compiling
+
+=== Packaging
+
+=== Docker
+
+
+++++
+<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+<script src="../src/assets/prism.js"></script>
+<link rel="stylesheet" href="../src/assets/prism.css">
+<script>
+    console.log('hiii')
+  class MyHandler extends Paged.Handler {
+    afterPreview(pageFragment, page) {
+        console.log('afterPreview')
+      Prism.highlightAll()
+    }
+  }
+  Paged.registerHandlers(MyHandler);
+</script>
+++++

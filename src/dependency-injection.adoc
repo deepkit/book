@@ -16,9 +16,9 @@ class UserRepository {
 }
 ```
 
-Die Klasse UserRepository hat dabei als Abhängigkeit einen HttpClient. Diese Abhängigkeit an sich ist nichts Auffälliges, allerdings ist problematisch, dass UserRepository den HttpClient selbst erstellt. Dies ist auf den ersten Blick naheliegend, hat jedoch seine Nachteile: Was, wenn wir den HttpClient austauschen möchten? Was wenn wir UserRepository in einem Unit-Test testen wollen, ohne dass echte HTTP-Anfragen herausgehen dürfen? Woher wissen wir, dass die Klasse überhaupt einen HttpClient benutzt?
+Die Klasse UserRepository hat dabei einen HttpClient als Abhängigkeit. Diese Abhängigkeit an sich ist nichts Auffälliges, allerdings ist problematisch, dass UserRepository den HttpClient selbst erstellt. Dies ist auf den ersten Blick naheliegend, hat jedoch seine Nachteile: Was, wenn wir den HttpClient austauschen möchten? Was, wenn wir UserRepository in einem Unit-Test testen wollen, ohne dass echte HTTP-Anfragen herausgehen dürfen? Woher wissen wir, dass die Klasse überhaupt einen HttpClient benutzt?
 
-=== Inversion of Control
+== Inversion of Control
 
 Im Gedanke von Inversion of Control (IoC) ist folgende alternative Variante, die den HttpClient als explizite Abhängigkeit im Constructor setzt (auch bekannt als Constructor-Injection).
 
@@ -36,9 +36,9 @@ class UserRepository {
 
 Nun ist nicht mehr UserRepository dafür verantwortlich den HttpClient anzulegen, sondern der User von UserRepository. Das ist Inversion of Control (IoC). Die Steuerung wurde umgedreht bzw. invertiert. Ganz konkret wendet dieser Code Dependency Injection an, denn Abhängigkeiten werden empfangen (injiziert) und nicht mehr selbst angelegt oder angefordert. Dependency Injection ist dabei nur eine Variante IoC anzuwenden.
 
-=== Service Locator
+== Service Locator
 
-Neben DI ist auch ein Service Locator (SL) eine Möglichkeit, das IoC Prinzip anzuwenden. Dies gilt gemeinhin als das Gegenstück zu Dependency Injection, da es Abhängigkeiten anfordert und nicht empfängt. Würde HttpClient im obigen Code wie folgt angefordert werden, würde man von einem Service Locator Pattern sprechen.
+Neben DI ist auch Service Locator (SL) eine Möglichkeit, das IoC Prinzip anzuwenden. Dies gilt gemeinhin als das Gegenstück zu Dependency Injection, da es Abhängigkeiten anfordert und nicht empfängt. Würde HttpClient im obigen Code wie folgt angefordert werden, würde man von einem Service Locator Pattern sprechen.
 
 ```typescript
 class UserRepository {
@@ -63,7 +63,7 @@ class UserRepository {
 
 Alle diese Varianten haben gemeinsam, dass sie die Abhängigkeit HttpClient explizit anfordern. Dieses Anfordern kann nicht nur an Properties als Default-Value geschehen, sondern auch irgendwo mitten im Code. Da mitten im Code bedeutet, dass es nicht Bestandteil eines Typen-Interfaces ist, ist die Nutzung des HttpClients versteckt. Abhängig der Variante wie der HttpClient angefordert wird, kann es mitunter sehr schwer oder komplett unmöglich sein, diesen durch eine andere Implementierung auszutauschen. Vor allem im Bereich von Unit-Tests und zwecks Übersichtlichkeit kann es hier zu Schwierigkeiten kommen, sodass der Service Locator mittlerweile in bestimmten Situationen als ein Anti-Pattern eingestuft wird.
 
-=== Dependency Injection
+== Dependency Injection
 
 Bei Dependency Injection wird nichts angefordert, sondern es wird explizit vom Nutzer bereitgestellt beziehungsweise von dem Code empfangen. Wie im Beispiel von Inversion of Control zu sehen, ist dort bereits das Dependency Injection Pattern angewendet worden. Konkret ist dort Constructor-Injection zu sehen, da die Abhängigkeit im Constructor deklariert ist. So muss UserRepository nun wie folgt genutzt werden.
 
@@ -80,7 +80,7 @@ Der Code, der UserRepository verwenden will, muss auch all seine Abhängigkeiten
 
 Aber ein offensichtlicher Nachteil kann auch direkt erkannt werden: Muss ich nun wirklich alle Abhängigkeiten wie den HttpClient selbst anlegen bzw. verwalten? Ja und Nein. Ja, es gibt viele Fälle, in denen es völlig legitim ist, die Abhängigkeiten selbst zu verwalten. Eine gute API zeichnet sich dadurch aus, dass Abhängigkeiten nicht ausufern und die Nutzung selbst dann noch angenehm ist. Bei vielen Applikationen oder komplexen Libraries kann dies durchaus der Fall sein. Um eine sehr komplexe low-level API mit vielen Abhängigkeiten vereinfacht dem Nutzer bereitzustellen, sind Facades wunderbar geeignet.
 
-=== Dependency Injection Container
+== Dependency Injection Container
 
 Für komplexere Applikationen ist es hingegen nicht nötig alle Abhängigkeiten selbst zu verwalten, denn genau dafür ist ein sogenannter Dependency Injection Container da. Dieser legt nicht nur alle Objekte automatisch an, sondern "injiziert" die Abhängigkeiten auch ganz automatisch, sodass ein manueller "new" Aufruf nicht mehr notwendig ist. Dabei gibt es diverse Arten des Injizierens wie zum Beispiel Constructor-Injection, Method-Injection, oder Property-Injection. So sind auch komplizierte Konstruktionen mit vielen Abhängigkeiten einfach zu verwalten.
 
@@ -125,7 +125,7 @@ Alle Arten von Providern werden in der Sektion <<dependency-injection-providers>
 
 An dieser Stelle sei zu erwähnen, dass Deepkit's DI Container nur mit Runtime Typen von Deepkit funktioniert. Das bedeutet, dass jeder Code, der Klassen, Typen, Interfaces, und Funktionen beinhaltet durch den Deepkit Type Compiler kompiliert werden muss, um so die Typeninformationen zur Laufzeit zur Verfügung zu haben. Siehe dazu das Kapitel <<runtime-types>>.
 
-=== Dependency Inversion
+== Dependency Inversion
 
 Das Beispiel von UserRepository unter Inversion of Control zeigt auf, dass UserRepository von einer niedrigeren Ebene, nämlich einer HTTP library, abhängt. Zusätzlich wird eine konkrete Implementierung (Klasse) statt einer Abstraktion (Interface) als Abhängigkeit deklariert. Dies mag auf den ersten Blick den Objekt-Orientierten Paradigmen entsprechen, kann aber insbesondere in komplexen und grossen Architekturen zu Problemen führen.
 
@@ -659,7 +659,7 @@ rootModule.setupProvider(UserRepository).db = injectorReference(Database);
 
 *Abstractions/Interfaces*
 
-Es können auch Interfaces Setup-Calls zugewiesen werden.
+Es können auch Setup-Calls einem Interface zugewiesen werden.
 
 ```typescript
 rootModule.setupProvider<DatabaseInterface>().logging = logger;

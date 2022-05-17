@@ -3,3 +3,17 @@
 
 Eine TSX basierte Template-Engine, mit der HTML auf eine typen-sichere Art generiert werden kann.
 
+== Installation
+
+== Components
+
+=== Function Components
+
+=== Class Components
+
+== Dependency Injection
+
+== Dynamic HTML
+
+== Optimization
+

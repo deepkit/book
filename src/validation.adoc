@@ -134,7 +134,7 @@ Wenn also Daten vorliegen, von denen der Typ nicht bekannt ist (`any` oder `unkn
 
 == Type-Guard
 
-Ein Type-Guard auf den obige genutzten Typen User könnte in einfachster Form wie folgt aussehen. Zu beachten ist, dass die obig erklärten Besonderheiten mit NaN hier nicht Bestandteil sind und somit dieser Type-Guard nicht korrekt ist.
+Ein Type-Guard auf den obige genutzten Typen `User` könnte in einfachster Form wie folgt aussehen. Zu beachten ist, dass die obig erklärten Besonderheiten mit NaN hier nicht Bestandteil sind und somit dieser Type-Guard nicht korrekt ist.
 
 ```typescript
 function isUser(data: any): data is User {
@@ -197,6 +197,55 @@ function addUser(data: any): void {
 ```
 
 Nutzen Sie auch hier die Vorteile, die TypeScript ihnen bietet. Typen können wiederverwendet oder durch diverse TypeScript Funktionen angepasst werden.
+
+== Error Reporting
+
+Die Funktionen `is`, `assert` und `validates` geben ein Boolean als Resultat zurück. Um genaue Informationen über fehlgeschlagenen Validations-Regeln zu erhalten, kann die Funktion `validate` benutzt werden. Sie gibt ein leeres Array zurück, wenn alles erfolgreich validiert wurde. Bei Fehlern enthält das Array ein oder mehrere Einträge mit folgender Struktur:
+
+```typescript
+interface ValidationErrorItem {
+    /**
+     * The path to the property. Might be a deep path separated by dot.
+     */
+    path: string;
+    /**
+     * A lower cased error code that can be used to identify this error and translate.
+     */
+    code: string,
+    /**
+     * Free text of the error.
+     */
+    message: string,
+}
+```
+
+Die Funktion erhält als erstes Typen-Argument ein beliebigen TypeScript Typ und als erstes Argument die zu validierende Daten.
+
+```typescript
+import { validate } from '@deepkit/type';
+
+validate<string>('Hello'); //[]
+validate<string>(123); //[{code: 'type', message: 'Not a string', path: ''}]
+
+validate<number>(123); //[]
+validate<number>('Hello'); //[{code: 'type', message: 'Not a number', path: ''}]
+```
+
+Es können hierbei auch komplexe Typen wie Interfaces, Klassen, oder Generics benutzt werden.
+
+```typescript
+import { validate } from '@deepkit/type';
+
+interface User {
+    id: number;
+    username: string;
+}
+
+validate<User>(undefined); //[{code: 'type', message: 'Not an object', path: ''}]
+validate<User>({}); //[{code: 'type', message: 'Not a number', path: 'id'}]
+validate<User>({id: 1}); //[{code: 'type', message: 'Not a string', path: 'username'}]
+validate<User>({id: 1, username: 'Peter'}); //[]
+```
 
 == Einschränkungen
 
@@ -262,109 +311,138 @@ is<ID>(1001); //true
 
 Validierung mitteils einer benutzerdefinierten Validierungsfunktion. Siehe nächste Sektion Benutzerdefinierte Validator für mehr Informationen.
 
+```typescript
 	type T = string & Validate<typeof myValidator>
+```
 
 ==== Pattern<typeof myRegexp>
 
 Defines a regular expression as validation pattern. Usually used for E-Mail validation or more complex content validation.
 
+```typescript
 	const myRegExp = /[a-zA-Z]+/;
 	type T = string & Pattern<typeof myRegExp>
+```
 
 ==== Alpha
 
 Validation for alpha characters (a-Z).
 
+```typescript
 	type T = string & Alpha;
+```
 
 
 ==== Alphanumeric
 
 Validation for alpha and numeric characters.
 
+```typescript
 	type T = string & Alphanumeric;
+```
 
 
 ==== Ascii
 
 Validation for ASCII characters.
 
+```typescript
 	type T = string & Ascii;
+```
 
 
 ==== Decimal<number, number>
 
 Validation for string represents a decimal number, such as 0.1, .3, 1.1, 1.00003, 4.0, etc.
 
+```typescript
 	type T = string & Decimal<1, 2>;
+```
 
 
 ==== MultipleOf<number>
 
 Validation of numbers that are a multiple of given number.
 
+```typescript
 	type T = number & MultipleOf<3>;
+```
 
 
 ==== MinLength<number>, MaxLength<number>
 
 Validation for min/max length for arrays or strings.
 
+```typescript
 	type T = any[] & MinLength<1>;
 
 	type T = string & MinLength<3> & MaxLength<16>;
+```
 
 
 ==== Includes<'any'> Excludes<'any'>
 
 Validation for an array item or sub string being included/excluded
 
+```typescript
 	type T = any[] & Includes<'abc'>;
 	type T = string & Excludes<' '>;
+```
 
 
 ==== Minimum<number>, Maximum<number>
 
 Validation for a value being minimum or maximum given number. Same as `>=` and `&lt;=`.
 
+```typescript
 	type T = number & Minimum<10>;
 	type T = number & Minimum<10> & Maximum<1000>;
+```
 
 
 ==== ExclusiveMinimum<number>, ExclusiveMaximum<number>
 
 Same as minimum/maximum but excludes the value itself. Same as `>` and `<`.
 
+```typescript
 	type T = number & ExclusiveMinimum<10>;
 	type T = number & ExclusiveMinimum<10> & ExclusiveMaximum<1000>;
+```
 
 
 ==== Positive, Negative, PositiveNoZero, NegativeNoZero
 
 Validation for a value being positive or negative.
 
+```typescript
 	type T = number & Positive;
 	type T = number & Negative;
+```
 
 
 ==== BeforeNow, AfterNow
 
 Validation for a date value compared to now (new Date)..
 
+```typescript
 	type T = Date & BeforeNow;
 	type T = Date & AfterNow;
+```
 
 
 ==== Email
 
 Simple regexp validation of emails via `/^\S+@\S+$/`. Is automatically a `string`, so no need to do `string & Email`.
 
+```typescript
 	type T = Email;
+```
 
 ==== integer
 
 Ensures that the number is a integer in the correct range. Is automatically a `number`, so no need to do `number & integer`.
 
+```typescript
 	type T = integer;
 	type T = uint8;
 	type T = uint16;
@@ -372,6 +450,7 @@ Ensures that the number is a integer in the correct range. Is automatically a `n
 	type T = int8;
 	type T = int16;
 	type T = int32;
+```
 
 See Special types: integer/floats for more information
 

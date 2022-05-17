@@ -5,18 +5,18 @@ Es können auch Validator-Einschränkungen wie zum Beispiel MaxLength, Maximum, 
 
 Deepkit kommt mit einer ganzen Reihe von Typen-Dekoratoren, die alle direkt aus @deepkit/type benutzt werden können. Sie sind designt, nicht aus einer bestimmten Library zu kommen, um so Typen nicht an eine Library wie zum Beispiel Deepkit RPC oder Deepkit Database zu koppelt. Das erlaubt das einfachere Wiederverwenden von Typen, auch im Frontend, obwohl zum Beispiel Datenbank Typen-Dekoratoren genutzt werden.
 
-=== Enhanced Types
+== Enhanced Types
 
 integer, float, UUID, MongoId, BinaryBigint, SignedBigInt, .
 
-=== Meta
+== Meta
 
 MapName, Group, Data, Entity, InlineRuntimeType.
 
-=== Serializer
+== Serializer
 
 Excluded, Embedded.
 
-=== Database
+== Database
 
 PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, DatabaseField.

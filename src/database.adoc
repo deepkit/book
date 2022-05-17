@@ -2,23 +2,153 @@
 = Database
 
 == Installation
-== Connection
+
+=== SQLite
+=== MySQL
+=== Postgres
+=== MongoDB
+
+== Benutzung
+
+=== Database
+
+=== Connection
+
+==== Read Replica
+
 == Entity
-== Session
+
+=== Primitives
+
+=== Primary Key
+
+=== Auto Increment
+
+=== UUID
+
+=== MongoDB ObjectID
+
+=== Optional / Nullable
+
+=== Embedded Types
+
+=== Default Values
+
+=== Default Expressions
+
+=== Complex Types
+
+=== Exclude
+
+=== Database Specific Column Types
+
+
+
+== Session / Unit Of Work
+
+=== Identity Map
+
+=== Change Detection
+
+=== Request/Response
+
+
 == Query
+
+=== Find
+
+=== Filter
+
+==== Equal
+
+==== Greater / Smaller
+
+==== RegExp
+
+==== Grouping AND/OR
+
+==== In
+
+=== Order
+
+=== Pagination
+
+=== Aggregation
+
+=== Join
+
+=== Returning
+
+=== Patch
+
+=== Delete
+
+=== Lift
+
 == Repository
+
 == Relations
+
+=== One To Many
+
+=== Many To Many
+
+=== One To One
+
+=== Constraints
+
+On Delete/Update: RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
+
 == Inheritance
+
+=== Table Per Class
+
+=== Single Table Inheritance
+
 == Index
 == Case Sensitivity
 == Character Sets
 == Collations
 == Batching
+
 == Caching
+
 == Multitenancy
+
 == Events
+
+=== Query Events
+=== Unit Of Work Events
+
 == Transactions
+
+=== Isolations
+
+== Naming Strategy
+
 == Locking
+
+=== Optimistic Locking
+=== Pessimistic Locking
+
+== Custom Types
+
+== Logging
+
 == Migration
+
+== Seeding
+
 == Raw Database Access
+
+=== SQL
+
+=== MongoDB
+
+== App Configuration
+
 == Composite Primary Key
+
+== Plugins
+
+=== Soft-Delete

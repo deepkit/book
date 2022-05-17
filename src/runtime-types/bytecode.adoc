@@ -23,7 +23,7 @@ type TypeA = string;
 const typeA = ['&'];
 ```
 
-Die vorhandenen Befehle selbst sind jeweils ein Byte groß und in `@deepkit/type-spec` als `ReflectionOp` Enum zu finden. Zum Zeitpunkt dieses Buches ist der Befehlessatz über 81 Befehle gross.
+Die vorhandenen Befehle selbst sind jeweils ein Byte groß und in `@deepkit/type-spec` als `ReflectionOp` Enum zu finden. Zum Zeitpunkt dieses Buches ist der Befehlssatz über 81 Befehle gross.
 
 ```typescript
 enum ReflectionOp {
