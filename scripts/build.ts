@@ -25,6 +25,7 @@ const languageMap: { [lang: string]: string } = {
 }
 
 if (!languageMap[targetLanguage]) throw new Error(`Language ${languageMap} not supported`);
+const targetLanguageShort = languageMap[targetLanguage].toLowerCase();
 
 const translationCachePath = './translations.json';
 let allTranslations: { [language: string]: { [text: string]: string } } = {};
@@ -110,7 +111,7 @@ function heading(text: string): string {
     return text.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase());
 }
 
-function isListItem(doc: any): doc is {text: string} {
+function isListItem(doc: any): doc is { text: string } {
     return doc.context === 'list_item' && 'string' === typeof doc.text;
 }
 
@@ -159,9 +160,36 @@ function extractOrApplyTranslations() {
         }
 
         const blocks = doc.getBlocks();
-        for (let i = 0; i < blocks.length; i++) {
-            blocks[i] = process.call(this, blocks[i], depth + 1);
-        }
+        const copy = blocks.slice();
+        blocks.length = 0;
+        outer:
+            for (let i = 0; i < copy.length; i++) {
+                const attr = copy[i].getAttributes();
+                if (attr.lang) {
+                    if (attr.lang === targetLanguage) {
+                        blocks.push(copy[i]);
+                    } else {
+                        console.log('ignore block', attr.lang, targetLanguage);
+                    }
+                    continue;
+                } else {
+                    //look for translated blocks underneath
+                    for (let j = i + 1; j < copy.length; j++) {
+                        const attr = copy[j].getAttributes();
+                        if (!attr.lang) {
+                            //none found or end
+                            break;
+                        } else {
+                            if (attr.lang === targetLanguage) {
+                                //translation found for this block. ignore the origin (copy[i}]
+                                //by jumping over
+                                continue outer;
+                            }
+                        }
+                    }
+                }
+                blocks.push(process.call(this, copy[i], depth + 1));
+            }
         return doc;
     });
 }

@@ -39,7 +39,7 @@ function log(message) {
 }
 ```
 
-sind die Informationen, dass message vom Typ string und der Return-Typ vom Type void ist nicht mehr verfügbar. Diese Informationen wurden unwiderruflich von TypeScript zerstört.
+sind die Informationen, dass `message` vom Typ string und der Return-Typ vom Type `void` ist nicht mehr verfügbar. Diese Informationen wurden unwiderruflich von TypeScript zerstört.
 
 Mit einem Typensystem zur Laufzeit können jedoch diese Informationen überleben, so dass man die Typen von message und den Return-Typ programmatisch auslesen kann.
 

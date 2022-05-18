@@ -1,7 +1,7 @@
 [#template]
 = Template
 
-Eine TSX basierte Template-Engine, mit der HTML auf eine typen-sichere Art generiert werden kann.
+Eine serverseitige TSX (JSX) basierte Template-Engine, mit der HTML auf eine typen-sichere Art generiert werden kann.
 
 == Installation
 

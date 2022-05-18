@@ -5,7 +5,7 @@ Um im Detail zu lernen, wie Deepkit die Typeninformationen im JavaScript enkodie
 == Typen-Compiler
 
 Der Type-Compiler (in @deepkit/type-compiler) ist dafür Verantwortlich, die definierten Typen in den TypeScript Dateien auszulesen und in ein Bytecode zu kompilieren. Dieser Bytecode hat alles, was nötig ist, um die Typen in der Laufzeit auszuführen.
-Zum Zeitpunkt dieses Buches ist der Type-Compiler ein sogenannter TypeScript Transformer. Dieser Transformer ist ein Plugin für den TypeScript Compiler selbst und wandelt ein TypeScript AST in ein anderen TypeScript AST um. Deepkit's Typen-Compiler liest in diesem Prozess den AST aus, produziert den dazugehörigen Bytecode, und fügt diesen in den AST ein.
+Zum Zeitpunkt dieses Buches ist der Type-Compiler ein sogenannter TypeScript Transformer. Dieser Transformer ist ein Plugin für den TypeScript Compiler selbst und wandelt ein TypeScript AST (Abstract Syntax Tree) in ein anderen TypeScript AST um. Deepkit's Typen-Compiler liest in diesem Prozess den AST aus, produziert den dazugehörigen Bytecode, und fügt diesen in den AST ein.
 
 TypeScript selbst erlaubt es nicht, dieses Plugin aka Transformer über eine tsconfig.json zu konfigurieren. Es ist entweder nötig, die TypeScript Compiler API direkt zu benutzen, oder ein Buildsystem wie Webpack mit `ts-loader`. Um diesen unangenehmen Weg den Benutzern von Deepkit zu ersparen, installiert sich der Deepkit Typen-Compiler automatisch selbst in `node_modules/typescript` sobald `@deepkit/type-compiler` installiert wird. Dies macht es möglich, dass alle Buildtools, die auf das lokal installierte TypeScript (das in `node_modules/typescript`) zugreifen, automatisch den Typen-Compiler aktiviert haben. Dadurch funktioniert tsc, Angular, webpack, ts-node, und einige andere Tools automatisch mit Deepkit's Typen-Compiler.
 
@@ -55,10 +55,10 @@ Entsprechend wird aus einer 5 ein `&`-Zeichen und aus einer 37 ein `F`-Zeichen. 
 export type TypeA = string[];
 
 //generated JavaScript
-export const __&#8486;typeA = ['&F'];
+export const __ΩtypeA = ['&F'];
 ```
 
-Um Namenskonflikte vorzubeugen, erhält jeder Typ ein "__&#8486;" als Prefix. Für jeden explizit definierten Typen, der exportiert oder von einem exportierten Typen genutzt wird, wird ein Bytecode  das JavaScript emittiert. Auch Klassen und Funktionen erhalten einen Bytecode direkt als Eigenschaft.
+Um Namenskonflikte vorzubeugen, erhält jeder Typ ein "__Ω" als Prefix. Für jeden explizit definierten Typen, der exportiert oder von einem exportierten Typen genutzt wird, wird ein Bytecode  das JavaScript emittiert. Auch Klassen und Funktionen erhalten einen Bytecode direkt als Eigenschaft.
 
 ```typescript
 //TypeScript

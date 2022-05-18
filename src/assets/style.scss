@@ -215,10 +215,23 @@ a, a:link {
 }
 
 
+//body {
+//  text-align: center;
+//}
+////styles for non-paged.js
+//#contents {
+//  margin: auto;
+//  max-width: 800px;
+//  text-align: left;
+//}
+//
 
-
-
-
+body > div:not(.pagedjs_pages) {
+  background-color: white;
+  margin: auto;
+  padding: 150px;
+  max-width: 430px;
+}
 
 
 /* Better tables */

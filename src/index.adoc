@@ -76,16 +76,13 @@ include::framework.adoc[leveloffset=+1]
 
 === Docker
 
-
 ++++
-<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+<!--<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>-->
 <script src="../src/assets/prism.js"></script>
 <link rel="stylesheet" href="../src/assets/prism.css">
 <script>
-    console.log('hiii')
   class MyHandler extends Paged.Handler {
     afterPreview(pageFragment, page) {
-        console.log('afterPreview')
       Prism.highlightAll()
     }
   }

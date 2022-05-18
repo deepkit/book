@@ -16,9 +16,9 @@ http.get('/user/:id', (request, response) => {
 });
 ```
 
-Dies ist für simple Anwendungsfälle sehr gut zugeschnitten, wird aber schnell unübersichtlich, wenn die Anwendung wächst, da alle Ein- und Ausgaben manuell serialisiert beziehungsweise deserialisiert und validiert werden müssen. Auch muss überlegt werden wie Objekte bzw Services wie zum Beispiel eine Datenbank Abstraktion aus der Anwendung selbst erhaltenen werden können. Es zwingt den User damit eine Architektur selbst obendrauf zu setzen, die einem diese zwingenden Funktionalitäten abnimmt.
+Dies ist für simple Anwendungsfälle sehr gut zugeschnitten, wird aber schnell unübersichtlich, wenn die Anwendung wächst, da alle Ein- und Ausgaben manuell serialisiert beziehungsweise deserialisiert und validiert werden müssen. Auch muss überlegt werden wie Objekte und Services wie zum Beispiel eine Datenbank Abstraktion aus der Anwendung selbst erhaltenen werden können. Es zwingt den Developer eine Architektur selbst obendrauf zu setzen, die diese zwingenden Funktionalitäten abbildet.
 
-Deepkit's HTTP Library nutzt die Stärke von TypeScript und Dependency Injection: Serialisierung bzw Deserialisierung und Validierung von jeglichen Werten passiert automatisch anhand der definierten Typen. Auch erlaubt es das Definieren von Routen entweder über eine funktionale API wie in dem Beispiel oben oder über Controller-Klassen, um die unterschiedlichen Bedürfnisse einer gewählten Architektur abzudecken.
+Deepkit's HTTP Library nutzt die Stärke von TypeScript und Dependency Injection. Serialisierung/Deserialisierung und Validierung von jeglichen Werten passieren automatisch anhand der definierten Typen. Auch erlaubt es das Definieren von Routen entweder über eine funktionale API wie in dem Beispiel oben oder über Controller-Klassen, um die unterschiedlichen Bedürfnisse einer Architektur abzudecken.
 
 Es kann dabei entweder mit einem bereits vorhandenen HTTP-Server wie Node's `http` Modul oder mit dem Deepkit Framework genutzt werden. Beide API-Varianten haben Zugriff auf den Dependency Injection Container und können so bequem Objekte wie eine Datenbank-Abstraktion und Konfigurationen aus der Anwendung beziehen.
 

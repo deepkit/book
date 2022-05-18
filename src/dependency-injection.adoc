@@ -71,7 +71,7 @@ Bei Dependency Injection wird nichts angefordert, sondern es wird explizit vom N
 const users = new UserRepository(new HttpClient());
 ```
 
-Der Code, der UserRepository verwenden will, muss auch all seine Abhängigkeiten bereitstellen (injizieren). Ob HttpClient dabei jedes mal neu erstellt oder jedes mal der selbe genutzt werden soll, entscheidet nun der User der Klasse und nicht mehr die Klasse selbst. Es wird nicht mehr (aus der Sicht der Klasse) wie beim Service-Locator angefordert oder bei dem initialen Beispiel komplett selbst erstellt. Dieses Invertieren des Flows hat diverse Vorteile:
+Der Code, der UserRepository verwenden will, muss auch all seine Abhängigkeiten bereitstellen (injizieren). Ob HttpClient dabei jedes Mal neu erstellt oder jedes Mal derselbe genutzt werden soll, entscheidet nun der User der Klasse und nicht mehr die Klasse selbst. Es wird nicht mehr (aus der Sicht der Klasse) wie beim Service-Locator angefordert oder bei dem initialen Beispiel komplett selbst erstellt. Dieses Invertieren des Flows hat diverse Vorteile:
 
 * Der Code ist einfacher zu verstehen, da alle Abhängigkeiten explizit sichtbar sind.
 * Der Code ist einfacher zu testen, da alle Abhängigkeiten eindeutig sind und bei Bedarf einfach abgeändert werden können.
@@ -168,7 +168,7 @@ Da Deepkit's DI container in der Lage ist, abstrakte Abhängigkeiten (Interfaces
 Sobald HttpClient seine API abändert (zum Beispiel die Methode `get` entfernt) und so nicht mehr kompatibel zu HttpClientInterface ist, wirft der DI Container einen Fehler ("die Abhängigkeit HttpClientInterface wurde nicht bereitgestellt").
 Hier ist der User, der beide Implementierungen zusammenbringen will, in der Pflicht eine Lösung zu finden. Als Beispiel könnte hier dann eine Adapter-Klasse registriert werden, die HttpClientInterface implementiert und die Methoden-Aufrufe korrekt an HttpClient weiterleitet.
 
-Hier sei zu beachten, dass obwohl in Theorie das Dependency Inversion Prinzip sein Vorteile hat, so hat es in der Praxis auch erhebliche Nachteile. So führt es nicht nur zu mehr Code (da mehr Interfaces geschrieben werden müssen), sondern auch zu mehr Komplexität (da jede Implementierung für jede Abhängigkeit nun ein Interface hat). Dieser zu zahlende Preis lohnt sich erst dann wenn die Applikation eine gewisse Größe erreicht hat und diese Flexibilität auch gebraucht wird. Wie jedes Design-Pattern und Prinzip hat auch dieses seinen Kosten-Nutzung-Faktor, welche vor seiner Anwendung durchdacht sein sollte.
+Hier sei zu beachten, dass obwohl in Theorie das Dependency Inversion Prinzip seine Vorteile hat, so hat es in der Praxis auch erhebliche Nachteile. So führt es nicht nur zu mehr Code (da mehr Interfaces geschrieben werden müssen), sondern auch zu mehr Komplexität (da jede Implementierung für jede Abhängigkeit nun ein Interface hat). Dieser zu zahlende Preis lohnt sich erst dann, wenn die Applikation eine gewisse Größe erreicht hat und diese Flexibilität auch gebraucht wird. Wie jedes Design-Pattern und Prinzip hat auch dieses seinen Kosten-Nutzung-Faktor, welche vor seiner Anwendung durchdacht sein sollte.
 Design-Patterns sollen nicht für jeden noch so simplen Code pauschal und blind genutzt werden. Sind jedoch die Voraussetzungen wie zum Beispiel einer komplexen Architektur, grossen Applikationen, oder eines skalierendes Teams gegeben, entfaltet Dependency Inversion und andere Design-Patterns erst seine wahre Stärke.
 
 == Installation
@@ -210,7 +210,7 @@ Das `injector` Objekt ist in diesem Fall der Dependency Injection Container. Die
 
 === Module API
 
-Eine etwas komplexere API ist die `InjectorModule` Klasse, welche es erlaubt, die Provider in unterschiedlichen Modulen auszulagern, um so mehrere encapsulated DI Container per Module zu erstellen. Auch erlaubt dies das Verwenden von Konfiguration-Klassen per Module, welche es vereinfacht, Konfigurationswerte automatisch validiert den Providern bereitzustellen. Module können sich untereinander importieren, Provider exportieren, um so eine Hiararchie und schön separierte Architektur aufzubauen.
+Eine etwas komplexere API ist die `InjectorModule` Klasse, welche es erlaubt, die Provider in unterschiedlichen Modulen auszulagern, um so mehrere encapsulated DI Container per Module zu erstellen. Auch erlaubt dies das Verwenden von Konfiguration-Klassen per Module, welche es vereinfacht, Konfigurationswerte automatisch validiert den Providern bereitzustellen. Module können sich untereinander importieren, Provider exportieren, um so eine Hierarchie und schön separierte Architektur aufzubauen.
 
 Diese API sollte genutzt werden, wenn die Applikation komplexer ist und nicht das Deepkit Framework genutzt wird.
 
@@ -237,7 +237,7 @@ const httpClient = injector.get(HttpClient, lowLevelModule);
 
 All nicht-root Module sind per default verschlossen ("encapsulated"), sodass alle Provider in diesem Modul nur ihm selbst zur Verfügung stehen. Soll ein Provider auch anderen Modulen zur Verfügung stehen, muss dieser Provider exportiert werden. Durch das Exportieren wandert der Provider in das Eltern-Modul der Hierarchie und kann so genutzt werden.
 
-Um alle Provider per default auf die oberste Ebene, dem Root-Module, zu exportieren, kann die Option `forRoot` genutzt werden.
+Um alle Provider per default auf die oberste Ebene, dem Root-Module, zu exportieren, kann die Option `forRoot` genutzt werden. Dadurch können alle Provider von allen anderen Modulen genutzt werden.
 
 ```typescript
 const lowLevelModule = new InjectorModule([HttpClient])
@@ -246,9 +246,15 @@ const lowLevelModule = new InjectorModule([HttpClient])
 
 === App API
 
-Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, so dass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
+Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, sodass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
 
 In dem Kapitel <<framework-modules>> ist näheres hierzu beschrieben.
+
+[lang=english]
+The <<framework-modules>> chapter describes this in more detail.
+
+[lang=chinese]
+<<framework-modules>>一章对此有更详细的描述。
 
 [#dependency-injection-providers]
 == Providers
@@ -263,7 +269,7 @@ InjectorContext.forProviders([
 
 Dies stellt einen speziellen Provider dar, da lediglich die Klasse spezifiziert wird. Alle anderen Provider müssen als Object-Literal angegeben werden.
 
-Standardmäßig sind alle Provider als Singleton markiert, sodass zu jedem Zeitpunkt nur eine Instanz existiert. Um bei jedem Bereitstellen eine neue Instanz anzulegen, kann die Option `transient` genutzt werden. Dies führt dazu, dass Klassen jedes Mal neu erstellt werden oder Factories jedes mal neu ausgeführt werden.
+Standardmäßig sind alle Provider als Singleton markiert, sodass zu jedem Zeitpunkt nur eine Instanz existiert. Um bei jedem Bereitstellen eine neue Instanz anzulegen, kann die Option `transient` genutzt werden. Dies führt dazu, dass Klassen jedes Mal neu erstellt werden oder Factories jedes Mal neu ausgeführt werden.
 
 ```typescript
 InjectorContext.forProviders([
@@ -331,7 +337,7 @@ class EmailService {
 }
 ```
 
-Mit der Kombination aus einem Inject-Alias und primitive Provider-Tokens können auch Abhängikeiten aus Paketen bereitgestellt, die keine Runtime-Typeninformationen beinhalten.
+Mit der Kombination aus einem Inject-Alias und primitive Provider-Tokens können auch Abhängigkeiten aus Paketen bereitgestellt, die keine Runtime-Typeninformationen beinhalten.
 
 ```typescript
 import { Inject } from '@deepkit/injector';
@@ -365,7 +371,7 @@ InjectorContext.forProviders([
 
 === FactoryProvider
 
-Es kann eine Funktion genutzt werden, um einen Wert für den Provider bereitzustellen. Diese Funktion kann auch Parameter beinhalten, die wiederum von dem DI Container bereitgestellt werden. So sind andere Abhängigkeiten oder Konfigurations-Optionen zugreifbar.
+Es kann eine Funktion genutzt werden, um einen Wert für den Provider bereitzustellen. Diese Funktion kann auch Parameter beinhalten, die wiederum von dem DI Container bereitgestellt werden. So sind andere Abhängigkeiten oder Konfiguration-Optionen zugreifbar.
 
 ```typescript
 InjectorContext.forProviders([
@@ -506,7 +512,7 @@ Die Werte der Optionen selbst können über `configure()` gesetzt werden.
 	rootModule.configure({debug: true});
 ```
 
-Optionen, die keinen Default-Value haben, aber trotzdem notwendig sind, können mit einem "!" versehen werden. Dies zwingt den User des Modules dazu, den Wert bereitzustellen, da ansonsten es zu einem Fehler kommt.
+Optionen, die keinen Default-Value haben, aber trotzdem notwendig sind, können mit einem `!` versehen werden. Dies zwingt den User des Modules dazu, den Wert bereitzustellen, da ansonsten es zu einem Fehler kommt.
 
 ```typescript
 class RootConfiguration {
@@ -589,7 +595,7 @@ Sobald ein Scope angegeben ist, ist dieser Provider nicht mehr direkt über den 
 const session = injector.get(UserSession); //throws
 ```
 
-Stattdessen muss ein scoped DI Container erstellt werden. Dies würde jedesmal geschehen sobald ein HTTP-Request reinkommt:
+Stattdessen muss ein scoped DI Container erstellt werden. Dies würde jedes Mal geschehen sobald ein HTTP-Request reinkommt:
 
 ```typescript
 const httpScope = injector.createChildScope('http');
