@@ -182,10 +182,16 @@ body > div:not(.pagedjs_pages) {
   max-width: 730px;
   overflow: hidden;
   padding: 25px;
+  font-size: 0.95rem;
+  line-height: 1.2rem;
 }
 body > div:not(.pagedjs_pages) > * {
-  max-width: 430px;
+  max-width: 510px;
   margin: auto;
+}
+body > div:not(.pagedjs_pages) code, body > div:not(.pagedjs_pages) pre {
+  font-size: 0.9rem;
+  line-height: 1.1rem;
 }
 
 /* Better tables */
