@@ -225,14 +225,10 @@ a, a:link {
 //}
 //
 
-@media (max-width: 500px) {
+@media (max-width: 550px) {
   html, body {
     padding: 0;
     margin: 0;
-  }
-
-  body {
-    padding: 25px;
   }
 }
 
@@ -241,7 +237,7 @@ body > div:not(.pagedjs_pages) {
   margin: auto;
   max-width: 730px;
   overflow: hidden;
-  padding: 25px 0;
+  padding: 25px;
 
   > * {
     max-width: 430px;
