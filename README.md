@@ -14,3 +14,11 @@ export DEEPL_KEY="xyz:fx"
 ./scripts/build.ts english
 ./scripts/build.ts chinese
 ```
+
+## Deploy
+
+Make changes, commit and run
+
+```shell
+git push heroku main
+```
