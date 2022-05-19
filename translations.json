@@ -1426,6 +1426,24 @@
         "Deepkit macht genau das möglich. Es hängt sich in die Kompilierung von TypeScript ein und stellt sicher, dass alle Typeninformationen in dem generierten JavaScript eingebaut sind. Funktionen wie typeOf() (nicht zu verwechseln mit dem operator typeof, mit kleinem o) erlauben dem Entwickler dann darauf zuzugreifen. Es können daher auch Libraries entwickelt werden, die auf diesen Typeninformationen basieren und so dem Entwickler es erlauben, bereits geschriebene TypeScript Typen für eine ganze Palette von Anwendungsmöglichkeiten zu verwenden.": "Deepkit正是让这成为可能。它与TypeScript的编译挂钩，确保所有的类型信息都内置于生成的JavaScript中。像typeOf()这样的函数（不要和运算符typeof混淆，小写的是o）就允许开发者访问它。因此，可以根据这些类型信息来开发库，使开发者可以将已经写好的TypeScript类型用于一系列的应用。",
         "UUID": "UID",
         "`SignedBinaryBigInt` is the same as BinaryBigInt but is able to store negative values as well.": "`SignedBinaryBigInt`与BinaryBigInt相同，但也能存储负值。",
-        "Deepkit ORM stores SignedBinaryBigInt as binary. The binary has an additional leading sign byte and is represented as an uint: 255 for negative, 0 for zero, or 1 for positive.": "Deepkit ORM将SignedBinaryBigInt存储为二进制。二进制有一个额外的前导符号字节，表示为uint：255表示负，0表示零，1表示正"
+        "Deepkit ORM stores SignedBinaryBigInt as binary. The binary has an additional leading sign byte and is represented as an uint: 255 for negative, 0 for zero, or 1 for positive.": "Deepkit ORM将SignedBinaryBigInt存储为二进制。二进制有一个额外的前导符号字节，表示为uint：255表示负，0表示零，1表示正",
+        "Dabei haben viele Komponenten von Deepkit wie z.b. der HTTP-Router, die RPC-Abstraktion, aber auch die Datenbank Abstraktion selbst Validation eingebaut und wird automatisch ausgeführt, sodass es in vielen Fällen nicht nötig ist, dies manuell zu machen.": "Deepkit的许多组件，如HTTP路由器、RPC抽象，以及数据库抽象本身，都内置了验证功能，并自动执行，因此在许多情况下，没有必要手动操作。",
+        "Ein Type-Guard auf den obige genutzten Typen `User` könnte in einfachster Form wie folgt aussehen. Zu beachten ist, dass die obigen erklärten Besonderheiten mit NaN hier nicht Bestandteil sind und somit dieser Type-Guard nicht ganz korrekt ist.": "上面使用的`User'类型的类型保护，最简单的形式如下。请注意，上面解释的与NaN有关的特殊功能并不是其中的一部分，因此这个类型保护并不完全正确。",
+        "Der Code ist einfacher zu testen, da alle Abhängigkeiten eindeutig sind und bei Bedarf einfach abgeändert werden können.": "这个代码更容易测试，因为所有的依赖关系都是唯一的，如果有必要，可以很容易地进行修改。",
+        "Der Code ist modularer, da Abhängigkeiten einfach ausgetauscht werden können.": "代码更加模块化，因为依赖关系可以很容易地交换。",
+        "Eine alternative Variante wäre es, wenn die Abhängigkeit HttpClient in eine Abstraktion (Interface) überführt wird und so kein Code von einer HTTP-Library in UserRepository importiert wird.": "另一个变体是将HttpClient依赖关系转移到一个抽象（接口）中，从而不将HTTP库的代码导入UserRepository",
+        "Dies wird Dependency Inversion Prinzip genannt. UserRepository hat keine Abhängigkeit mehr direkt zu einer HTTP library und basiert stattdessen auf einer Abstraktion (Interface). Es löst damit zwei fundamentale Ziele in diesem Prinzip:": "这被称为依赖性反转原则。UserRepository不再直接依赖一个HTTP库，而是基于一个抽象（接口）。因此，它解决了这个原则中的两个基本目标：",
+        "Security": "安全",
+        "MySQL": "MySQL",
+        "Auto Increment": "自动增量",
+        "RegExp": "RegExp",
+        "Mit der Kombination aus einem Inject-Alias und primitive Provider-Tokens können auch Abhängigkeiten aus Paketen bereitgestellt, die keine Runtime-Typeninformationen beinhalten.": "通过注入别名和原始提供者令牌的组合，也可以从不包含运行时类型信息的包中提供依赖性。",
+        "Es kann eine Funktion genutzt werden, um einen Wert für den Provider bereitzustellen. Diese Funktion kann auch Parameter beinhalten, die wiederum von dem DI Container bereitgestellt werden. So sind andere Abhängigkeiten oder Konfiguration-Optionen zugreifbar.": "一个函数可以用来为提供者提供一个值。这个函数也可以包含参数，而这些参数又是由DI容器提供的。通过这种方式，可以访问其他依赖性或配置选项。",
+        "Grouping AND/OR": "分组 AND/OR",
+        "Multitenancy": "多租户",
+        "Composite Primary Key": "复合主键",
+        "Plugins": "插件",
+        "Public Directory": "公共目录",
+        "File Structure": "文件结构"
     }
 }

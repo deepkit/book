@@ -46,36 +46,23 @@ function ensureTranslation(sourceText: string): void {
 }
 
 async function loadTranslations(): Promise<void> {
-    const map: { [text: string]: { index: number } } = {};
-    let textAll: string = '';
     let translations = allTranslations[targetLanguage];
     if (!translations) translations = allTranslations[targetLanguage] = {};
 
-    //todo: remove
-    // textQueue.length = 10;
+    // textQueue.length = 5;
+
+    console.log('load translations for', textQueue);
+    const params = new URLSearchParams();
+    const map: { [text: string]: { index: number } } = {};
     let index = 0;
-
-    function tag(id: number): string {
-        return `<id-${id}/>`;
-    }
-
-    textQueue.length = 5;
-
     for (const text of textQueue) {
         map[text] = { index: index };
-        textAll += text + tag(index);
+        params.append('text', text);
         index++;
     }
-
-    console.log('load translations for', textAll);
-    const params = new URLSearchParams();
-    params.append('text', textAll);
     params.append('auth_key', process.env.DEEPL_KEY);
     params.append('source_lang', 'DE');
     params.append('target_lang', languageMap[targetLanguage].toUpperCase());
-    // params.append('tag_handling', 'xml');
-    // params.append('split_sentences', 'nonewlines');
-    // params.append('outline_detection', '0');
 
     const response = await fetch('https://api.deepl.com/v2/translate', {
         method: 'post',
@@ -87,22 +74,12 @@ async function loadTranslations(): Promise<void> {
     }
 
     const result = await response.json();
-    let translated = '';
 
-    if (result && result.translations && result.translations[0]) {
-        const first = result.translations[0];
-        translated = first.text;
-    }
-
-    if (translated) {
+    if (result && result.translations && result.translations) {
         for (const [text, info] of Object.entries(map)) {
-            const fromIndex = info.index === 0 ? 0 : translated.indexOf(tag(info.index - 1)) + tag(info.index - 1).length;
-            const toIndex = translated.indexOf(tag(info.index));
-            const translatedText = translated.slice(fromIndex, toIndex);
-            if (translatedText.includes('<id')) {
-                throw new Error(`BROKEN! ${info.index} ${fromIndex}-${toIndex}: ${translated}`);
-            }
-            translations[text] = translatedText;
+            const translated = result.translations[info.index];
+            if (!translated) throw new Error(`No translation found at index ${info.index}`);
+            translations[text] = translated.text;
         }
     }
 
