@@ -18,9 +18,17 @@ RUN node -r ts-node/register scripts/build.ts english
 RUN node -r ts-node/register scripts/build.ts chinese
 
 FROM nginx:1.21
-ENV NGINX_PORT ${PORT}
 
 WORKDIR /usr/share/nginx/html
 
 COPY --from=0 /app/build /usr/share/nginx/html
 ADD src/index.html /usr/share/nginx/html/index.html
+
+RUN echo 'server {\
+            listen $PORT default_server;\
+            location / {\
+              root   /usr/share/nginx/html;\
+              index  index.html index.htm;\
+            }\
+          }' > /etc/nginx/conf.d/default.conf.template
+CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon off;'
