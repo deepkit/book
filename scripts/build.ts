@@ -22,6 +22,7 @@ const languageMap: { [lang: string]: string } = {
     german: 'DE',
     english: 'EN',
     chinese: 'ZH',
+    polish: 'PL',
 }
 
 if (!languageMap[targetLanguage]) throw new Error(`Language ${languageMap} not supported`);
