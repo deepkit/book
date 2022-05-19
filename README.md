@@ -8,14 +8,9 @@ Adjusted/Corrected translation blocks are added into the file as is and tagged a
 ## Translate
 
 ```shell
+export DEEPL_KEY="xyz:fx"
+
+./scripts/build.ts german
 ./scripts/build.ts english
-```
-
-
-### Install
-
-MacOS:
-
-```shell
-brew install basictex
+./scripts/build.ts chinese
 ```

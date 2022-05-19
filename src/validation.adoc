@@ -134,7 +134,7 @@ Wenn also Daten vorliegen, von denen der Typ nicht bekannt ist (`any` oder `unkn
 
 == Type-Guard
 
-Ein Type-Guard auf den obige genutzten Typen `User` könnte in einfachster Form wie folgt aussehen. Zu beachten ist, dass die obig erklärten Besonderheiten mit NaN hier nicht Bestandteil sind und somit dieser Type-Guard nicht korrekt ist.
+Ein Type-Guard auf den obige genutzten Typen `User` könnte in einfachster Form wie folgt aussehen. Zu beachten ist, dass die obigen erklärten Besonderheiten mit NaN hier nicht Bestandteil sind und somit dieser Type-Guard nicht ganz korrekt ist.
 
 ```typescript
 function isUser(data: any): data is User {
@@ -250,13 +250,13 @@ validate<User>({id: 1, username: 'Peter'}); //[]
 == Einschränkungen
 
 Zusätzlich zum Prüfen der Typen können weitere beliebige Einschränkungen an einen Typen hinzugefügt werden. Das Prüfen von diesen zusätzlichen Inhalts-Einschränkungen erfolgt automatisch, nachdem die Typen selbst geprüft wurden. Dies geschieht in allen Validierungsfunktionen wie `validate`, `is`, and `assert`. Eine Einschränkung kann dabei zum Beispiel sein, dass ein String eine bestimmte minimale oder maximale Länge haben muss.
-Diese Einschränkungen werden über die Typen-Dekorationen an den eigentlichen Typen hinzugefügt. Dabei gibt es eine ganze Vielzahl von Dekorationen, die genutzt werden können. Eigene Dekoratoren können bei erweitertem Bedarf nach Belieben selbst definiert und genutzt werden.
+Diese Einschränkungen werden über die Typen-Decorators an den eigentlichen Typen hinzugefügt. Dabei gibt es eine ganze Vielzahl von Dekorationen, die genutzt werden können. Eigene Decorators können bei erweitertem Bedarf nach Belieben selbst definiert und genutzt werden.
 
 ```typescript
 type Username = string & MinLength<3>;
 ```
 
-Mit `&` können beliebig viele Typen-Dekoratoren an den eigentlichen Typ hinzugefügt werden. Das Ergebnis, hier `Username`, kann dann in allen Validierungsfunktionen aber auch in anderen Typen genutzt werden.
+Mit `&` können beliebig viele Typen-Decorators an den eigentlichen Typ hinzugefügt werden. Das Ergebnis, hier `Username`, kann dann in allen Validierungsfunktionen aber auch in anderen Typen genutzt werden.
 
 ```typescript
 is<Username>('ab'); //false, because minimum length is 3
@@ -305,6 +305,7 @@ is<ID>(123); //true
 is<ID>(1001); //true
 ```
 
+[#validation-constraint-types]
 === Constraint Types
 
 ==== Validate<typeof myValidator>

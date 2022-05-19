@@ -1,7 +1,7 @@
 [#runtime-types]
 = Runtime Types
 
-Typeninformationen in TypeScript zur Laufzeit zur Verfügung zu stellen ändert vieles. Es erlaubt neue Arbeitsweisen, die zuvor nur über Umwege oder gar nicht möglich waren. Das Deklarieren von Typen und Schemas ist mittlerweile ein großer Teil moderner Entwicklungsprozessen geworden. So sind GraphQL, Validatoren, ORMs, und Encoder wie zum Beispiel ProtoBuf, und viele mehr darauf angewiesen, Schema-Informationen auch zur Laufzeit zur Verfügung zu haben, um so fundamentale Funktionalitäten überhaupt erst bereitstellen zu können. Diese Tools und Libraries verlangen vom Entwickler teilweise komplett neue Sprachen zu lernen, die sehr spezifisch für den Anwendungsfall entwickelt worden sind. So haben ProtoBuf und GraphQL ihre eigene Deklarationssprache, auch Validatoren basieren oft auf eigene Schema-APIs oder gar JSON-Schema, welches ebenfalls eine eigenständige Art ist, Strukturen zu definieren. Einige davon verlangen bei jeder Änderung das Ausführen von Code-Generatoren, um die Schema-Informationen auch der Laufzeit bereitzustellen. Ein anderes bekanntes Muster ist, experimentelle TypeScript Dekoratoren zu verwenden, um Meta-Informationen an Klassen der Laufzeit zur Verfügung zu stellen.
+Typeninformationen in TypeScript zur Laufzeit zur Verfügung zu stellen ändert vieles. Es erlaubt neue Arbeitsweisen, die zuvor nur über Umwege oder gar nicht möglich waren. Das Deklarieren von Typen und Schemas ist mittlerweile ein großer Teil moderner Entwicklungsprozessen geworden. So sind GraphQL, Validatoren, ORMs, und Encoder wie zum Beispiel ProtoBuf, und viele mehr darauf angewiesen, Schema-Informationen auch zur Laufzeit zur Verfügung zu haben, um so fundamentale Funktionalitäten überhaupt erst bereitstellen zu können. Diese Tools und Libraries verlangen vom Entwickler teilweise komplett neue Sprachen zu lernen, die sehr spezifisch für den Anwendungsfall entwickelt worden sind. So haben ProtoBuf und GraphQL ihre eigene Deklarationssprache, auch Validatoren basieren oft auf eigene Schema-APIs oder gar JSON-Schema, welches ebenfalls eine eigenständige Art ist, Strukturen zu definieren. Einige davon verlangen bei jeder Änderung das Ausführen von Code-Generatoren, um die Schema-Informationen auch der Laufzeit bereitzustellen. Ein anderes bekanntes Muster ist, experimentelle TypeScript Decorators zu verwenden, um Meta-Informationen an Klassen der Laufzeit zur Verfügung zu stellen.
 
 Aber ist das alles nötig? TypeScript bietet eine sehr mächtige Sprache, um auch sehr komplexe Strukturen zu beschreiben. Tatsächlich ist TypeScript mittlerweile Touring-Complete, was grob bedeutet, dass theoretisch jede Art von Program in TypeScript abbildbar ist. Natürlich hat dies seine praktischen Grenzen, der wichtige Punkt ist jedoch, dass TypeScript in der Lage ist, jegliche Deklarationsformate wie GraphQL, ProtoBuf, JSON-Schema, und viele andere komplett zu ersetzen. In Kombination mit einem Typensystem zur Laufzeit ist es möglich, all die beschriebenen Tools und deren Anwendungsfälle in TypeScript selbst ohne jeglichen Code-Generator abzudecken. Warum gibt es aber noch keine Lösung, die genau dies erlaubt?
 
@@ -58,5 +58,48 @@ Deepkit macht genau das möglich. Es hängt sich in die Kompilierung von TypeScr
 
 include::installation.adoc[leveloffset=+1]
 include::type-decorators.adoc[leveloffset=+1]
+
+== External Classes
+
+Since TypeScript does not include type information per default, imported types/classes from other packages (that did not use @deepkit/type-compiler) will not have type information available.
+
+To annotate types for an external class, use `annotateClass` and make sure this function is executed in the bootstrap phase of your application before the imported class is used somewhere else.
+
+```typescript
+import { MyExternalClass } from 'external-package';
+import { annotateClass } from '@deepkit/type';
+
+interface AnnotatedClass {
+    id: number;
+    title: string;
+}
+
+annotateClass<AnnotatedClass>(MyExternalClass);
+
+//all uses of MyExternalClass return now the type of AnnotatedClass
+serialize<MyExternalClass>({...});
+
+//MyExternalClass can now also be used in other types
+interface User {
+    id: number;
+    clazz: MyExternalClass;
+}
+```
+
+`MyExternalClass` can now be used in serialization functions and in the reflection API.
+
+To following shows how to annotate generic classes:
+
+```typescript
+import { MyExternalClass } from 'external-package';
+import { annotateClass } from '@deepkit/type';
+
+class AnnotatedClass<T> {
+    id!: T;
+}
+
+annotateClass(ExternalClass, AnnotatedClass);
+```
+
 include::reflection.adoc[leveloffset=+1]
 include::bytecode.adoc[leveloffset=+1]

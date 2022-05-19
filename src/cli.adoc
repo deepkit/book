@@ -10,7 +10,7 @@ Die Argumente und Optionen der CLI-Anwendung werden über Methoden-Parameter via
 CLI ist einer von drei Einstiegspunkten zu einer Deepkit Framework Anwendung. Im Deepkit Framework wird die Anwendung immer über ein CLI-Program gestartet, das selbst vom User in TypeScript geschrieben ist. Es gibt daher keine Deepkit spezifisches globales CLI tool, um eine Deepkit Anwendung zu starten. Auf diese Weise starten Sie den HTTP/RPC-Server, führen Migrationen aus oder führen eigene Befehle aus. Das alles geschieht über denselben Einstiegspunkt, dieselbe Datei. Sobald das Deepkit Framework durch den Import von `FrameworkModule` aus `@deepkit/framework` benutzt wird, erhält die Anwendung zusätzliche Commands für den Application Server, Migrations, und mehr.
 
 
-Das CLI-Framework erlaubt es auf einfache Art eigene Commands zu registrieren und basiert dabei auf einfachen Klassen. Tatsächlich basiert es auf `@deepkit/app`, einem kleinen Paket, das nur für diesen Zweck gedacht ist und auch eigenständig ohne das Deepkit Framework verwendet werden kann. In diesem Paket finden sich Dekoratoren, die benötigt werden, um die CLI-Controller-Klasse zu dekorieren.
+Das CLI-Framework erlaubt es auf einfache Art eigene Commands zu registrieren und basiert dabei auf einfachen Klassen. Tatsächlich basiert es auf `@deepkit/app`, einem kleinen Paket, das nur für diesen Zweck gedacht ist und auch eigenständig ohne das Deepkit Framework verwendet werden kann. In diesem Paket finden sich Decorators, die benötigt werden, um die CLI-Controller-Klasse zu dekorieren.
 
 Controller werden vom Dependency Injection Container verwaltet beziehungsweise instanziiert und können daher andere Provider verwenden. Siehe das Kapitel <<dependency-injection>> für weitere Details.
 
@@ -319,7 +319,7 @@ $ ./app.ts test 123
 id 123 number
 ```
 
-Zusätzliche Einschränkungen können mit den Typen-Dekoratoren aus `@deepkit/type` definiert werden.
+Zusätzliche Einschränkungen können mit den Typen-Decorators aus `@deepkit/type` definiert werden.
 
 ```typescript
 import { Positive } from '@deepkit/type';

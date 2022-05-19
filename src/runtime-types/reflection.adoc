@@ -1,9 +1,10 @@
+[#runtime-types-reflection]
 = Reflection
 
 Um mit den Typeninformationen selbst direkt zu arbeiten, gibt es dabei zwei grundlegende Varianten: Type-Objekte und Reflection-Klassen. Die Reflection-Klassen werden weiter unten behandelt. Die Funktion `typeOf` gibt Typen-Objekte zurück, die ganz simple object literals sind. Es beinhaltet immer ein `kind` welches eine Nummer ist und mittels dem Enum `ReflectionKind` seine Bedeutung erlangt. `ReflectionKind` ist in dem Paket `@deepkit/type` wie folgt definiert:
 
 ```typescript
-const enum ReflectionKind {
+enum ReflectionKind {
   never,    //0
   any,     //1
   unknown, //2
@@ -211,7 +212,7 @@ typeOf<ID>();
 
 Bei zwischengespeicherten Type-Objekten wie oben exemplarisch aufgezeigt, sind die `parent` Eigenschaften nicht immer die echten Elternteile. So zum Beispiel bei einer Klasse, die mehrfach genutzt wird, zeigen zwar unmittelbaren Typen in `types` (TypePropertySignature und TypeMethodSignature) auf das korrekte TypeClass, aber die `type` dieser Signature-Typen zeigen auf die Signature-Typen des TypeClass des Cache-Eintrages. Das ist wichtig zu wissen, um so nicht unendlich die parent-Struktur auszulesen, sondern nur der unmittelbare Elternteil. Die Tatsache, dass der parent nicht unendliche Genauigkeit hat, ist Performance-Gründen geschuldet.
 
-== JIT cache
+== JIT Cache
 
 Im weiteren Verlauf werden einige Funktionen und Features beschrieben, die oft auf die Type-Objekte basieren. Um einige davon performant umzusetzen, braucht es einen JIT-Cache (just in time) pro Type-Objekt. Die kann via `getJitContainer(type)` bereitgestellt werden. Diese Funktion gibt ein simples Objekt zurück, auf den beliebig Daten gespeichert werden können. Solange keine Referenz auf das Objekt gehalten wird, löscht es sich automatisch durch den GC sobald das Type-Objekt selbst auch nicht mehr referenziert wird.
 
@@ -257,6 +258,8 @@ function validate<T>(data: any, type?: ReceiveType<T>): void;
 `ReceiveType` mit der Referenz auf den ersten Typenargumenten `T` signalisiert dem Typen-Compiler, dass jeder Aufruf zu `validate` den Type an zweiter Stelle (da `type` an zweiter Stelle deklariert ist) stellen soll. Um zur Laufzeit dann die Informationen auszulesen, wird die Funktion `resolveReceiveType` genutzt.
 
 ```typescript
+import { resolveReceiveType, ReceiveType } from '@deepkit/type';
+
 function validate<T>(data: any, type?: ReceiveType<T>): void {
     type = resolveReceiveType(type);
 }

@@ -1,22 +1,342 @@
-= Typen-Dekoratoren
+= Typen-Decorators
 
-Typen-Dekoratoren sind normale TypeScript-Typen, die Meta-Informationen beinhalten, um meist zur Laufzeit das Verhalten festzulegen. So kann zum Beispiel eine Klassen-Eigenschaft als Primary-Key, als Referenz, oder Index markiert werden.  Die Datenbank Library kann diese Information nutzen, um die korrekten SQL Queries zu erstellen.
-Es können auch Validator-Einschränkungen wie zum Beispiel MaxLength, Maximum, oder Positive an einen beliebigen Typen hinzugefügt werden. Auch kann dem Serializer mitgeteilt werden, wie ein bestimmter Wert zu serialisieren bzw deserialisieren ist.
+Typen-Decorators sind normale TypeScript-Typen, die Meta-Informationen beinhalten, um zur Laufzeit das Verhalten diverser Funktionen zu verändern. Deepkit liefert bereits einige Typen-Decorators mit, die einige Anwendungsfälle abdecken. So kann zum Beispiel eine Klassen-Eigenschaft als Primary-Key, als Referenz, oder Index markiert werden. Die Datenbank Library kann diese Information zur Laufzeit nutzen, um so die korrekten SQL Queries ohne vorherige Code-Generation zu erstellen.
+Es können auch Validator-Einschränkungen wie zum Beispiel `MaxLength`, `Maximum`, oder `Positive` an einen beliebigen Typen hinzugefügt werden. Auch kann dem Serializer mitgeteilt werden, wie ein bestimmter Wert zu serialisieren bzw deserialisieren ist. Zusätzlich ist es möglich, komplett eigene Type-Decorators zu erstellen und zur Laufzeit auszulesen, um so sehr individuell das Typensystem zur Laufzeit zu verwenden.
 
-Deepkit kommt mit einer ganzen Reihe von Typen-Dekoratoren, die alle direkt aus @deepkit/type benutzt werden können. Sie sind designt, nicht aus einer bestimmten Library zu kommen, um so Typen nicht an eine Library wie zum Beispiel Deepkit RPC oder Deepkit Database zu koppelt. Das erlaubt das einfachere Wiederverwenden von Typen, auch im Frontend, obwohl zum Beispiel Datenbank Typen-Dekoratoren genutzt werden.
+Deepkit kommt mit einer ganzen Reihe von Typen-Decorators, die alle direkt aus `@deepkit/type` benutzt werden können. Sie sind designt, nicht aus mehreren Libraries zu kommen, um so Code nicht direkt an eine bestimmte Library wie zum Beispiel Deepkit RPC oder Deepkit Database zu koppeln. Das erlaubt das einfachere Wiederverwenden von Typen, auch im Frontend, obwohl zum Beispiel Datenbank Typen-Decorators genutzt werden.
 
-== Enhanced Types
+Folgend ist eine Liste von vorhandenen Type-Decorators. Der Validator und Serializer von `@deepkit/type` und `@deepkit/bson` sowie Deepkit Database von `@deepkit/orm` nutzten diese Informationen unterschiedlich. Siehe die entsprechenden Kapitel, um mehr darüber zu erfahren.
 
-integer, float, UUID, MongoId, BinaryBigint, SignedBigInt, .
+== Integer/Float
 
-== Meta
+Integer und Floats sind als Basis als `number` definiert und hat mehrere Untervarianten:
 
-MapName, Group, Data, Entity, InlineRuntimeType.
+[%autowidth]
+[cols="1,1"]
+|===
+|Type|Description
 
-== Serializer
+|integer|An integer of arbitrary size.
 
-Excluded, Embedded.
+|int8|An integer between -128 and 127.
+
+|uint8|An integer between 0 and 255.
+|int16|An integer between -32768 and 32767.
+|uint16|An integer between 0 and 65535.
+|int32|An integer between -2147483648 and 2147483647.
+|uint32|An integer between 0 and 4294967295.
+|float|Same as number, but might have different meaning in database context.
+|float32|A float between -3.40282347e+38 and 3.40282347e+38. Note that JavaScript is not able to check correctly the range due to precision issues, but the information might be handy for the database or binary serializers.
+|float64|Same as number, but might have different meaning in database context.
+|===
+
+```typescript
+import { integer } from '@deepkit/type';
+
+interface User {
+    id: integer;
+}
+```
+
+Hier ist zur Laufzeit die `id` des Users eine Number, wird jedoch in der Validierung und Serialisierung als Integer interpretiert.
+Das heisst, dass hier zum Beispiel keine Floats in Validation genutzt werden dürfen und der Serializer Floats automatisch in Integer umwandeln.
+
+```typescript
+import { is, integer } from '@deepkit/type';
+
+is<integer>(12); //true
+is<integer>(12.5); //false
+```
+
+Die Untertypen können genauso benutzt werden und sind sinnvoll, wenn ein bestimmter Nummernbereich erlaubt werden soll.
+
+```typescript
+import { is, int8 } from '@deepkit/type';
+
+is<int8>(-5); //true
+is<int8>(5); //true
+is<int8>(-200); //false
+is<int8>(2500); //false
+```
+
+== Float
+
+
+== UUID
+
+UUID v4 wird in der Datenbank in der Regel als Binary abgespeichert und in JSON als String.
+
+```typescript
+import { is, UUID } from '@deepkit/type';
+
+is<UUID>('f897399a-9f23-49ac-827d-c16f8e4810a0'); //true
+is<UUID>('asd'); //false
+```
+
+== MongoID
+
+Marks this field as ObjectId for MongoDB. Resolves as a string. Is stored in the MongoDB as binary.
+
+```typescript
+import { MongoId, serialize, is } from '@deepkit/type';
+
+serialize<MongoId>('507f1f77bcf86cd799439011'); //507f1f77bcf86cd799439011
+is<MongoId>('507f1f77bcf86cd799439011'); //true
+is<MongoId>('507f1f77bcf86cd799439011'); //false
+
+class User {
+    id: MongoId = ''; //will automatically set in Deepkit ORM once user is inserted
+}
+```
+
+== Bigint
+
+Per default the normal bigint type serializes as number in JSON (and long in BSON). This has however limitation in what is possible to save as bigint in JavaScript has a unlimited potential size, where numbers in JavaScript and long in BSON are limited. To bypass this limitation the BinaryBigInt is available.
+
+Same as bigint but serializes to unsigned binary with unlimited size (instead of 8 bytes in most databases) in databases and string in JSON. Negative values will be converted to positive (abs(x)).
+
+```typescript
+import { BinaryBigInt } from '@deepkit/type';
+
+interface User {
+    id: BinaryBigInt;
+}
+
+const user: User = {id: 24n};
+
+serialize<User>({id: 24n}); //{id: '24'}
+
+serialize<BinaryBigInt>(24); //'24'
+serialize<BinaryBigInt>(-24); //'0'
+```
+
+Deepkit ORM stores BinaryBigInt as a binary field.
+
+`SignedBinaryBigInt` is the same as BinaryBigInt but is able to store negative values as well.
+
+Deepkit ORM stores SignedBinaryBigInt as binary. The binary has an additional leading sign byte and is represented as an uint: 255 for negative, 0 for zero, or 1 for positive.
+
+```typescript
+import { SignedBinaryBigInt } from '@deepkit/type';
+
+interface User {
+    id: SignedBinaryBigInt;
+}
+```
+
+== MapName
+
+To change the name of a property in the serialization.
+
+```typescript
+import { serialize, deserialize, MapName } from '@deepkit/type';
+
+interface User {
+    firstName: string & MapName<'first_name'>;
+}
+
+serialize<User>({firstName: 'Peter'}) // {first_name: 'Peter'}
+deserialize<User>({first_name: 'Peter'}) // {firstName: 'Peter'}
+```
+
+== Group
+
+Properties can be grouped together. For serialization you can for example exclude a group from serialization. See the chapter Serialization for more information.
+
+```typescript
+import { serialize } from '@deepkit/type';
+
+interface Model {
+    username: string;
+    password: string & Group<'secret'>
+}
+
+serialize<Model>(
+    { username: 'Peter', password: 'nope' },
+    { groupsExclude: ['secret'] }
+); //{username: 'Peter'}
+```
+
+== Data
+
+Each property can add additional meta-data that can be read via the Reflection API. See <<runtime-types-reflection>> for more information.
+
+```typescript
+import { ReflectionClass } from '@deepkit/type';
+
+interface Model {
+    username: string;
+    title: string & Data<'key', 'value'>
+}
+
+const reflection = ReflectionClass.from<Model>();
+reflection.getProperty('title').getData()['key']; //value;
+```
+
+== Excluded
+
+Each property can be excluded from the serialization process for a specific target.
+
+```typescript
+import { serialize, deserialize, Excluded } from '@deepkit/type';
+
+interface Auth {
+    title: string;
+    password: string & Excluded<'json'>
+}
+
+const item = deserialize<Auth>({title: 'Peter', password: 'secret'});
+
+item.password; //undefined, since deserialize's default serializer is called `json`
+
+item.password = 'secret';
+
+const json = serialize<Auth>(item);
+json.password; //again undefined, since serialize's serializer is called `json`
+```
+
+== Embedded
+
+Marks the field as an embedded type.
+
+```typescript
+import { PrimaryKey, Embedded, serialize, deserialize } from '@deepkit/type';
+
+interface Address {
+    street: string;
+    postalCode: string;
+    city: string;
+    country: string;
+}
+
+interface User  {
+    id: number & PrimaryKey;
+    address: Embedded<Address>;
+}
+
+const user: User {
+    id: 12,
+    address: {
+        street: 'abc', postalCode: '1234', city: 'Hamburg', country: 'Germany'
+    }
+};
+
+serialize<User>(user);
+{
+    id: 12,
+    address_street: 'abc',
+    address_postalCode: '1234',
+    address_city: 'Hamburg',
+    address_country: 'Germany'
+}
+
+//for deserialize you have to provide the embedded structure
+deserialize<User>({
+    id: 12,
+    address_street: 'abc',
+    //...
+});
+```
+
+It's possible to change the prefix (which is per default the property name).
+
+```typescript
+interface User  {
+    id: number & PrimaryKey;
+    address: Embedded<Address, {prefix: 'addr_'}>;
+}
+
+serialize<User>(user);
+{
+    id: 12,
+    addr_street: 'abc',
+    addr_postalCode: '1234',
+}
+
+//or remove it entirely
+interface User  {
+    id: number & PrimaryKey;
+    address: Embedded<Address, {prefix: ''}>;
+}
+
+serialize<User>(user);
+{
+    id: 12,
+    street: 'abc',
+    postalCode: '1234',
+}
+```
+
+== Entity
+
+To annotate interfaces with entity information. Only used in the database context.
+
+```typescript
+import { Entity, PrimaryKey } from '@deepkit/type';
+
+interface User extends Entity<{name: 'user', collection: 'users'> {
+    id: number & PrimaryKey;
+    username: string;
+}
+```
+
+== InlineRuntimeType
+
+TODO
+
+== ResetDecorator
+
+TODO
 
 == Database
 
-PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, DatabaseField.
+TODO: PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, DatabaseField.
+
+== Validation
+
+TODO
+
+Siehe dazu Kapitel Validation <<validation-constraint-types>>.
+
+=== Benutzerdefinierte Type-Decorators
+
+Ein Typen-Decorator kann wie folgt definiert werden:
+
+```typescript
+type MyAnnotation = {__meta?: ['myAnnotation']};
+```
+
+Als Konvention ist definiert, dass ein Typen-Decorator ein Object-Literal mit einem einzigen optionalen Property `__meta` ist, das ein Tuple als Typ hat. Der erste Eintrag in diesem Tuple ist sein eindeutiger Name und alle weiteren Tuple Einträge beliebige Optionen. So kann ein Typen-Decorator mit zusätzlichen Optionen ausgestattet werden.
+
+```typescript
+type AnnotationOption<T extends {title: string}> = {__meta?: ['myAnnotation', T]};
+```
+
+Genutzt wird der Typen-Decorator mit dem Intersection-Operator `&`. Es können beliebig viele Typen-Decorators an einem Typen genutzt werden.
+
+```typescript
+type Username = string & MyAnnotation;
+type Title = string & & MyAnnotation & AnnotationOption<{title: 'Hello'}>;
+```
+
+Ausgelesen können die Typen-Decorators über die Typen-Objekte von `typeOf<T>()` und `metaAnnotation`:
+
+```typescript
+import { typeOf, metaAnnotation } from '@deepkit/type';
+
+const type = typeOf<Username>();
+const annotation = metaAnnotation.getForName(type, 'myAnnotation'); //[]
+```
+
+Das Resultat in `annotation` ist entweder ein Array mit Optionen, wenn der Typen-Decorator `myAnnotation` genutzt wurde oder `undefined` wenn nicht. Hat der Typen-Decorator zusätzliche Optionen wie in `AnnotationOption` zu sehen, sind die übergebenen Werte in dem Array zu finden.
+Bereits mitgelieferte Typen-Decorators wie `MapName`, `Group`, `Data`, etc haben ihre eigenen Annotation-Objekt:
+
+```typescript
+import { typeOf, Group, groupAnnotation } from '@deepkit/type';
+type Username = string & Group<'a'> & Group<'b'>;
+
+const type = typeOf<Username>();
+groupAnnotation.getAnnotations(type); //['a', 'b']
+```
+
+Siehe das Kapitel <<runtime-types-reflection>>, um mehr darüber zu erfahren.

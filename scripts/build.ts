@@ -1,6 +1,6 @@
 #!/usr/bin/env ./node_modules/.bin/ts-node-script
 import asciidoctor, { Asciidoctor } from "asciidoctor";
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, cpSync } from 'fs';
 import { isAbsolute, join } from 'path';
 import fetch from 'node-fetch';
 import { spawn } from 'child_process';
@@ -59,6 +59,8 @@ async function loadTranslations(): Promise<void> {
         return `<id-${id}/>`;
     }
 
+    textQueue.length = 5;
+
     for (const text of textQueue) {
         map[text] = { index: index };
         textAll += text + tag(index);
@@ -68,14 +70,14 @@ async function loadTranslations(): Promise<void> {
     console.log('load translations for', textAll);
     const params = new URLSearchParams();
     params.append('text', textAll);
-    params.append('auth_key', '58b02196-63cb-b157-b023-4fba4245c46f:fx');
+    params.append('auth_key', process.env.DEEPL_KEY);
     params.append('source_lang', 'DE');
     params.append('target_lang', languageMap[targetLanguage].toUpperCase());
     // params.append('tag_handling', 'xml');
     // params.append('split_sentences', 'nonewlines');
     // params.append('outline_detection', '0');
 
-    const response = await fetch('https://api-free.deepl.com/v2/translate', {
+    const response = await fetch('https://api.deepl.com/v2/translate', {
         method: 'post',
         body: params
     });
@@ -96,7 +98,11 @@ async function loadTranslations(): Promise<void> {
         for (const [text, info] of Object.entries(map)) {
             const fromIndex = info.index === 0 ? 0 : translated.indexOf(tag(info.index - 1)) + tag(info.index - 1).length;
             const toIndex = translated.indexOf(tag(info.index));
-            translations[text] = translated.slice(fromIndex, toIndex);
+            const translatedText = translated.slice(fromIndex, toIndex);
+            if (translatedText.includes('<id')) {
+                throw new Error(`BROKEN! ${info.index} ${fromIndex}-${toIndex}: ${translated}`);
+            }
+            translations[text] = translatedText;
         }
     }
 
@@ -119,44 +125,44 @@ function extractOrApplyTranslations() {
     this.process(function process(this: Asciidoctor.Extensions.TreeProcessor, doc: Asciidoctor.AbstractBlock, depth: number = 0) {
         const context: string = (doc as any).context;
 
-        if (targetLanguage === 'german') return doc;
+        if (targetLanguage !== 'german') {
+            // console.log(' '.repeat(4 * depth), context);
 
-        // console.log(' '.repeat(4 * depth), context);
-
-        if (isListItem(doc)) {
-            if (translations[doc.text]) {
-                doc.text = translations[doc.text];
-            } else {
-                ensureTranslation(doc.text);
-            }
-        }
-
-        if (context === 'section') {
-            const title = doc.getTitle();
-            doc.setTitle(title);
-            const keep = doc.getAttribute('keep');
-            if (!keep && keep !== '*' && keep !== targetLanguage) {
-                if (translations[title]) {
-                    doc.setTitle(heading(translations[title]));
+            if (isListItem(doc)) {
+                if (translations[doc.text]) {
+                    doc.text = translations[doc.text];
                 } else {
-                    ensureTranslation(title);
+                    ensureTranslation(doc.text);
                 }
             }
-        }
 
-        if (context === 'paragraph') {
-            const lines = (doc as any).lines as string[] | undefined;
-            if (!lines) return doc;
-
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                if (translations[line]) {
-                    lines[i] = translations[line];
-                } else {
-                    ensureTranslation(line);
+            if (context === 'section') {
+                const title = doc.getTitle();
+                doc.setTitle(title);
+                const keep = doc.getAttribute('keep');
+                if (!keep && keep !== '*' && keep !== targetLanguage) {
+                    if (translations[title]) {
+                        doc.setTitle(heading(translations[title]));
+                    } else {
+                        ensureTranslation(title);
+                    }
                 }
             }
-            this.createBlock(doc, 'paragraph', lines, doc.getAttributes());
+
+            if (context === 'paragraph') {
+                const lines = (doc as any).lines as string[] | undefined;
+                if (!lines) return doc;
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (translations[line]) {
+                        lines[i] = translations[line];
+                    } else {
+                        ensureTranslation(line);
+                    }
+                }
+                this.createBlock(doc, 'paragraph', lines, doc.getAttributes());
+            }
         }
 
         const blocks = doc.getBlocks();
@@ -229,8 +235,8 @@ async function main() {
     // console.log('textQueue', textQueue);
 
     //if new texts to translate is found, load them, and loadFile again so that
-    //extractOrApplyTranslations has all translations ready
-    if (textQueue.length) {
+    //extractOrApplyTranslations applies all found translations
+    if (textQueue.length && process.env.DEEPL_KEY) {
         console.log('Load translations ...')
         await loadTranslations();
         console.log('Rebuild document ...');
@@ -238,8 +244,15 @@ async function main() {
     }
 
     const outputPath = 'build/deepkit-book-' + targetLanguage + '.html';
-    writeFileSync(outputPath, doc.convert());
 
+    let result: string = doc.convert();
+
+    if (process.env.DIST_BUILD) {
+        result = result.replace(/..\/src\/assets/g, 'assets');
+        cpSync('src/assets', 'build/assets', { recursive: true });
+    }
+
+    writeFileSync(outputPath, result);
     // console.log('Build PDF');
     // const pdfPath = 'build/deepkit-book-' + targetLanguage + '.pdf';
     // spawn('pandoc', ['--from', 'docbook', '--toc', '--to', 'latex', '--resource-path', 'src/', '--output', pdfPath, outputPath], { stdio: 'inherit' });

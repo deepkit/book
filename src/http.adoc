@@ -245,7 +245,7 @@ Routen können einen eindeutigen Namen erhalten, welcher bei einer Weiterleitung
 ```typescript
 //functional API
 router.get({
-    url: '/user/:id',
+    path: '/user/:id',
     name: 'userDetail'
 }, (id: number) => {
     return {userId: id};
@@ -258,6 +258,14 @@ class UserController {
         return {userId: id};
     }
 }
+```
+
+Von allen Routen mit einem Namen kann die URL durch `Router.resolveUrl()` angefordert werden.
+
+```typescript
+import { HttpRouter } from '@deepkit/http';
+const router = app.get(HttpRouter);
+router.resolveUrl('userDetail', {id: 2}); //=> '/user/2'
 ```
 
 == Dependency Injection
@@ -615,15 +623,57 @@ router.get('/', () => {
 });
 ```
 
+=== HTTP Errors
+
+Es ist durch das Werfen von diversen HTTP-Errors möglich, die Verarbeitung eines HTTP-Requests sofort zu unterbrechen und den entsprechenden HTTP-Status des Errors auszugeben.
+
+```typescript
+import { HttpNotFoundError } from '@deepkit/http';
+
+router.get('/user/:id', async (id: number, database: Database) => {
+    const user = await database.query(User).filter({id}).findOneOrUndefined();
+    if (!user) throw new HttpNotFoundError('User not found');
+    return user;
+});
+```
+
+Per default werden alle Errors als JSON dem Client zurückgegeben. Dieses Verhalten kann man beliebig im Event-System unter dem Event `httpWorkflow.onControllerError` anpassen. Siehe dazu die Sektion <<http-events>>.
+
+|===
+|Error class |Status
+
+|HttpBadRequestError|400
+|HttpUnauthorizedError|401
+|HttpAccessDeniedError|403
+|HttpNotFoundError|404
+|HttpMethodNotAllowedError|405
+|HttpNotAcceptableError|406
+|HttpTimeoutError|408
+|HttpConflictError|409
+|HttpGoneError|410
+|HttpTooManyRequestsError|429
+|HttpInternalServerError|500
+|HttpNotImplementedError|501
+|===
+
+Der Error `HttpAccessDeniedError` stellt hierbei eine besonderheit dar. Sobald er geworfen wird, springt der HTTP Workflow (see <<http-events>>) nicht zu `controllerError` sondern zu `accessDenied`.
+
+Benutzerdefinierte HTTP-Errors können mit `createHttpError` angelegt und geworfen werden.
+
+```typescript
+export class HttpMyError extends createHttpError(412, 'My Error Message') {
+}
+```
+
 === Zusätzliche Header
 
-Um den Header einer Antwort zu verändert, kann auf den Objekten `Response`, `JSONResponse`, und `HTMLResponse` zusätzliche Methoden aufgerufen werden.
+Um den Header einer HTTP-Response zu verändert, kann auf den Objekten `Response`, `JSONResponse`, und `HTMLResponse` zusätzliche Methoden aufgerufen werden.
 
 ```typescript
 import { Response } from '@deepkit/http';
 
 router.get('/', () => {
-    return new Response('Access Denied', 'text/plan')
+    return new Response('Access Denied', 'text/plain')
         .header('X-Reason', 'unknown')
         .status(403);
 });
@@ -636,11 +686,11 @@ Um eine 301 oder 302 Weiterleitung als Antwort zurückzugeben, kann `Redirect.to
 ```typescript
 import { Redirect } from '@deepkit/http';
 
-router.get({url: '/', name: 'homepage'}, () => {
+router.get({path: '/', name: 'homepage'}, () => {
     return <b>Hello World</b>;
 });
 
-router.get({url: '/registration/complete'}, () => {
+router.get({path: '/registration/complete'}, () => {
     return Redirect.toRoute('homepage');
 });
 ```
@@ -648,7 +698,7 @@ router.get({url: '/registration/complete'}, () => {
 Die Methode `Redirect.toRoute` verwendet hierbei den Namen der Route. Wie ein Routen-Name gesetzt werden kann, ist in der Sektion <<http-route-name>> einzusehen. Wenn diese referenzierte Route (Query oder Pfad) Parameter beinhaltet, können diese über das zweite Argument angegeben werden:
 
 ```typescript
-router.get({url: '/user/:id', name: 'user_detail'}, (id: number) => {
+router.get({path: '/user/:id', name: 'user_detail'}, (id: number) => {
 
 });
 
@@ -688,6 +738,7 @@ Es kann durchaus nützlich sein, Provider in den `http` Scope zu platzieren, um 
 
 Siehe das Kapitel <<dependency-injection-scopes>>, um zu erfahren, wie Provider in den `http` Scope platziert werden können.
 
+[#http-events]
 == Events
 
 Das HTTP-Modul basiert auf einer Workflow-Engine, die verschiedene Event-Tokens bereitstellt, mit denen sich in den gesamten Prozess der Verarbeitung eines HTTP-Requests eingeklinkt werden kann.

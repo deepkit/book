@@ -1,6 +1,6 @@
 = Bytecode
 
-Um im Detail zu lernen, wie Deepkit die Typeninformationen im JavaScript enkodiert und ausliest, ist dieses Kapitel gedacht. Es erklärt, wie die Typen in Bytecode umgewandelt, im JavaScript emittiert, und anschließen zur Laufzeit interpretiert werden.
+Um im Detail zu lernen, wie Deepkit die Typeninformationen im JavaScript enkodiert und ausliest, ist dieses Kapitel gedacht. Es erklärt, wie die Typen konkret in Bytecode umgewandelt, im JavaScript emittiert, und anschließen zur Laufzeit interpretiert werden.
 
 == Typen-Compiler
 
