@@ -16,7 +16,7 @@ ENV DIST_BUILD 1
 RUN node -r ts-node/register scripts/build.ts german
 RUN node -r ts-node/register scripts/build.ts english
 RUN node -r ts-node/register scripts/build.ts chinese
-RUN node -r ts-node/register scripts/build.ts polish
+#RUN node -r ts-node/register scripts/build.ts polish
 
 FROM nginx:1.21
 

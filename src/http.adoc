@@ -134,7 +134,7 @@ const app = new App({
 });
 ```
 
-Siehe das Kapitel <<framework-modules>>, um mehr über App Module zu erfahren.
+Siehe <<framework-modules>>, um mehr über App Module zu erfahren.
 
 == Controller API
 
@@ -206,7 +206,7 @@ class MyModule extends createModule({
 }
 ```
 
-Siehe das Kapitel <<framework-modules>>, um mehr über App Module zu erfahren.
+Siehe <<framework-modules>>, um mehr über App Module zu erfahren.
 
 == HTTP Server
 
@@ -315,7 +315,7 @@ class UserController {
 }
 ```
 
-Siehe das Kapitel <<dependency-injection>> für mehr Informationen.
+Siehe <<dependency-injection>> für mehr Informationen.
 
 == Input
 
@@ -366,7 +366,7 @@ router.get('/user/:id', (id: number & Positive) => {
 });
 ```
 
-Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in dem Kapitel <<http-validation>> zu finden.
+Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in <<http-validation>> zu finden.
 
 Die Path Parameter haben standardmäßig bei dem URL-Matching `[^/]+` als Regular-Expression gesetzt. Das RegExp dazu kann wie folgt angepasst werden:
 
@@ -416,7 +416,7 @@ $ curl http://localhost:8080/\?text\=ga
 error
 ```
 
-Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in dem Kapitel  <<http-validation>> zu finden.
+Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in <<http-validation>> zu finden.
 
 *Warnung*: Parameterwerte werden nicht escaped/sanitized. Ihre direkte Rückgabe in einer Zeichenkette in einer Route als HTML öffnet eine Sicherheitslücke (XSS). Stelle sicher, dass niemals externen Eingabe vertraut werden und filtere/sanitize/konvertiere Daten, wo nötig.
 
@@ -559,7 +559,7 @@ router.post('/', (body: HttpBody<MyQuery>) => {
 }
 ```
 
-Siehe das Kapitel <<validation>> für mehr Informationen dazu.
+Siehe <<validation>> für mehr Informationen dazu.
 
 == Output
 
@@ -609,7 +609,7 @@ router.get('/', () => {
 });
 ```
 
-Die Template-Engine Variante mit TSX hat dabei den Vorteil, dass genutzte Variablen automatisch HTML-escaped werden. Siehe dazu das Kapitel <<template>>.
+Die Template-Engine Variante mit TSX hat dabei den Vorteil, dass genutzte Variablen automatisch HTML-escaped werden. Siehe dazu <<template>>.
 
 === Custom Content
 
@@ -736,7 +736,7 @@ router.get('/', (response: HttpResponse) => {
 
 Es kann durchaus nützlich sein, Provider in den `http` Scope zu platzieren, um zum Beispiel Services für jeden HTTP-Request neu zu instantiieren. Sobald der HTTP-Request bearbeitet wurde, wird der `http` scoped DI Container gelöscht und so alle seine Provider Instanzen vom Garbage Collector (GC) aufgeräumt.
 
-Siehe das Kapitel <<dependency-injection-scopes>>, um zu erfahren, wie Provider in den `http` Scope platziert werden können.
+Siehe <<dependency-injection-scopes>>, um zu erfahren, wie Provider in den `http` Scope platziert werden können.
 
 [#http-events]
 == Events
@@ -870,5 +870,31 @@ new App({
     .run();
 ```
 
-Der User muss hierbei nicht zwingend von einem Parameter abhängen. So könnte er genauso gut von einer Session bzw. einem HTTP-Header abhängen, und nur dann bereitgestellt werden, wenn der User eingeloggt ist. In `RouteParameterResolverContext` sind viele Informationen über den HTTP-Request verfügbar, sodass viele Anwendungsfälle so abbildbar sind.
+Der Decorator in `@http.resolveParameter` gibt dabei an, welche Klasse mit dem `UserResolver` aufgelöst werden soll. Sobald nun die angegebene Klasse `User` als Parameter in der Funktion beziehungsweise Methode angegeben ist, wird der Resolver genutzt, um diese bereitzustellen.
+
+Ist `@http.resolveParameter` an der Klasse angegeben, erhalten all Methoden dieser Klasse diesen Resolver. Der Decorator kann auch pro Methode angewendet werden:
+
+```typescript
+class MyWebsite {
+    @http.GET('/user/:id').resolveParameter(User, UserResolver)
+    getUser(user: User) {
+        return 'Hello ' + user.username;
+    }
+}
+```
+
+Auch kann die funktionale API genutzt werden:
+
+```typescript
+
+router.add(
+    http.GET('/user/:id').resolveParameter(User, UserResolver),
+    (user: User) => {
+        return 'Hello ' + user.username;
+    }
+);
+```
+
+Das Objekt `User` muss hierbei nicht zwingend von einem Parameter abhängen. So könnte er genauso gut von einer Session bzw. einem HTTP-Header abhängen, und nur dann bereitgestellt werden, wenn der Benutzer eingeloggt ist. In `RouteParameterResolverContext` sind viele Informationen über den HTTP-Request verfügbar, sodass viele Anwendungsfälle abbildbar sind.
+
 Im Prinzip ist es auch möglich, komplexe Parametertypen über den Dependency Injection Container aus dem Scope `http` bereitstellen zu lassen, da diese ebenfalls in der Routen-Funktion bzw. Methode verfügbar sind. Dies hat jedoch den Nachteil, dass kein asynchrone Funktionsaufrufe verwendet werden können, da der DI container durchweg synchron ist.

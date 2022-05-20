@@ -7,6 +7,7 @@ Marc J. Schmidt
 :toclevels: 3
 :doctype: book
 :xrefstyle: full
+:sectnums:
 
 <<<
 

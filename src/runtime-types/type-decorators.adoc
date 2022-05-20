@@ -91,9 +91,9 @@ class User {
 
 == Bigint
 
-Per default the normal bigint type serializes as number in JSON (and long in BSON). This has however limitation in what is possible to save as bigint in JavaScript has a unlimited potential size, where numbers in JavaScript and long in BSON are limited. To bypass this limitation the BinaryBigInt is available.
+Per default the normal bigint type serializes as number in JSON (and long in BSON). This has however limitation in what is possible to save since bigint in JavaScript has an unlimited potential size, where numbers in JavaScript and long in BSON are limited. To bypass this limitation the types `BinaryBigInt` and `SignedBinaryBigInt` are available.
 
-Same as bigint but serializes to unsigned binary with unlimited size (instead of 8 bytes in most databases) in databases and string in JSON. Negative values will be converted to positive (abs(x)).
+`BinaryBigInt` is the same as bigint but serializes to unsigned binary with unlimited size (instead of 8 bytes in most databases) in databases and string in JSON. Negative values will be converted to positive (`abs(x)`).
 
 ```typescript
 import { BinaryBigInt } from '@deepkit/type';
@@ -112,9 +112,7 @@ serialize<BinaryBigInt>(-24); //'0'
 
 Deepkit ORM stores BinaryBigInt as a binary field.
 
-`SignedBinaryBigInt` is the same as BinaryBigInt but is able to store negative values as well.
-
-Deepkit ORM stores SignedBinaryBigInt as binary. The binary has an additional leading sign byte and is represented as an uint: 255 for negative, 0 for zero, or 1 for positive.
+`SignedBinaryBigInt` is the same as `BinaryBigInt` but is able to store negative values as well. Deepkit ORM stores `SignedBinaryBigInt` as binary. The binary has an additional leading sign byte and is represented as an uint: 255 for negative, 0 for zero, or 1 for positive.
 
 ```typescript
 import { SignedBinaryBigInt } from '@deepkit/type';
@@ -296,7 +294,7 @@ TODO: PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, Databa
 
 TODO
 
-Siehe dazu Kapitel Validation <<validation-constraint-types>>.
+Siehe <<validation-constraint-types>>.
 
 === Benutzerdefinierte Type-Decorators
 
@@ -339,4 +337,4 @@ const type = typeOf<Username>();
 groupAnnotation.getAnnotations(type); //['a', 'b']
 ```
 
-Siehe das Kapitel <<runtime-types-reflection>>, um mehr darüber zu erfahren.
+Siehe <<runtime-types-reflection>>, um mehr darüber zu erfahren.

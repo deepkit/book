@@ -25,9 +25,9 @@ Es sind vier Hauptfunktionen verfügbar: `serialize`, `cast`/`deserialize` und `
 
 Deepkit Type unterstützt benutzerdefinierte Serialisierungsziele, ist aber bereits mit einem mächtigen JSON-Serialisierungsziel ausgestattet, der Daten als JSON-Objekte serialisiert und anschließend mit JSON.stringify korrekt und sicher als JSON umgewandelt werden kann. Mit `@deepkit/bson` kann auch BSON als Serialisierungsziel verwendet werden. Wie ein eigenes Serialisierungsziel erstellt werden kann (zum Beispiel für einen Datenbanktreiber), kann in der Sektion <<serialisation-custom-serialiser>> erfahren werden.
 
-Zu beachten ist, dass obwohl Serializer auch Daten auf ihre Kompatibilität geprüft werden, sind diese Validierungen anders als die Validierung in dem Kapitel <<validation>>. Lediglich die Funktion `cast` ruft nach dem erfolgreichen Deserialisieren auch den vollen Validierungsprozess aus dem Kapitel <<validation>> auf, und wirft einen Fehler, wenn die Daten nicht valide sind.
+Zu beachten ist, dass obwohl Serializer auch Daten auf ihre Kompatibilität geprüft werden, sind diese Validierungen anders als die Validierung in <<validation>>. Lediglich die Funktion `cast` ruft nach dem erfolgreichen Deserialisieren auch den vollen Validierungsprozess aus dem Kapitel <<validation>> auf, und wirft einen Fehler, wenn die Daten nicht valide sind.
 
-Alternativ kann auch `validatedDeserialize` verwendet werden, um nach dem Deserialisieren zu validieren. Eine weitere Alternative ist manuelle die Funktionen `validate` oder `validates` auf deserialisierte Daten von der Funktion `deserialize` aufzurufen, siehe dazu Kapitel <<validation>>.
+Alternativ kann auch `validatedDeserialize` verwendet werden, um nach dem Deserialisieren zu validieren. Eine weitere Alternative ist manuelle die Funktionen `validate` oder `validates` auf deserialisierte Daten von der Funktion `deserialize` aufzurufen, siehe <<validation>>.
 Alle Funktionen aus der Serialisierung und Validation werfen bei Fehlern ein `ValidationError` aus `@deepkit/type`.
 
 [#serialisation-cast]

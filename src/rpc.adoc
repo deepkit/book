@@ -1,15 +1,225 @@
 [#rpc]
 = RPC
 
+RPC steht für Remote Procedure Call und erlaubt es, Funktionen (procedures) auf einem remote Server so aufzurufen als wäre es eine lokale Funktion. Im Gegensatz zu HTTP Client-Server Kommunikation geschieht die Zuordnung nicht über die HTTP-Methode und einer URL, sondern dem Funktionsnamen. Die zu sendenden Daten werden als normale Funktion-Argumente übergeben und das Resultat des Funktionsaufrufes auf dem Server an den Client zurückgesendet.
+
+Der Vorteil von RPC besteht darin, dass die Client-Server Abstraktion schmaler ist, da weder mit Headern, Pfaden, noch Query-Strings oder Ähnlichem gearbeitet wird. Der Nachteil ist, dass Funktionen auf einem Server via RPC nicht von einem Browser ohne weiteres aufgerufen werden können und es einen speziellen Client benötigt.
+
+Ein Schlüsselfeature von RPC ist, dass die Daten zwischen dem Client und Server automatisch serialisiert und deserialisiert werden. Aus diesem Grund sind meist typen-sichere RPC-Clients möglich. Manche RPC-Frameworks zwingen den Benutzern daher, die Typen (Parameter-Types und Return-Types) in einem bestimmten Format bereitzustellen. Dies kann in Form von einer eigenen DSL wie bei gRPC (Protocol Buffers) und GraphQL mit einem Code-Generator sein oder in Form von einem JavaScript Schema-Builder. Zusätzliche Validierung der Daten kann das RPC-Framework ebenfalls anbieten, wird aber nicht von allen unterstützt.
+
+In Deepkit RPC werden die Typen aus den Funktionen von dem TypeScript selbst extrahiert (siehe <<runtime-types>>), sodass es nicht nötig ist, ein Code-Generator zu verwenden oder diese manuell zu definieren. Deepkit unterstützt dabei das automatische Serialisieren und Deserialisieren von Parametern und Resultaten. Sobald zusätzliche Einschränkungen aus dem Kapitel <<validation>> definiert sind, werden diese auch automatisch validiert. Dies macht die Kommunikation über RPC extrem typen-sicher und effektiv. Die Unterstützung von Streaming via `rxjs` in Deepkit RPC macht dieses RPC-Framework auch zu einem geeigneten Tool für Echtzeitkommunikation.
+
+Um das Konzept hinter RPC zu veranschaulichen folgender Code:
+
+```typescript
+//server.ts
+class Controller {
+    hello(title: string): string {
+        return 'Hello ' + title
+    }
+}
+```
+
+Eine Methode wie `hello` wird ganz normal innerhalb einer Klasse auf dem Server implementiert und kann dann von einem remote Client aufgerufen werden.
+
+```typescript
+//client.ts
+const client = new RpcClient('localhost');
+const controller = client.controller<Controller>();
+
+const result = await controller.hello('World'); // => 'Hello World';
+```
+
+Da RPC fundamental auf asynchroner Kommunikation basiert, ist die Kommunikation meist über HTTP, kann aber auch über TCP oder WebSockets geschehen. Das bedeutet, dass alle Funktionsaufrufe in TypeScript selbst zu einem `Promise` umgewandelt werden. Mit einem entsprechenden `await` kann das Resultat asynchron empfangen werden.
+
+== Isomorphic TypeScript
+
+Sobald ein Projekt im Client (meist Frontend) und Server (backend) TypeScript genutzt wird, spricht man von Isomorphic TypeScript. Ein typen-sicheres RPC Framework, das auf TypeScript's Typen basiert, ist dann besonders profitable für ein solches Projekt, da Typen zwischen Client und Server geteilt werden können.
+
+Um diesen Vorteil zu nutzen, sollten Typen, die auf beiden Seiten genutzt werden, in eine eigene Datei oder Package ausgelagert werden. Das Importieren auf der jeweiligen Seite fügt diese dann wieder zusammen.
+
+```typescript
+//shared.ts
+export class User {
+    id: number;
+    username: string;
+}
+
+interface UserControllerApi {
+    getUser(id: number): Promise<User>;
+}
+
+//server.ts
+import { User } from './shared';
+class UserController implements UserControllerApi {
+    async getUser(id: number): Promise<User> {
+        return await datbase.query(User).filter({id}).findOne();
+    }
+}
+
+//client.ts
+import { UserControllerApi } from './shared';
+const controller = client.controller<UserControllerApi>();
+const user = await controller.getUser(2); // => User
+```
+
+Das Interface `UserControllerApi` agiert hierbei als Vertrag zwischen Client und Server. Der Server muss dies korrekt implementieren und der Client kann es konsumieren.
+
+Abwärtskompatiblität kann auf dieselbe Art und Weise umgesetzt werden wie bei einer normalen lokalen API auch: Entweder werden neue Parameter als optional markiert oder es wird eine neue Methode hinzugefügt.
+
+Es ist zwar auch möglich, direkt `UserController` via `import type { UserController } from './server.ts` zu importieren, so hat dies jedoch andere Nachteile wie keine Unterstützung für nominale Typen (was bedeutet, dass Klassen-Instanzen nicht mit `instanceof` geprüft werden können).
+
 == Installation
+
+Da Deepkit RPC auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+
+Falls dies erfolgreich geschehen ist, kann `@deepkit/rpc` installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
+
+```sh
+npm install @deekpit/rpc
+```
+
+Zu beachten ist, dass Controller-Klassen in `@deepkit/rpc` auf TypeScript-Decorators basieren und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss
+
+Das Paket `@deepkit/rpc` muss auf dem Server und Client installiert werden, sofern beide ihre eigene `package.json` haben.
+
+Um über TCP mit dem Server zu kommunizieren, muss das Paket `@deepkit/rpc-tcp` im Client und Server installiert werden.
+
+Für eine WebSocket-Kommunikation braucht es das Paket ebenfalls auf dem Server. Der Client im Browser hingegen nutzt `WebSocket` aus dem offiziellen Standard.
+
+```sh
+npm install @deepkit/rpc-tcp
+```
+
+Sobald der Client über WebSocket auch in einer Umgebung genutzt werden soll, wo `WebSocket` nicht verfügbar ist (zum Beispiel NodeJS), so wird das Paket `ws` in dem Client benötigt.
+
+```sh
+npm install ws
+```
+
+== Benutzung
+
+Nachfolgend ein voll funktionsfähiges Beispiel basierend auf einer WebSocket-Kommunikation und der low-level API von `@deepkit/rpc`. Sobald das <<framework>> benutzt wird, werden Controller über App-Module bereitgestellt und es wird kein RpcKernel manuell instantiiert.
+
+_Datei: server.ts_
+
+```typescript
+import { rpc, RpcKernel } from '@deepkit/rpc';
+import { RpcWebSocketServer } from '@deepkit/rpc-tcp';
+
+@rpc.controller('myController');
+export class Controller {
+    @rpc.action()
+    hello(title: string): string {
+        return 'Hello ' + title;
+    }
+}
+
+const kernel = new RpcKernel();
+kernel.registerController(Controller);
+const server = new RpcWebSocketServer(kernel, 'localhost:8081');
+server.start();
+```
+
+_Datei: client.ts_
+
+```typescript
+import { RpcWebSocketClient } from '@deepkit/rpc';
+import type { Controller } from './server';
+
+async function main() {
+    const client = new RpcWebSocketClient('localhost:8081');
+    const controller = client.controller<Controller>('myController');
+
+    const result = await controller.hello('World');
+    console.log('result', result);
+
+    client.disconnect();
+}
+
+main().catch(console.error);
+```
 
 == Controller
 
+Das "Procedure" in Remote Procedure Call wird auch gerne Action genannt. Eine solche Action wird als Methode in einer Klasse definiert und mit dem `@rpc.action` Decorator markiert. Die Klasse selbst wird dabei als Controller durch den `@rpc.controller` Decorator markiert und einen eindeutigen Namen vergeben. Dieser Name wird dann im Client referenziert, um den korrekten Controller anzusprechen. Es können beliebig viele Controller definiert und registriert werden.
+
+```typescript
+import { rpc } from '@deepkit/rpc';
+
+@rpc.controller('myController');
+class Controller {
+    @rpc.action()
+    hello(title: string): string {
+        return 'Hello ' + title;
+    }
+
+    @rpc.action()
+    test(): boolean {
+        return true;
+    }
+}
+```
+
+Nur Methoden, die auch als `@rpc.action()` markiert sind, können von einem Client angesprochen werden.
+
+Typen müssen explizit angeben werden und können nicht inferred werden. Das ist wichtig, da der Serializer genau wissen muss, wie die Typen aussehen, um diese in Binärdaten (BSON) oder JSON umzuwandeln.
+
 == Dependency Injection
 
-== Server
+Die Controller-Klassen werden von dem Dependency Injection Container von `@deepkit/injector` verwaltet. Wenn das Deepkit Framework genutzt wird, haben diese Controller automatisch zugriff auf die Provider des Modules, die den Controller bereitstellen.
 
-== Client
+```typescript
+import { RpcKernel, rpc } from '@deepkit/rpc';
+import { App } from '@deepkit/app';
+import { Database, User } from './database';
+
+@rpc.controller('my')
+class Controller {
+    constructor(private database: Database) {}
+
+    @rpc.action()
+    async getUser(id: number): Promise<User> {
+        return await this.database.query(User).filter({id}).findOne();
+    }
+}
+
+new App({
+    providers: [{provide: Database, useValue: new Database}]
+    controllers: [Controller],
+}).run();
+```
+
+Sobald jedoch ein `RpcKernel` manuell instantiiert wird, kann dort auch ein DI Container übergeben werden.
+
+```typescript
+import { RpcKernel, rpc } from '@deepkit/rpc';
+import { InjectorContext } from '@deepkit/injector';
+import { Database, User } from './database';
+
+@rpc.controller('my')
+class Controller {
+    constructor(private database: Database) {}
+
+    @rpc.action()
+    async getUser(id: number): Promise<User> {
+        return await this.database.query(User).filter({id}).findOne();
+    }
+}
+
+const injector = InjectorContext.forProviders([
+    Controller,
+    {provide: Database, useValue: new Database},
+]);
+const kernel = new RpcKernel(injector);
+kernel.registerController(Controller);
+```
+
+Siehe <<dependency-injection>>, um mehr zu erfahren.
+
+== Nominal Types
+
+== Error Forwarding
 
 == Security
 

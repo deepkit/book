@@ -248,7 +248,7 @@ const lowLevelModule = new InjectorModule([HttpClient])
 
 Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, sodass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
 
-In dem Kapitel <<framework-modules>> ist näheres hierzu beschrieben.
+In <<framework-modules>> ist näheres hierzu beschrieben.
 
 [lang=english]
 The <<framework-modules>> chapter describes this in more detail.
@@ -608,6 +608,21 @@ const session = httpScope.get(UserSession); //works
 ```
 
 Da alle Provider per default Singleton sind, wird auch hier jeder Aufruf zu `get(UserSession)` immer dieselbe Instanz pro scoped Container zurückgeben. Erstellt man mehrere scoped Container werden auch mehrere UserSession angelegt.
+
+Scoped DI Container haben die Fähigkeit, Werte dynamisch von außen zu setzen. So ist es zum Beispiel bei einem HTTP-Scope einfach möglich, die Objekte HttpRequest und HttpResponse zu setzen.
+
+```typescript
+const injector = InjectorContext.forProviders([
+    {provide: HttpResponse, scope: 'http'},
+    {provide: HttpRequest, scope: 'http'},
+]);
+
+httpServer.on('request', (req, res) => {
+    const httpScope = injector.createChildScope('http');
+    httpScope.set(HttpRequest, req);
+    httpScope.set(HttpResponse, res);
+});
+```
 
 Applikationen, die mit dem Deepkit Framework arbeiten, haben per default einen `http`, einen `rpc`, und einen `cli` Scope. Siehe dazu jeweils das Kapitel <<cli>>, <<http>>, oder <<rpc>>.
 

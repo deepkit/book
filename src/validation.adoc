@@ -14,7 +14,7 @@ app.post('/user', function(request) {
 });
 ```
 
-Dieser oft gesehene Code stellt ein Fehler da, der zum Programmabsturz oder zu einer Sicherheitslücke führen kann, da ein Type-Cast `as number` verwendet wurde, der keinerlei Sicherheiten zur Laufzeit bereitstellt. Der User kann als `limit` einfach einen String übergeben und das Program würde dann mit einem String in `limit` arbeiten, obwohl der Code darauf basiert, dass es eine Nummer sein muss. Um diese Sicherheit zur Laufzeit zu erhalten gibt es Validatoren und Type-Guards. Auch könnte ein Serializer benutzt werden, um `limit` in eine Nummer umzuwandeln. Hierzu findet sich in dem Kapitel <<serialisation>> mehr Informationen.
+Dieser oft gesehene Code stellt ein Fehler da, der zum Programmabsturz oder zu einer Sicherheitslücke führen kann, da ein Type-Cast `as number` verwendet wurde, der keinerlei Sicherheiten zur Laufzeit bereitstellt. Der User kann als `limit` einfach einen String übergeben und das Program würde dann mit einem String in `limit` arbeiten, obwohl der Code darauf basiert, dass es eine Nummer sein muss. Um diese Sicherheit zur Laufzeit zu erhalten gibt es Validatoren und Type-Guards. Auch könnte ein Serializer benutzt werden, um `limit` in eine Nummer umzuwandeln. Hierzu findet sich in <<serialisation>> mehr Informationen.
 
 Validation ist essenzieller Bestandteil jeder Anwendung und sollte besser einmal zuviel als einmal zu wenig genutzt werden. Deepkit stellt viele Validationsoptionen bereit und hat eine high-performance Implementierung, sodass sich in den allermeisten Fällen kein Gedanke um die Ausführungszeit gemacht werden muss. Nutzen Sie soviel Validation wie möglich, im Zweifel einmal mehr, um auf der sicheren Seite zu stehen.
 

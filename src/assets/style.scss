@@ -244,6 +244,10 @@ body > div:not(.pagedjs_pages) {
   > * {
     max-width: 510px;
     margin: auto;
+
+    h2 {
+      margin-top: 150px;
+    }
   }
 
   code, pre {
