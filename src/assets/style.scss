@@ -251,8 +251,33 @@ body > div:not(.pagedjs_pages) {
   }
 
   code, pre {
-    font-size: 0.9rem;
-    line-height: 1.1rem;
+    font-size: 0.85rem;
+    line-height: 1.05rem;
+  }
+
+  pre {
+    padding: 5px 0;
+    overflow: auto;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+      height: 11px;
+      width: 11px;
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(169, 173, 175, 0.77);
+      border-radius: 8px;
+      border: 2px solid rgba(0, 0, 0, 0.01);
+      background-clip: padding-box;
+
+      &:hover {
+        background: #727475;
+        border: 2px solid rgba(0, 0, 0, 0.01);
+        background-clip: padding-box;
+      }
+    }
   }
 }
 

@@ -193,8 +193,29 @@ body > div:not(.pagedjs_pages) > * h2 {
   margin-top: 150px;
 }
 body > div:not(.pagedjs_pages) code, body > div:not(.pagedjs_pages) pre {
-  font-size: 0.9rem;
-  line-height: 1.1rem;
+  font-size: 0.85rem;
+  line-height: 1.05rem;
+}
+body > div:not(.pagedjs_pages) pre {
+  padding: 5px 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+body > div:not(.pagedjs_pages) pre::-webkit-scrollbar {
+  height: 11px;
+  width: 11px;
+  background: transparent;
+}
+body > div:not(.pagedjs_pages) pre::-webkit-scrollbar-thumb {
+  background: rgba(169, 173, 175, 0.77);
+  border-radius: 8px;
+  border: 2px solid rgba(0, 0, 0, 0.01);
+  background-clip: padding-box;
+}
+body > div:not(.pagedjs_pages) pre::-webkit-scrollbar-thumb:hover {
+  background: #727475;
+  border: 2px solid rgba(0, 0, 0, 0.01);
+  background-clip: padding-box;
 }
 
 /* Better tables */
