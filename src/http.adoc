@@ -48,7 +48,7 @@ class UserController {
 
 == Installation
 
-Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig @deepkit/type bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
 
 Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
@@ -56,7 +56,7 @@ Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder 
 npm install @deekpit/http
 ```
 
-Zu beachten ist, dass `@deepkit/http` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss sobald die Controller API verwendet wird.
+Zu beachten ist, dass `@deepkit/http` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss, sobald die Controller API verwendet wird.
 
 _Datei: tsconfig.json_
 

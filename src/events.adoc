@@ -1,0 +1,81 @@
+[#events]
+= Event System
+
+Ein Event-System ermöglicht es Anwendungskomponenten im selben Prozess miteinander zu kommunizieren, indem sie Ereignisse versenden und auf sie hören. Es hilft bei der Modularisierung des Codes, indem Nachrichten zwischen Funktionen gesendet werden, die nicht direkt voneinander wissen.
+
+Die Anwendung oder Library eröffnet dabei die Möglichkeit an einem bestimmten Zeitpunkt der Ausführung zusätzliche Funktionen auszuführen. Diese zusätzlichen Funktionen registrieren sich dabei selbst als sogenannte Event-Listener.
+
+Ein Event kann dabei vielfältig sein:
+
+- Die Anwendung fährt hoch oder runter.
+- Ein neuer User wurde erstellt oder gelöscht.
+- Eine Error wurde geworfen.
+- Ein neuer HTTP-Request ist hereingekommen.
+
+Deepkit Framework und seine Libraries bieten bereits diverse Events an, auf die der Benutzer hören und reagieren kann. Es können jedoch auch beliebig viele eigene Events angelegt werden, um so die Anwendung modular erweiterbar zu machen.
+
+Nachfolgend ein Beispiel der Low-Level API von `@deepkit/event`. Wenn Deepkit Framework genutzt wird, geschieht die Registrierung von Event-Listener nicht über `EventDispatcher` direkt sondern über Module.
+
+```typescript
+import { EventDispatcher, EventToken } from '@deepkit/event';
+
+const dispatcher = new EventDispatcher();
+const MyEvent = new EventToken('my-event');
+
+dispatcher.listen(MyEvent, (event) => {
+    console.log('MyEvent triggered!');
+});
+dispatcher.dispatch(MyEvent);
+```
+
+== Installation
+
+Da das Event-System von Deepkit basiert auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+
+Falls dies erfolgreich geschehen ist, kann `@deepkit/event` installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
+
+```sh
+npm install @deekpit/event
+```
+
+Zu beachten ist, dass `@deepkit/event` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss, sobald die Controller API verwendet wird.
+
+_Datei: tsconfig.json_
+
+```json
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "es6",
+    "moduleResolution": "node",
+    "experimentalDecorators": true
+  },
+  "reflection": true
+}
+```
+
+Sobald die Library installiert ist, kann die API davon direkt benutzt werden.
+
+== Event Token
+
+Im Mittelpunkt vom Event-System stehen die Event-Tokens. Sie sind Objekte, die die eindeutige Event-ID und den Event-Typen definieren. Über ein Event-Token kann ein Event ausgelöst und auf ein Event gehört werden. Dabei ist konzeptionell derjenige, der den Event eines Event-Tokens auslöst, auch der Besitzer dieses Event-Tokens. Das Event-Token entscheidet entsprechend darüber, welche Daten an dem Event verfügbar sind und ob asynchrone Event-Listener erlaubt werden.
+
+```typescript
+const MyEvent = new EventToken('my-event');
+```
+
+TODO asynchrone
+
+== Event Types
+
+
+TODO
+
+== Propagation
+
+TODO. event.stop()
+
+== Dependency Injection
+
+TODO
+

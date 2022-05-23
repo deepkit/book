@@ -7,7 +7,7 @@ Der Vorteil von RPC besteht darin, dass die Client-Server Abstraktion leichtgewi
 
 Ein Schlüsselfeature von RPC ist, dass die Daten zwischen dem Client und Server automatisch serialisiert und deserialisiert werden. Aus diesem Grund sind meist typen-sichere RPC-Clients möglich. Manche RPC-Frameworks zwingen den Benutzern daher, die Typen (Parameter-Types und Return-Types) in einem bestimmten Format bereitzustellen. Dies kann in Form von einer eigenen DSL wie bei gRPC (Protocol Buffers) und GraphQL mit einem Code-Generator sein oder in Form von einem JavaScript Schema-Builder. Zusätzliche Validierung der Daten kann das RPC-Framework ebenfalls anbieten, wird aber nicht von allen unterstützt.
 
-In Deepkit RPC werden die Typen aus den Funktionen von dem TypeScript selbst extrahiert (siehe <<runtime-types>>), sodass es nicht nötig ist, ein Code-Generator zu verwenden oder diese manuell zu definieren. Deepkit unterstützt dabei das automatische Serialisieren und Deserialisieren von Parametern und Resultaten. Sobald zusätzliche Einschränkungen aus dem Kapitel <<validation>> definiert sind, werden diese auch automatisch validiert. Dies macht die Kommunikation über RPC extrem typen-sicher und effektiv. Die Unterstützung von Streaming via `rxjs` in Deepkit RPC macht dieses RPC-Framework auch zu einem geeigneten Tool für Echtzeitkommunikation.
+In Deepkit RPC werden die Typen aus den Funktionen von dem TypeScript-Code selbst extrahiert (siehe <<runtime-types>>), sodass es nicht nötig ist, ein Code-Generator zu verwenden oder diese manuell zu definieren. Deepkit unterstützt dabei das automatische Serialisieren und Deserialisieren von Parametern und Resultaten. Sobald zusätzliche Einschränkungen aus <<validation>> definiert sind, werden diese auch automatisch validiert. Dies macht die Kommunikation über RPC extrem typen-sicher und effektiv. Die Unterstützung von Streaming via `rxjs` in Deepkit RPC macht dieses RPC-Framework auch zu einem geeigneten Tool für Echtzeitkommunikation.
 
 Um das Konzept hinter RPC zu veranschaulichen folgender Code:
 
@@ -99,7 +99,7 @@ npm install ws
 
 == Benutzung
 
-Nachfolgend ein voll funktionsfähiges Beispiel basierend auf einer WebSocket-Kommunikation und der low-level API von `@deepkit/rpc`. Sobald das <<framework>> benutzt wird, werden Controller über App-Module bereitgestellt und es wird kein RpcKernel manuell instantiiert.
+Nachfolgend ein voll funktionsfähiges Beispiel basierend WebSockets und der low-level API von `@deepkit/rpc`. Sobald das Deepkit Framework benutzt wird, werden Controller über App-Module bereitgestellt und es wird kein RpcKernel manuell instantiiert.
 
 _Datei: server.ts_
 

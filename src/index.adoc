@@ -31,6 +31,10 @@ include::dependency-injection.adoc[leveloffset=+1]
 
 <<<
 
+include::events.adoc[leveloffset=+1]
+
+<<<
+
 include::cli.adoc[leveloffset=+1]
 
 <<<
