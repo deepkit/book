@@ -7,8 +7,12 @@
     "type": "git",
     "url": "git+https://github.com/marcj/deepkit-book.git"
   },
+  "scripts": {
+    "build-web": "antora playbook.yml"
+  },
   "dependencies": {
     "@asciidoctor/docbook-converter": "^2.0.0",
+    "antora": "^3.0.2",
     "asciidoctor": "^2.2.6",
     "glob": "^7.1.6",
     "latex.css": "^1.6.0",

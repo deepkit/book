@@ -1,0 +1,11 @@
+name: english
+title: English
+start_page: ROOT:web.adoc
+version: master
+asciidoc:
+  attributes:
+    lang: en
+    source-language: asciidoc@
+    table-caption: false
+nav:
+  - modules/ROOT/nav.adoc

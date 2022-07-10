@@ -1,0 +1,22 @@
+site:
+  title: Deepkit
+  url: https://my-antora-demo-site.org
+#  start_page: ROOT:web.adoc
+content:
+  sources:
+    - url: ./
+      start_path: src/
+    - url: ./
+      start_path: src/english
+ui:
+  bundle:
+    url: ./ui-bundle
+  #    snapshot: true
+  #    start_path: dark
+  #  default_layout:
+#  output_dir: _/dark
+output:
+  dir: ./public
+antora:
+  extensions:
+    - ./my-extension.js

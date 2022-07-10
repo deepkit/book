@@ -1,0 +1,11 @@
+name: german
+title: German
+start_page: ROOT:web.adoc
+version: master
+asciidoc:
+  attributes:
+    lang: de
+    source-language: asciidoc@
+    table-caption: false
+nav:
+  - modules/ROOT/nav.adoc

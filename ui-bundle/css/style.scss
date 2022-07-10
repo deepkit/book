@@ -1,0 +1,335 @@
+@import url("https://fonts.googleapis.com/css?family=Fondamento:400,400i|Neuton:400,400i,700|Vollkorn:400,400i,700,700i&subset=latin-ext");
+@import "./fonts/CMUSerif/stylesheet.css";
+@import "./fonts/latin-modern/stylesheet.css";
+
+body {
+  font-family: 'CMU Serif', "Times New Roman", serif;
+  font-size: 0.8rem;
+  line-height: 1rem;
+
+  //-webkit-font-smoothing: antialiased;
+  //text-rendering: geometricPrecision;
+  //-moz-osx-font-smoothing: grayscale;
+
+
+  --text-color: #000;
+  --color-link: #1565c0;
+  color: var(--text-color);
+
+  --page-margin: 22mm;
+}
+
+h1 {
+  font-size: 1.35rem;
+  line-height: 1.5rem;
+  letter-spacing: -.055rem;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sect1 > h2 {
+  break-before: page;
+}
+
+#toctitle,
+h2 {
+  font-size: 1.25rem;
+  line-height: 1.35rem;
+  letter-spacing: -.055rem;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h2 {
+  string-set: title content(text);
+}
+
+.imageblock {
+  padding: 25px 0;
+  margin: 0 -100px;
+
+  img {
+    max-width: 100%;
+  }
+}
+
+p {
+  margin: 0;
+  text-align: justify;
+}
+
+.paragraph + .paragraph,
+p + p {
+  margin-top: 15px;
+}
+
+#header {
+  h1 {
+    text-align: center;
+  }
+
+  .details {
+    text-align: center;
+    margin-top: 1.1rem;
+    margin-bottom: 2rem;
+    font-size: 0.91rem;
+    line-height: 2.15rem;
+  }
+}
+
+////needs to be a simple selector otherwise paged.js doesnt
+//#toc li a::after {
+//  float: right;
+//  position: relative;
+//  width: 1.5rem;
+//  text-align: right;
+//  display: block;
+//  background: white;
+//  content: target-counter(attr(href), page);
+//}
+//
+//#toc {
+//  ul, li {
+//    list-style: none;
+//    margin: 0;
+//    padding: 0;
+//  }
+//
+//  ul:not(.sectlevel1) {
+//    li {
+//      overflow: hidden;
+//      position: relative;
+//
+//      &::before {
+//        position: absolute;
+//        right: 0;
+//        text-align: right;
+//        white-space: nowrap;
+//        content: ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . " ". . . . . . . . . . . . . . . . . . . . ";
+//      }
+//
+//      a {
+//        position: relative;
+//        background: white;
+//        padding-right: 1rem;
+//      }
+//
+//      a::after {
+//        float: right;
+//        background: white;
+//      }
+//    }
+//  }
+//
+//  .sectlevel1 {
+//    > li {
+//      margin-top: 1rem;
+//
+//      > a {
+//        //font-size: 9px;
+//        font-weight: bold;
+//      }
+//    }
+//  }
+//
+//  .sectlevel2 {
+//    margin-left: 1rem;
+//  }
+//
+//  .sectlevel3,
+//  .sectlevel4,
+//  .sectlevel5 {
+//    margin-left: 1.7rem;
+//  }
+//}
+
+a, a:link {
+  text-decoration: none;
+  color: var(--text-color);
+  &:hover {
+    color: var(--color-link);
+  }
+}
+
+li.nav-item.is-active {
+  > a, > a:link {
+    color: var(--color-link);
+  }
+}
+
+//@page {
+//  //size: 111mm 178mm;
+//  size: 8in 10.5in;
+//  //margin-top: 45pt;
+//  //margin-bottom: 60pt;
+//  margin: 1.75in;
+//  padding: 0;
+//  marks: crop;
+//  bleed: 0;
+//  trim: 0;
+//  pdf-page-colorspace: rgb;
+//}
+//
+//.pagedjs_area {
+//  //border: 1px solid blue !important;
+//}
+//
+//@page :left {
+//  margin-left: 1.75in;
+//  margin-right: 1.75in;
+//}
+//
+//@page :right {
+//  margin-left: 1.75in;
+//  margin-right: 1.75in;
+//}
+//
+//@page {
+//  //@bottom-left {
+//  //  content: string(title);
+//  //}
+//  @bottom-center {
+//    content: counter(page);
+//  }
+//}
+//
+//@media only screen {
+//  html {
+//    background-color: #eee;
+//    padding: 15pt;
+//  }
+//
+//  .pagedjs_page {
+//    background-color: white;
+//    box-shadow: 0px 0px 0.1px lightblue;
+//    margin-bottom: 15pt;
+//  }
+//
+//  .pagedjs_left_page {
+//    float: left;
+//  }
+//
+//  .pagedjs_right_page {
+//    margin-left: 8.2in;
+//  }
+//
+//  .pagedjs_first_page {
+//    margin-left: 0;
+//  }
+//}
+//
+//.chapter {
+//  page: chapter;
+//  break-before: recto;
+//}
+
+
+//body {
+//  text-align: center;
+//}
+////styles for non-paged.js
+//#contents {
+//  margin: auto;
+//  max-width: 800px;
+//  text-align: left;
+//}
+//
+
+//@media (max-width: 550px) {
+//  html, body {
+//    padding: 0;
+//    margin: 0;
+//  }
+//}
+
+//body > div:not(.pagedjs_pages) {
+//  background-color: white;
+//  margin: auto;
+//  max-width: 730px;
+//  overflow: hidden;
+//  padding: 25px;
+//  font-size: 0.95rem;
+//  line-height: 1.2rem;
+//
+//  > * {
+//    max-width: 510px;
+//    margin: auto;
+//
+//    h2 {
+//      margin-top: 150px;
+//    }
+//  }
+//
+//  code, pre {
+//    font-size: 0.85rem;
+//    line-height: 1.05rem;
+//  }
+//
+//  pre {
+//    padding: 5px 0;
+//    overflow: auto;
+//    scrollbar-width: thin;
+//
+//    &::-webkit-scrollbar {
+//      height: 11px;
+//      width: 11px;
+//      background: transparent;
+//    }
+//
+//    &::-webkit-scrollbar-thumb {
+//      background: rgba(169, 173, 175, 0.77);
+//      border-radius: 8px;
+//      border: 2px solid rgba(0, 0, 0, 0.01);
+//      background-clip: padding-box;
+//
+//      &:hover {
+//        background: #727475;
+//        border: 2px solid rgba(0, 0, 0, 0.01);
+//        background-clip: padding-box;
+//      }
+//    }
+//  }
+//}
+
+
+/* Better tables */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: auto;
+  margin: 30px 0;
+  max-width: 100%;
+  border-top: 2.27px solid black;
+  border-bottom: 2.27px solid black;
+  /* display: block; */
+  overflow-x: auto; /* does not work because element is not block */
+  /* white-space: nowrap; */
+  counter-increment: caption;
+}
+
+/* add bottom border on column table headings  */
+table tr > th[scope='col'] {
+  border-bottom: 1.36px solid black;
+}
+
+/* add right border on row table headings  */
+table tr > th[scope='row'] {
+  border-right: 1.36px solid black;
+}
+
+table > tbody > tr:first-child > td,
+table > tbody > tr:first-child > th {
+  border-top: 1.36px solid black;
+}
+
+table > tbody > tr:last-child > td,
+table > tbody > tr:last-child > th {
+  border-bottom: 1.36px solid black;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem;
+  line-height: 1.1;
+}

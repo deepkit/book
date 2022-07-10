@@ -11,43 +11,39 @@ Marc J. Schmidt
 
 <<<
 
-include::introduction.adoc[leveloffset=+1]
+include::modules/ROOT/pages/runtime-types.adoc[leveloffset=+1]
 
 <<<
 
-include::runtime-types/index.adoc[leveloffset=+1]
+include::modules/ROOT/pages/validation.adoc[leveloffset=+1]
 
 <<<
 
-include::validation.adoc[leveloffset=+1]
+include::modules/ROOT/pages/serialization.adoc[leveloffset=+1]
 
 <<<
 
-include::serialization.adoc[leveloffset=+1]
+include::modules/ROOT/pages/dependency-injection.adoc[leveloffset=+1]
 
 <<<
 
-include::dependency-injection.adoc[leveloffset=+1]
+include::modules/ROOT/pages/events.adoc[leveloffset=+1]
 
 <<<
 
-include::events.adoc[leveloffset=+1]
+include::modules/ROOT/pages/cli.adoc[leveloffset=+1]
 
 <<<
 
-include::cli.adoc[leveloffset=+1]
+include::modules/ROOT/pages/http.adoc[leveloffset=+1]
 
 <<<
 
-include::http.adoc[leveloffset=+1]
+include::modules/ROOT/pages/rpc.adoc[leveloffset=+1]
 
 <<<
 
-include::rpc.adoc[leveloffset=+1]
-
-<<<
-
-include::database.adoc[leveloffset=+1]
+include::modules/ROOT/pages/database.adoc[leveloffset=+1]
 
 <<<
 
@@ -60,11 +56,11 @@ include::database.adoc[leveloffset=+1]
 
 <<<
 
-include::template.adoc[leveloffset=+1]
+include::modules/ROOT/pages/template.adoc[leveloffset=+1]
 
 <<<
 
-include::framework.adoc[leveloffset=+1]
+include::modules/ROOT/pages/framework.adoc[leveloffset=+1]
 
 <<<
 

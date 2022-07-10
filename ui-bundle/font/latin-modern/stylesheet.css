@@ -1,0 +1,81 @@
+@font-face {
+    font-family: 'LMRoman10';
+    src: url('LMRoman10-Regular.woff2') format('woff2'),
+        url('LMRoman10-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMRoman10';
+    src: url('LMRoman10-Italic.woff2') format('woff2'),
+        url('LMRoman10-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMMono10';
+    src: url('LMMono10-Regular.woff2') format('woff2'),
+        url('LMMono10-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMRoman12';
+    src: url('LMRoman12-Bold.woff2') format('woff2'),
+        url('LMRoman12-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMRoman12';
+    src: url('LMRoman12-Regular.woff2') format('woff2'),
+        url('LMRoman12-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMRoman10';
+    src: url('LMRoman10-Bold.woff2') format('woff2'),
+        url('LMRoman10-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMMono10';
+    src: url('LMMono10-Italic.woff2') format('woff2'),
+        url('LMMono10-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMRoman17';
+    src: url('LMRoman17-Regular.woff2') format('woff2'),
+        url('LMRoman17-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LMMonoLt10';
+    src: url('LMMonoLt10-Bold.woff2') format('woff2'),
+        url('LMMonoLt10-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+

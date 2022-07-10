@@ -1,0 +1,75 @@
+[#runtime-types-bytecode]
+= Bytecode
+
+Um im Detail zu lernen, wie Deepkit die Typeninformationen im JavaScript enkodiert und ausliest, ist dieses Kapitel gedacht. Es erklärt, wie die Typen konkret in Bytecode umgewandelt, im JavaScript emittiert, und anschließen zur Laufzeit interpretiert werden.
+
+== Typen-Compiler
+
+Der Type-Compiler (in @deepkit/type-compiler) ist dafür Verantwortlich, die definierten Typen in den TypeScript Dateien auszulesen und in ein Bytecode zu kompilieren. Dieser Bytecode hat alles, was nötig ist, um die Typen in der Laufzeit auszuführen.
+Zum Zeitpunkt dieses Buches ist der Type-Compiler ein sogenannter TypeScript Transformer. Dieser Transformer ist ein Plugin für den TypeScript Compiler selbst und wandelt ein TypeScript AST (Abstract Syntax Tree) in ein anderen TypeScript AST um. Deepkit's Typen-Compiler liest in diesem Prozess den AST aus, produziert den dazugehörigen Bytecode, und fügt diesen in den AST ein.
+
+TypeScript selbst erlaubt es nicht, dieses Plugin aka Transformer über eine tsconfig.json zu konfigurieren. Es ist entweder nötig, die TypeScript Compiler API direkt zu benutzen, oder ein Buildsystem wie Webpack mit `ts-loader`. Um diesen unangenehmen Weg den Benutzern von Deepkit zu ersparen, installiert sich der Deepkit Typen-Compiler automatisch selbst in `node_modules/typescript` sobald `@deepkit/type-compiler` installiert wird. Dies macht es möglich, dass alle Buildtools, die auf das lokal installierte TypeScript (das in `node_modules/typescript`) zugreifen, automatisch den Typen-Compiler aktiviert haben. Dadurch funktioniert tsc, Angular, webpack, ts-node, und einige andere Tools automatisch mit Deepkit's Typen-Compiler.
+
+Ist das automatische Ausführen von NPM install scripts nicht aktiviert und wird so das lokal installierte Typescript nicht modifiziert, so muss dieser Prozess manuell ausgeführt werden, sofern man das möchte. Alternative kann auch der Typen-Compiler manuell in einen Buildtool wie zum Beispiel webpack genutzt werden. Siehe dazu die Sektion Installation weiter oben.
+
+== Bytecode Encoding
+
+Der Bytecode ist eine Folge von Befehlen für eine Virtuelle Maschine und ist im JavaScript selbst als Array mit Referenzen und String (dem eigentlichen Bytecode) enkodiert.
+
+```typescript
+//TypeScript
+type TypeA = string;
+
+//generated JavaScript
+const typeA = ['&'];
+```
+
+Die vorhandenen Befehle selbst sind jeweils ein Byte groß und in `@deepkit/type-spec` als `ReflectionOp` Enum zu finden. Zum Zeitpunkt dieses Buches ist der Befehlssatz über 81 Befehle gross.
+
+```typescript
+enum ReflectionOp {
+    never,
+    any,
+    unknown,
+    void,
+    object,
+
+    string,
+    number,
+
+    //...many more
+}
+```
+
+Eine Folge von Befehlen wird enkodiert als einen String um Speicherplatz zu sparen. So wird ein Typ `string[]` als Bytecode Program `[string, array]` konzeptionell dargestellt, welches die Bytes `[5, 37]` hat und mit folgendem Algorithmus enkodiert:
+
+```typescript
+function encodeOps(ops: ReflectionOp[]): string {
+    return ops.map(v => String.fromCharCode(v + 33)).join('');
+}
+```
+
+Entsprechend wird aus einer 5 ein `&`-Zeichen und aus einer 37 ein `F`-Zeichen. Zusammen wird daraus `&F` und in Javascript als `['&F']` emittiert.
+
+```typescript
+//TypeScript
+export type TypeA = string[];
+
+//generated JavaScript
+export const __ΩtypeA = ['&F'];
+```
+
+Um Namenskonflikte vorzubeugen, erhält jeder Typ ein "__Ω" als Prefix. Für jeden explizit definierten Typen, der exportiert oder von einem exportierten Typen genutzt wird, wird ein Bytecode  das JavaScript emittiert. Auch Klassen und Funktionen erhalten einen Bytecode direkt als Eigenschaft.
+
+```typescript
+//TypeScript
+function log(message: string): void {}
+
+//generated JavaScript
+function log(message) {}
+log.__type = ['message', 'log', 'P&2!$/"'];
+```
+
+== Virtuelle Maschine
+
+Eine virtuelle Maschine (in `@deepkit/type` die Klasse Processor) zur Laufzeit ist dafür zuständig den encodierten Bytecode zu dekodieren und auszuführen. Sie gibt immer ein Typen-Objekt zurück, siehe weiter oben die Sektion Reflection.
