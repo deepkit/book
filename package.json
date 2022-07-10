@@ -8,7 +8,9 @@
     "url": "git+https://github.com/marcj/deepkit-book.git"
   },
   "scripts": {
-    "build-web": "antora playbook.yml"
+    "build": "make build",
+    "build-ebook": "npm run build && make ebook",
+    "build-web": "npm run build && antora playbook.yml"
   },
   "dependencies": {
     "@asciidoctor/docbook-converter": "^2.0.0",
@@ -17,6 +19,7 @@
     "glob": "^7.1.6",
     "latex.css": "^1.6.0",
     "node-fetch": "^2.6.7",
+    "sass": "^1.53.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
   },

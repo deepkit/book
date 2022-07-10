@@ -1,7 +1,12 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
+    "skipLibCheck": true,
+    "module": "CommonJS",
     "moduleResolution": "node",
     "target": "ES2020"
-  }
+  },
+  "include": [
+    "my-extension.ts",
+    "scripts/**/*.ts"
+  ]
 }

@@ -16,7 +16,7 @@ ui:
   #  default_layout:
 #  output_dir: _/dark
 output:
-  dir: ./public
+  dir: ./build
 antora:
   extensions:
     - ./my-extension.js

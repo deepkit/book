@@ -1,96 +1,15 @@
-= Deepkit Documentation
-Marc J. Schmidt
-{docdate}
-:url-wolpertinger: https://deepkit.io/
-:toc: left
-:toc-title: Contents
-:toclevels: 3
-:doctype: book
-:xrefstyle: full
-:sectnums:
+= Documentation
 
-//<<<
-//
-//include::introduction.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::runtime-types/index.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::validation.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::serialization.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::dependency-injection.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::events.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::cli.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::http.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::rpc.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::database.adoc[leveloffset=+1]
-//
-//<<<
-//
-//== Broker
-//=== Installation
-//=== Server
-//=== Client
-//=== Key/Value
-//=== Publish / Subscribe
-//
-//<<<
-//
-//include::template.adoc[leveloffset=+1]
-//
-//<<<
-//
-//include::framework.adoc[leveloffset=+1]
-//
-//<<<
-//
-//== Debugger
-//=== Module
-//=== Profiler
-//=== Database
-//
-//== Deployment
-//
-//=== Compiling
-//
-//=== Packaging
-//
-//=== Docker
-//
-//++++
-//<!--<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>-->
-//<script src="../src/assets/prism.js"></script>
-//<link rel="stylesheet" href="../src/assets/prism.css">
-//<script>
-//  class MyHandler extends Paged.Handler {
-//    afterPreview(pageFragment, page) {
-//      Prism.highlightAll()
-//    }
-//  }
-//  Paged.registerHandlers(MyHandler);
-//</script>
-//++++
+Welcome to the Deepkit documentation. In this documentation you will find more information about how to use each library and the Deepkit Framework in great detail with example code.
+
+== API
+
+Use the API documentation to get very detailed information about the API of each module.
+
+link:https://deepkit.io/assets/api-docs/modules.html[API Documentation, role=big]
+
+== Support
+
+If you need help, please join the Discord community server:
+
+link:https://deepkit.io/community[Community, role=big]

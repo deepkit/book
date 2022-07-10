@@ -146,21 +146,17 @@ a, a:link {
     background-color: #eee;
     padding: 15pt;
   }
-
   .pagedjs_page {
     background-color: white;
     box-shadow: 0px 0px 0.1px lightblue;
     margin-bottom: 15pt;
   }
-
   .pagedjs_left_page {
     float: left;
   }
-
   .pagedjs_right_page {
     margin-left: 8.2in;
   }
-
   .pagedjs_first_page {
     margin-left: 0;
   }
@@ -228,8 +224,7 @@ table {
   border-top: 2.27px solid black;
   border-bottom: 2.27px solid black;
   /* display: block; */
-  overflow-x: auto;
-  /* does not work because element is not block */
+  overflow-x: auto; /* does not work because element is not block */
   /* white-space: nowrap; */
   counter-increment: caption;
 }
@@ -260,5 +255,3 @@ td {
   padding: 0.5rem;
   line-height: 1.1;
 }
-
-/*# sourceMappingURL=style.css.map */

@@ -1,8 +1,18 @@
 <div class="nav-container"{{#if page.component}} data-component="{{page.component.name}}" data-version="{{page.version}}"{{/if}}>
   <aside class="nav">
     <div class="panels">
-{{> nav-menu}}
+        <div style="padding: 30px 0;">
+            <a href="https://deepkit.io/framework">
+                <img src="https://deepkit.io/assets/images/deepkit_text.svg" style="height: 26px;"/>
+            </a>
+        </div>
+
+{{#if page.component}}
+    <a href="/deepkit-book-english.pdf">eBook Version</a>
+{{/if}}
+
 {{> nav-explore}}
+{{> nav-menu}}
     </div>
   </aside>
 </div>

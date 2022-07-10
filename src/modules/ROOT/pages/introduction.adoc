@@ -1,5 +1,5 @@
 [#introduction]
-= Einführung
+= Introduction
 
 TypeScript ist JavaScript das skaliert. Eine Sprache, die designt ist, komplexe Anwendungsfälle umzusetzen. Es erlaubt das Schreiben von JavaScript mit Typen, die bei dem Kompilieren geprüft und entfernt werden. Diese dadurch entstehende Typensicherheit erlaubt das einfachere Schreiben und Warten von komplexen Anwendungen. Genau das ist unter anderem, was TypeScript so populär gemacht hat: Es erlaubt das Finden von Fehlern im Code insbesondere in großem Maßstab viel schneller und einfacher als würde das mit reinem JavaScript möglich sein - und arbeitet dabei nicht gegen, sondern mit JavaScript.
 

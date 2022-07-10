@@ -32,7 +32,7 @@ Dies macht es möglich, dass alle Buildtools, die auf das lokal installierte Typ
 
 Falls der Typen-Compiler nicht erfolgreich automatisch installiert werden konnte (weil zum Beispiel NPM install hooks deaktiviert sind), kann dies manuell mit folgendem Kommando nachgeholt werden:
 
-```
+```sh
 node_modules/.bin/deepkit-type-install
 ```
 

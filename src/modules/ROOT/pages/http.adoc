@@ -48,7 +48,8 @@ class UserController {
 
 == Installation
 
-Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben.
+Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 

@@ -1,4 +1,6 @@
 
+* xref:introduction.adoc[]
+
 * xref:runtime-types.adoc[]
 //** xref:runtime-types.adoc#runtime-types-installation[Installation]
 //** xref:runtime-types.adoc#runtime-type-decorators[Type Decorators]

@@ -2,22 +2,22 @@
 <html lang="en">
   <head>
 {{> head defaultPageTitle='Untitled'}}
-      <link rel="stylesheet" href="{{{uiRootPath}}}/css/style.css">
   </head>
   <body class="article{{#with (or page.attributes.role page.role)}} {{{this}}}{{/with}}">
-{{> header}}
-{{> body}}
-{{> footer}}
-
+  <div class="wrapper">
+    {{> header}}
+    {{> body}}
+    {{> footer}}
+  </div>
     <script src="{{{uiRootPath}}}/js/prism.js"></script>
     <link rel="stylesheet" href="{{{uiRootPath}}}/css/prism.css">
-    <script>
-        class MyHandler extends Paged.Handler {
-            afterPreview(pageFragment, page) {
-                Prism.highlightAll()
-            }
-        }
-        Paged.registerHandlers(MyHandler);
-    </script>
+<!--    <script>-->
+<!--        class MyHandler extends Paged.Handler {-->
+<!--            afterPreview(pageFragment, page) {-->
+<!--                Prism.highlightAll()-->
+<!--            }-->
+<!--        }-->
+<!--        Paged.registerHandlers(MyHandler);-->
+<!--    </script>-->
   </body>
 </html>

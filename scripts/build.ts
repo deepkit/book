@@ -2,12 +2,12 @@
 import asciidoctor, { Asciidoctor } from "asciidoctor";
 import { cpSync, writeFileSync } from 'fs';
 
-import docbookConverter from '@asciidoctor/docbook-converter';
+// import docbookConverter from '@asciidoctor/docbook-converter';
 import { extractOrApplyTranslations, macroPageBreak, Translation } from "./utils";
 import ProcessorOptions = Asciidoctor.ProcessorOptions;
 
 const asciidoc = asciidoctor();
-docbookConverter.register();
+// docbookConverter.register();
 
 async function main() {
     const translation = new Translation(process.argv[2]);
@@ -24,9 +24,11 @@ async function main() {
         to_dir: 'build',
         // doctype: 'book',
         safe: 'server',
+        base_dir: 'src/',
         // backend: 'docbook5',
         standalone: true,
         attributes: {
+            imagesdir: 'modules/ROOT/assets/images/',
             // 'allow-uri-read': true,
             'data-uri': true,
             linkcss: true,
@@ -57,6 +59,7 @@ async function main() {
         cpSync('src/assets', 'build/assets', { recursive: true });
     }
 
+    console.log('HTML written to', outputPath);
     writeFileSync(outputPath, result);
     // console.log('Build PDF');
     // const pdfPath = 'build/deepkit-book-' + targetLanguage + '.pdf';
