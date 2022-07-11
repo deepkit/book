@@ -33,7 +33,7 @@ export class Translation {
 
         if (!this.targetLanguage) this.targetLanguage = 'german';
 
-        if (!languageMap[this.targetLanguage]) throw new Error(`Language ${languageMap} not supported`);
+        if (!languageMap[this.targetLanguage]) throw new Error(`Language ${this.targetLanguage} not supported`);
         // const targetLanguageShort = languageMap[targetLanguage].toLowerCase();
 
         if (!this.fileLoaded && existsSync(this.translationCachePath)) {
@@ -55,7 +55,7 @@ export class Translation {
 
     async loadTranslations(): Promise<void> {
         if (!this.textQueue.length || !process.env.DEEPL_KEY) {
-            console.log('this.textQueue', this.textQueue);
+            console.log('this.textQueue', this.textQueue.length);
             console.log('Load translation failed since either textQueue empty or DEEPL_KEY missing');
             return;
         }
@@ -66,7 +66,7 @@ export class Translation {
 
         // textQueue.length = 5;
 
-        console.log('load translations for', this.textQueue);
+        console.log('load translations for', this.textQueue.length);
         const params = new URLSearchParams();
         const map: { [text: string]: { index: number } } = {};
         let index = 0;
@@ -103,6 +103,10 @@ export class Translation {
         // console.log('translations', translations);
 
         writeFileSync(this.translationCachePath, JSON.stringify(this.allTranslations, undefined, 4));
+    }
+
+    get(text: string): string {
+        return this.translations[text] || text;
     }
 
     heading(text: string): string {

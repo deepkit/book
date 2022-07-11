@@ -48,8 +48,7 @@ class UserController {
 
 == Installation
 
-Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben.
-Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
+Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
@@ -135,7 +134,7 @@ const app = new App({
 });
 ```
 
-Siehe <<framework-modules>>, um mehr über App Module zu erfahren.
+Siehe xref:framework.adoc#framework-modules[Framework Modules], um mehr über App Module zu erfahren.
 
 == Controller API
 
@@ -207,7 +206,7 @@ class MyModule extends createModule({
 }
 ```
 
-Siehe <<framework-modules>>, um mehr über App Module zu erfahren.
+Siehe xref:framework.adoc#framework-modules[Framework Modules], um mehr über App Module zu erfahren.
 
 == HTTP Server
 
@@ -316,7 +315,7 @@ class UserController {
 }
 ```
 
-Siehe <<dependency-injection>> für mehr Informationen.
+Siehe xref:dependency-injection.adoc[Dependency Injection] für mehr Informationen.
 
 == Input
 
@@ -324,14 +323,14 @@ Alle nachfolgenden Input-Variationen funktionen bei der funktionalen wie auch de
 Dies führt nicht nur zu einer deutlichen erhöhten Sicherheit, sondern auch einfacheres Unit-Testen,
 da streng genommen nicht einmal ein HTTP-Request Objekt existieren muss, um die Route zu testen.
 
-Alle Parameter werden dabei automatisch in den definierten TypeScript-Typen umgewandelt (deserialisiert) und validiert. Dies geschieht über das `@deepkit/type` Paket und seinen <<serialisation>> und <<validation>> Features.
+Alle Parameter werden dabei automatisch in den definierten TypeScript-Typen umgewandelt (deserialisiert) und validiert. Dies geschieht über das `@deepkit/type` Paket und seinen xref:serialization.adoc[Serialization] und xref:validation.adoc[Validation] Features.
 
 Der Einfachheit halber sind nachfolgend alle Beispiel mit der funktionalen API abgebildet.
 
 === Path Parameters
 
 Path Parameter sind Werte, die aus der URL der Route extrahiert werden. Der Typ des Wertes richtet sich nach dem Typen an dem dazugehörigen Parameter der Funktion beziehungsweise Methode.
-Die Umwandlung geschieht automatisch mit dem Feature <<serialisation-loosely-convertion>>.
+Die Umwandlung geschieht automatisch mit dem Feature xref:serialization.adoc#serialisation-loosely-convertion[Weiche Typenkonvertierung].
 
 ```typescript
 router.get('/:text', (text: string) => {
@@ -367,7 +366,8 @@ router.get('/user/:id', (id: number & Positive) => {
 });
 ```
 
-Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in <<http-validation>> zu finden.
+Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in
+xref:http.adoc#http-validation[HTTP Validation] zu finden.
 
 Die Path Parameter haben standardmäßig bei dem URL-Matching `[^/]+` als Regular-Expression gesetzt. Das RegExp dazu kann wie folgt angepasst werden:
 
@@ -417,7 +417,7 @@ $ curl http://localhost:8080/\?text\=ga
 error
 ```
 
-Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in <<http-validation>> zu finden.
+Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in xref:http.adoc#http-validation[HTTP Validation] zu finden.
 
 *Warnung*: Parameterwerte werden nicht escaped/sanitized. Ihre direkte Rückgabe in einer Zeichenkette in einer Route als HTML öffnet eine Sicherheitslücke (XSS). Stelle sicher, dass niemals externen Eingabe vertraut werden und filtere/sanitize/konvertiere Daten, wo nötig.
 
@@ -443,7 +443,7 @@ $ curl http://localhost:8080/\?text\=galaxy&page=1
 Hello galaxy at page 1
 ```
 
-Die Properties in dem angegebenen Model können alle TypeScript-Typen und Validierung-Typen beinhalten, die `@deepkit/type` unterstützt. Sieh dazu das Kapitel <<serialisation>> und <<validation>>.
+Die Properties in dem angegebenen Model können alle TypeScript-Typen und Validierung-Typen beinhalten, die `@deepkit/type` unterstützt. Sieh dazu das Kapitel xref:serialization.adoc[Serialization] und xref:validation.adoc[Validation].
 
 === Body
 
@@ -490,7 +490,7 @@ router.post('/', (body: HttpBodyValidation<HelloWorldBody>) => {
 
 Sobald `valid()` den Wert `false` zurückgibt, können die Werte in dem angegebenen Model in einem fehlerhaften Zustand sein. Das bedeutet, dass die Validierung fehlgeschlagen ist. Wenn `HttpBodyValidation` nicht verwendet wird und eine fehlerhafte HTTP-Request eingeht, würde die Anfrage direkt abgebrochen werden und der Code in der Funktion nie ausgeführt. Verwende `HttpBodyValidation` nur dann, wenn zum Beispiel Fehlermeldungen bezüglich des Bodys manuell in derselben Route verwertet werden sollen.
 
-Die Properties in dem angegebenen Model können alle TypeScript-Typen und Validierung-Typen beinhalten, die `@deepkit/type` unterstützt. Sieh dazu das Kapitel <<serialisation>> und <<validation>>.
+Die Properties in dem angegebenen Model können alle TypeScript-Typen und Validierung-Typen beinhalten, die `@deepkit/type` unterstützt. Sieh dazu das Kapitel xref:serialization.adoc[Serialization] und xref:validation.adoc[Validation].
 
 ==== File Upload
 
@@ -560,7 +560,7 @@ router.post('/', (body: HttpBody<MyQuery>) => {
 }
 ```
 
-Siehe <<validation>> für mehr Informationen dazu.
+Siehe xref:validation.adoc[Validation] für mehr Informationen dazu.
 
 == Output
 
@@ -610,7 +610,7 @@ router.get('/', () => {
 });
 ```
 
-Die Template-Engine Variante mit TSX hat dabei den Vorteil, dass genutzte Variablen automatisch HTML-escaped werden. Siehe dazu <<template>>.
+Die Template-Engine Variante mit TSX hat dabei den Vorteil, dass genutzte Variablen automatisch HTML-escaped werden. Siehe dazu xref:template.adoc[Template].
 
 === Custom Content
 
@@ -638,7 +638,7 @@ router.get('/user/:id', async (id: number, database: Database) => {
 });
 ```
 
-Per default werden alle Errors als JSON dem Client zurückgegeben. Dieses Verhalten kann man beliebig im Event-System unter dem Event `httpWorkflow.onControllerError` anpassen. Siehe dazu die Sektion <<http-events>>.
+Per default werden alle Errors als JSON dem Client zurückgegeben. Dieses Verhalten kann man beliebig im Event-System unter dem Event `httpWorkflow.onControllerError` anpassen. Siehe dazu die Sektion xref:http.adoc#http-events[HTTP Events].
 
 |===
 |Error class |Status
@@ -657,7 +657,7 @@ Per default werden alle Errors als JSON dem Client zurückgegeben. Dieses Verhal
 |HttpNotImplementedError|501
 |===
 
-Der Error `HttpAccessDeniedError` stellt hierbei eine besonderheit dar. Sobald er geworfen wird, springt der HTTP Workflow (see <<http-events>>) nicht zu `controllerError` sondern zu `accessDenied`.
+Der Error `HttpAccessDeniedError` stellt hierbei eine besonderheit dar. Sobald er geworfen wird, springt der HTTP Workflow (sieh xref:http.adoc#http-events[HTTP Events]) nicht zu `controllerError` sondern zu `accessDenied`.
 
 Benutzerdefinierte HTTP-Errors können mit `createHttpError` angelegt und geworfen werden.
 
@@ -696,7 +696,7 @@ router.get({path: '/registration/complete'}, () => {
 });
 ```
 
-Die Methode `Redirect.toRoute` verwendet hierbei den Namen der Route. Wie ein Routen-Name gesetzt werden kann, ist in der Sektion <<http-route-name>> einzusehen. Wenn diese referenzierte Route (Query oder Pfad) Parameter beinhaltet, können diese über das zweite Argument angegeben werden:
+Die Methode `Redirect.toRoute` verwendet hierbei den Namen der Route. Wie ein Routen-Name gesetzt werden kann, ist in der Sektion xref:http.adoc#http-route-name[HTTP Route Name] einzusehen. Wenn diese referenzierte Route (Query oder Pfad) Parameter beinhaltet, können diese über das zweite Argument angegeben werden:
 
 ```typescript
 router.get({path: '/user/:id', name: 'user_detail'}, (id: number) => {
@@ -737,7 +737,7 @@ router.get('/', (response: HttpResponse) => {
 
 Es kann durchaus nützlich sein, Provider in den `http` Scope zu platzieren, um zum Beispiel Services für jeden HTTP-Request neu zu instantiieren. Sobald der HTTP-Request bearbeitet wurde, wird der `http` scoped DI Container gelöscht und so alle seine Provider Instanzen vom Garbage Collector (GC) aufgeräumt.
 
-Siehe <<dependency-injection-scopes>>, um zu erfahren, wie Provider in den `http` Scope platziert werden können.
+Siehe xref:dependency-injection.adoc#di-scopes[Dependency Injection Scopes], um zu erfahren, wie Provider in den `http` Scope platziert werden können.
 
 [#http-events]
 == Events
@@ -836,6 +836,281 @@ No access to this area
 == Sessions
 
 == Middleware
+
+
+HTTP middlewares allow you to hook into the request/response cycle as an alternative to HTTP events. Its API allows you to use all middlewares from the Express/Connect framework.
+
+Middleware
+A middleware can either be a class (which is instantiated by the dependency injection container) or a simple function.
+
+```typescript
+import { HttpMiddleware, httpMiddleware, HttpRequest, HttpResponse } from '@deepkit/http';
+
+class MyMiddleware implements HttpMiddleware {
+    async execute(request: HttpRequest, response: HttpResponse, next: (err?: any) => void) {
+        response.setHeader('middleware', '1');
+        next();
+    }
+}
+
+
+function myMiddlewareFunction(request: HttpRequest, response: HttpResponse, next: (err?: any) => void) {
+    response.setHeader('middleware', '1');
+    next();
+}
+
+new App({
+    providers: [MyMiddleware],
+    middlewares: [
+        httpMiddleware.for(MyMiddleware),
+        httpMiddleware.for(myMiddlewareFunction),
+    ],
+    imports: [new FrameworkModule]
+}).run();
+```
+
+=== Global
+
+By using httpMiddleware.for(MyMiddleware) a middleware is registered for all routes, globally.
+
+```typescript
+import { httpMiddleware } from '@deepkit/http';
+
+new App({
+    providers: [MyMiddleware],
+    middlewares: [
+        httpMiddleware.for(MyMiddleware)
+    ],
+    imports: [new FrameworkModule]
+}).run();
+```
+
+=== Per Controller
+
+You can limit middlewares to one or multiple controllers in two ways. Either by using the `@http.controller` or `httpMiddleware.for(T).forControllers()`. `excludeControllers` allow you to exclude controllers.
+
+```typescript
+@http.middleware(MyMiddleware)
+class MyFirstController {
+
+}
+new App({
+    providers: [MyMiddleware],
+    controllers: [MainController, UsersCommand],
+    middlewares: [
+        httpMiddleware.for(MyMiddleware).forControllers(MyFirstController, MySecondController)
+    ],
+    imports: [new FrameworkModule]
+}).run();
+```
+
+=== Per Route Name
+
+`forRouteNames` along with its counterpart `excludeRouteNames` allow you to filter the execution of a middleware per route names.
+
+```typescript
+class MyFirstController {
+    @http.GET('/hello').name('firstRoute')
+    myAction() {
+    }
+
+    @http.GET('/second').name('secondRoute')
+    myAction2() {
+    }
+}
+new App({
+    controllers: [MainController, UsersCommand],
+    providers: [MyMiddleware],
+    middlewares: [
+        httpMiddleware.for(MyMiddleware).forRouteNames('firstRoute', 'secondRoute')
+    ],
+    imports: [new FrameworkModule]
+}).run();
+```
+
+
+=== Per Action/Route
+
+To execute a middleware only for a certain route, you can either use `@http.GET().middleware()` or
+`httpMiddleware.for(T).forRoute()` where forRoute has multiple options to filter routes.
+
+```typescript
+class MyFirstController {
+    @http.GET('/hello').middleware(MyMiddleware)
+    myAction() {
+    }
+}
+new App({
+    controllers: [MainController, UsersCommand],
+    providers: [MyMiddleware],
+    middlewares: [
+        httpMiddleware.for(MyMiddleware).forRoutes({
+            path: 'api/*'
+        })
+    ],
+    imports: [new FrameworkModule]
+}).run();
+```
+
+`forRoutes()` allows as first argument several way to filter for routes.
+
+```typescript
+{
+    path?: string;
+    pathRegExp?: RegExp;
+    httpMethod?: 'GET' | 'HEAD' | 'POST' | 'PATCH' | 'PUT' | 'DELETE' | 'OPTIONS' | 'TRACE';
+    category?: string;
+    excludeCategory?: string;
+    group?: string;
+    excludeGroup?: string;
+}
+```
+
+=== Path Pattern
+
+`path` supports wildcard *.
+
+```typescript
+httpMiddleware.for(MyMiddleware).forRoutes({
+    path: 'api/*'
+})
+```
+
+=== RegExp
+
+```typescript
+httpMiddleware.for(MyMiddleware).forRoutes({
+    pathRegExp: /'api/.*'/
+})
+```
+
+=== HTTP Method
+
+Filter all routes by a HTTP method.
+
+```typescript
+httpMiddleware.for(MyMiddleware).forRoutes({
+    httpMethod: 'GET'
+})
+```
+
+=== Category
+
+`category` along with its counterpart `excludeCategory` allow you to filter per route category.
+
+```typescript
+@http.category('myCategory')
+class MyFirstController {
+
+}
+
+class MySecondController {
+    @http.GET().category('myCategory')
+    myAction() {
+    }
+}
+httpMiddleware.for(MyMiddleware).forRoutes({
+    category: 'myCategory'
+})
+```
+=== Group
+
+`group` along with its counterpart `excludeGroup` allow you to filter per route group.
+
+```typescript
+@http.group('myGroup')
+class MyFirstController {
+
+}
+
+class MySecondController {
+    @http.GET().group('myGroup')
+    myAction() {
+    }
+}
+httpMiddleware.for(MyMiddleware).forRoutes({
+    group: 'myGroup'
+})
+```
+
+=== Per Modules
+
+You can limit the execution of a module for a whole module.
+
+```typescript
+httpMiddleware.for(MyMiddleware).forModule(ApiModule)
+```
+
+
+=== Per Self Modules
+
+To execute a middleware for all controllers/routes of a module where the middleware was registered use `forSelfModules()`.
+
+```typescript
+const ApiModule new AppModule({
+    controllers: [MainController, UsersCommand],
+    providers: [MyMiddleware],
+    middlewares: [
+        //for all controllers registered of the same module
+        httpMiddleware.for(MyMiddleware).forSelfModules(),
+    ],
+});
+```
+
+=== Timeout
+
+All middleware needs to execute `next()` sooner or later. If a middleware does not execute `next()` withing a timeout, a warning is logged and the next middleware executed. To change the default of 4seconds to something else use timeout(milliseconds).
+
+```typescript
+const ApiModule = new AppModule({
+    controllers: [MainController, UsersCommand],
+    providers: [MyMiddleware],
+    middlewares: [
+        //for all controllers registered of the same module
+        httpMiddleware.for(MyMiddleware).timeout(15_000),
+    ],
+});
+```
+
+=== Multiple Rules
+
+To combine multiple filters, you can chain method calls.
+
+```typescript
+const ApiModule = new AppModule({
+    controllers: [MyController],
+    providers: [MyMiddleware],
+    middlewares: [
+        httpMiddleware.for(MyMiddleware).forControllers(MyController).excludeRouteNames('secondRoute')
+    ],
+});
+```
+
+=== Express Middleware
+
+Almost all express middlewares are supported. Those who access certain request methods of express are not yet supported.
+
+```typescript
+import * as compression from 'compression';
+
+const ApiModule = new AppModule({
+    middlewares: [
+        httpMiddleware.for(compress()).forControllers(MyController)
+    ],
+});
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 == Resolver
 

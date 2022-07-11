@@ -4,7 +4,7 @@ start_page: ROOT:index.adoc
 version: master
 asciidoc:
   attributes:
-    lang: de
+    lang: german
     source-language: asciidoc@
     table-caption: false
 nav:

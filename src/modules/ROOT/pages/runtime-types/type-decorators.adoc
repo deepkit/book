@@ -62,7 +62,6 @@ is<int8>(2500); //false
 
 == Float
 
-
 == UUID
 
 UUID v4 wird in der Datenbank in der Regel als Binary abgespeichert und in JSON als String.
@@ -158,7 +157,7 @@ serialize<Model>(
 
 == Data
 
-Each property can add additional meta-data that can be read via the Reflection API. See <<runtime-types-reflection>> for more information.
+Each property can add additional meta-data that can be read via the Reflection API. See xref:runtime-types.adoc#runtime-types-reflection[Runtime Types Reflection] for more information.
 
 ```typescript
 import { ReflectionClass } from '@deepkit/type';
@@ -295,7 +294,7 @@ TODO: PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, Databa
 
 TODO
 
-Siehe <<validation-constraint-types>>.
+Siehe xref:validation.adoc#validation-constraint-types[Validation Constraint Types].
 
 === Benutzerdefinierte Type-Decorators
 
@@ -338,4 +337,4 @@ const type = typeOf<Username>();
 groupAnnotation.getAnnotations(type); //['a', 'b']
 ```
 
-Siehe <<runtime-types-reflection>>, um mehr darüber zu erfahren.
+Siehe xref:runtime-types.adoc#runtime-types-reflection[Runtime Types Reflection], um mehr darüber zu erfahren.

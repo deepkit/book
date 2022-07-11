@@ -12,11 +12,11 @@ CLI ist einer von drei Einstiegspunkten zu einer Deepkit Framework Anwendung. Im
 
 Das CLI-Framework erlaubt es auf einfache Art eigene Commands zu registrieren und basiert dabei auf einfachen Klassen. Tatsächlich basiert es auf `@deepkit/app`, einem kleinen Paket, das nur für diesen Zweck gedacht ist und auch eigenständig ohne das Deepkit Framework verwendet werden kann. In diesem Paket finden sich Decorators, die benötigt werden, um die CLI-Controller-Klasse zu dekorieren.
 
-Controller werden vom Dependency Injection Container verwaltet beziehungsweise instanziiert und können daher andere Provider verwenden. Siehe das Kapitel <<dependency-injection>> für weitere Details.
+Controller werden vom Dependency Injection Container verwaltet beziehungsweise instanziiert und können daher andere Provider verwenden. Siehe das Kapitel xref:dependency-injection.adoc[Dependency Injection] für weitere Details.
 
 == Installation
 
-Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig @deepkit/type bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig @deepkit/type bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
@@ -302,7 +302,7 @@ Dies gilt auch für Flags in derselben Art und Weise.
 
 Alle Argumente und Flags werden automatisch basierend auf dessen Typen deserialisiert, validiert und können mit zusätzlichen Einschränkungen versehen werden.
 
-So sind Argument, die als Number definiert sind, in dem Controller auch garantiert immer eine echte Nummer, obwohl das Command-Line Interface auf Text und somit Strings basiert. Die Umwandlung passiert dabei automatisch mit dem Feature <<serialisation-loosely-convertion>>.
+So sind Argument, die als Number definiert sind, in dem Controller auch garantiert immer eine echte Nummer, obwohl das Command-Line Interface auf Text und somit Strings basiert. Die Umwandlung passiert dabei automatisch mit dem Feature xref:serialization.adoc#serialisation-loosely-convertion[Weiche Typenkonvertierung].
 
 ```typescript
 class TestCommand {
@@ -340,7 +340,7 @@ $ ./app.ts test -123
 Validation error in id: Number needs to be positive [positive]
 ```
 
-Bei einer positiven Nummer funktioniert dies dann wieder wie zuvor. Durch diese zusätzliche sehr einfach zu bewerkstelligende Validierung, wird der Command deutlich robuster gegen Falscheingaben geschützt. Sieh dazu das Kapitel <<validation>> für mehr Informationen.
+Bei einer positiven Nummer funktioniert dies dann wieder wie zuvor. Durch diese zusätzliche sehr einfach zu bewerkstelligende Validierung, wird der Command deutlich robuster gegen Falscheingaben geschützt. Sieh dazu das Kapitel xref:validation.adoc[Validation] für mehr Informationen.
 
 == Description
 

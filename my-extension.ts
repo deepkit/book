@@ -14,9 +14,13 @@ module.exports.register = function ({ config }) {
 
     const asciiLoad = Asciidoctor.load;
     Asciidoctor.load = function (...args) {
-        args[1].extension_registry.treeProcessor(function () {
-            extractOrApplyTranslations.call(this, translation);
-        })
+        const options = args[1];
+        if (!options.extension_registry.extRegistered) {
+            options.extension_registry.treeProcessor(function () {
+                extractOrApplyTranslations.call(this, translation);
+            });
+            options.extension_registry.extRegistered = true;
+        }
         translation.setLanguage(args[1].attributes['page-component-name']);
         const document = asciiLoad.call(this, ...args);
         // console.log('YOLO', document.reader?.file, args[1].attributes['page-component-name']);
@@ -25,24 +29,26 @@ module.exports.register = function ({ config }) {
     }
 
     this.on('contentClassified', async (event) => {
-        const { playbook, contentCatalog } = this.getVariables()
+        const { playbook, contentCatalog } = this.getVariables();
         const options = {
             extension_registry: registry,
             safe: 'server',
             base_dir: 'src/modules/ROOT/pages'
         };
 
+        console.log('contentCatalog', contentCatalog.getComponents()[0]);
+
         // console.log('lang', this.getVariables());
         // console.log('contentCatalog', contentCatalog.getComponents());
         // translation.setLanguage(args[1].attributes.lang);
 
-        const components: {[name: string]: true} = {};
+        const components: { [name: string]: true } = {};
         for (const page of contentCatalog.getPages()) {
             components[page.src.component] = true;
         }
 
         for (const component of Object.keys(components)) {
-            console.log('Load component', component);
+            // console.log('Load component', component);
             translation.setLanguage(component);
 
             for (const page of contentCatalog.getPages()) {
@@ -54,6 +60,15 @@ module.exports.register = function ({ config }) {
             }
             console.log('Load languages for', component);
             await translation.loadTranslations();
+        }
+    });
+
+    this.on('documentsConverted', (event) => {
+        const { playbook, contentCatalog } = this.getVariables();
+        for (const page of contentCatalog.getPages()) {
+            translation.setLanguage(page.asciidoc.attributes.lang);
+            page.asciidoc.doctitle = translation.get(page.asciidoc.doctitle);
+            page.asciidoc.navtitle = translation.get(page.asciidoc.navtitle);
         }
     });
 

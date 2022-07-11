@@ -39,7 +39,7 @@ RUN echo 'server {\
               index  index.html index.htm;\
             }\
             location = / { \
-                return 301 /english/;\
+                return 302 /english/;\
             }\
           }' > /etc/nginx/conf.d/default.conf.template
 CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon off;'

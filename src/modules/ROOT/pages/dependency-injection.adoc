@@ -121,9 +121,9 @@ const injector = InjectorContext.forProviders([
 ]);
 ```
 
-Alle Arten von Providern werden in der Sektion <<dependency-injection-providers>> aufgelistet und erklärt.
+Alle Arten von Providern werden in der Sektion xref:dependency-injection.adoc#di-providers[Dependency Injection Providers] aufgelistet und erklärt.
 
-An dieser Stelle sei zu erwähnen, dass Deepkit's DI Container nur mit Runtime Typen von Deepkit funktioniert. Das bedeutet, dass jeder Code, der Klassen, Typen, Interfaces, und Funktionen beinhaltet durch den Deepkit Type Compiler kompiliert werden muss, um so die Typeninformationen zur Laufzeit zur Verfügung zu haben. Siehe dazu das Kapitel <<runtime-types>>.
+An dieser Stelle sei zu erwähnen, dass Deepkit's DI Container nur mit Runtime Typen von Deepkit funktioniert. Das bedeutet, dass jeder Code, der Klassen, Typen, Interfaces, und Funktionen beinhaltet durch den Deepkit Type Compiler kompiliert werden muss, um so die Typeninformationen zur Laufzeit zur Verfügung zu haben. Siehe dazu das Kapitel xref:runtime-types.adoc[Runtime Types].
 
 == Dependency Inversion
 
@@ -174,7 +174,7 @@ Design-Patterns sollen nicht für jeden noch so simplen Code pauschal und blind 
 [#di-installation]
 == Installation
 
-Da Dependency Injection in Deepkit auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben.
+Da Dependency Injection in Deepkit auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann `@deepkit/injector` selbst installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
@@ -208,7 +208,7 @@ const injector = InjectorContext.forProviders([
 const repository = injector.get(UserRepository);
 ```
 
-Das `injector` Objekt ist in diesem Fall der Dependency Injection Container. Die Funktion `InjectorContext.forProviders` nimmt dabei ein Array von Providern entgegen. Siehe die Sektion <<dependency-injection-providers>>, um zu erfahren, welche Werte übergeben werden können.
+Das `injector` Objekt ist in diesem Fall der Dependency Injection Container. Die Funktion `InjectorContext.forProviders` nimmt dabei ein Array von Providern entgegen. Siehe die Sektion xref:dependency-injection.adoc#di-providers[Dependency Injection Providers], um zu erfahren, welche Werte übergeben werden können.
 
 [#di-module-api]
 === Module API
@@ -251,13 +251,13 @@ const lowLevelModule = new InjectorModule([HttpClient])
 
 Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, sodass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
 
-In <<framework-modules>> ist näheres hierzu beschrieben.
+In xref:framework.adoc#framework-modules[Framework Modules] ist näheres hierzu beschrieben.
 
 [lang=english]
-The <<framework-modules>> chapter describes this in more detail.
+The xref:framework.adoc#framework-modules[Framework Modules] chapter describes this in more detail.
 
 [lang=chinese]
-<<framework-modules>>一章对此有更详细的描述。
+xref:framework.adoc#framework-modules[Framework Modules]一章对此有更详细的描述。
 
 [#di-providers]
 == Providers
@@ -536,7 +536,7 @@ class RootConfiguration {
 
 === Validation
 
-Auch können alle Serialization und Validation Typen aus den vorherigen Kapiteln <<validation>> und <<serialisation>> genutzt werden, um so sehr detailliert festzulegen, welchen Typ und inhaltliche Einschränkungen eine Option haben muss.
+Auch können alle Serialization und Validation Typen aus den vorherigen Kapiteln xref:validation.adoc[Validation] und xref:serialization.adoc[Serialization] genutzt werden, um so sehr detailliert festzulegen, welchen Typ und inhaltliche Einschränkungen eine Option haben muss.
 
 ```typescript
 class RootConfiguration {
@@ -638,7 +638,8 @@ httpServer.on('request', (req, res) => {
 });
 ```
 
-Applikationen, die mit dem Deepkit Framework arbeiten, haben per default einen `http`, einen `rpc`, und einen `cli` Scope. Siehe dazu jeweils das Kapitel <<cli>>, <<http>>, oder <<rpc>>.
+Applikationen, die mit dem Deepkit Framework arbeiten, haben per default einen `http`, einen `rpc`, und einen `cli` Scope. Siehe dazu jeweils das Kapitel xref:cli.adoc[CLI], xref:http.adoc[HTTP], oder
+xref:rpc.adoc[RPC].
 
 [#di-setup-calls]
 == Setup Calls

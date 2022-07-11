@@ -30,7 +30,7 @@ dispatcher.dispatch(MyEvent);
 
 == Installation
 
-Da das Event-System von Deepkit basiert auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+Da das Event-System von Deepkit basiert auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann `@deepkit/event` installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 

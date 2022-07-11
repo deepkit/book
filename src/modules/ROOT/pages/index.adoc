@@ -2,6 +2,13 @@
 
 Welcome to the Deepkit documentation. In this documentation you will find more information about how to use each library and the Deepkit Framework in great detail with example code.
 
+== Work in Progress
+
+This documentation is still in progress.
+Although there are already some titles, many especially in the database area have not been written yet.
+We are continuously improving the documentation.
+If you need something urgently, please head over to our Discord channel.
+
 == API
 
 Use the API documentation to get very detailed information about the API of each module.

@@ -1,19 +1,172 @@
 [#template]
 = Template
 
-Eine serverseitige TSX (JSX) basierte Template-Engine, mit der HTML auf eine typen-sichere Art generiert werden kann.
+Die Template-Engine ermöglicht es, typsichere, schnelle und sichere HTML-Templates zu schreiben. Sie basiert auf TSX und ist sofort einsatzbereit, sobald Sie die Dateierweiterung `.tsx` verwenden und die `tsconfig.json` entsprechend anpassen.
+
+Wichtig dabei ist: Es ist nicht kompatibel zu React. Sobald React eingesetzt werden soll, ist `@deepkit/template` inkompatibel. Deepkit's Template engine ist nur für SSR (Server-Side-Rendering) gedacht.
 
 == Installation
 
+In your tsconfig you have to adjust following settings: `jsx` and `jsxImportSource`
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2020",
+    "moduleResolution": "node",
+
+    "jsx": "react-jsx",
+    "jsxImportSource": "@deepkit/template"
+  }
+}
+```
+
+Jetzt können Sie TSX direkt in Ihrem Controller verwenden.
+
+```typescript
+#!/usr/bin/env ts-node-script
+import { App } from '@deepkit/app';
+import { FrameworkModule } from '@deepkit/framework';
+import { http } from '@deepkit/http';
+
+@http.controller('my-base-url/')
+class MyPage {
+    @http.GET('hello-world')
+    helloWorld() {
+        return <div style="color: red">Hello World</div>;
+    }
+}
+
+new App({
+    controllers: [MyPage],
+    imports: [
+        new FrameworkModule({
+            debug: true,
+        })
+    ]
+}).run();
+```
+
+Wenn Sie eine solches TSX in Ihrer Routenmethode zurückgeben, wird der HTTP-Inhaltstyp automatisch auf `text/html; charset=utf-8` gesetzt.
+
 == Components
+
+Sie können Ihre Templates so strukturieren, wie Sie es von React gewohnt sind. Entweder modularisieren Sie Ihr Layout in mehrere Funktions- oder Klassenkomponenten.
+
 
 === Function Components
 
+Am einfachsten ist es, eine Funktion zu verwenden, die TSX zurückgibt.
+
+```typescript
+async function Website(props: {title: string, children?: any}) {
+    return <html>
+        <head>
+            <title>{props.title}</title>
+        </head>
+        <body>
+            {props.children}
+        </body>
+    </html>;
+}
+
+class MyPage {
+    @http.GET('hello-world')
+    helloWorld() {
+        return <Website title="Hello world">
+            <h1>Great page</h1>
+        </Website>;
+    }
+}
+```
+
+```sh
+$ curl http://localhost:8080/hello-world
+<html><head><title>Hello world</title></head><body><h1>Great page</h1></body></html>
+```
+
+Funktionskomponenten können (anders als in React) asynchron sein. Dies ist ein wichtiger Unterschied zu anderen Template-Engines, die Sie vielleicht kennen, wie React.
+
+Alle Funktionen haben Zugriff auf den Dependency Injection Container und können ab dem dritten Parameter beliebige Dependencies referenzieren.
+
+```typescript
+class Database {
+    users: any[] = [{ username: 'Peter' }];
+}
+
+function UserList(props: {}, children: any, database: Database) {
+    return <div>{database.users.length}</div>;
+}
+
+class MyPage {
+    @http.GET('list')
+    list() {
+        return <UserList/>
+    }
+}
+
+new App({
+    controllers: [MyPage],
+    providers: [Database],
+    imports: [new FrameworkModule()]
+}).run();
+```
+
+
 === Class Components
 
-== Dependency Injection
+Eine alternative Art, eine Komponente zu schreiben, ist eine Klassenkomponente. Sie werden im Dependency Injection Container behandelt und instanziiert und haben somit Zugriff auf alle im Container registrierten Dienste. Dadurch ist es möglich, in Ihren Komponenten beispielsweise direkt auf eine Datenquelle wie eine Datenbank zuzugreifen.
+
+```typescript
+class UserList {
+    constructor(
+        protected props: {},
+        protected children: any,
+        protected database: SQLiteDatabase) {
+    }
+
+    async render() {
+        const users = await this.database.query(User).find();
+
+        return <div class="users">
+            {users.map((user) => <UserDetail user={user}/>)}
+        </div>;
+    }
+}
+
+class MyPage {
+    @http.GET('')
+    listUsers() {
+        return <UserList/>;
+    }
+}
+```
+
+Für Klassenkomponenten sind die ersten Konstruktorargumente reserviert. `props` kann beliebig definiert werden, `children` ist immer "any", und dann folgen optionale Abhängigkeiten, die Sie beliebig wählen können. Da Klassenkomponenten im Dependency Injection Container instanziiert werden, haben Sie Zugriff auf alle Ihre Services.
 
 == Dynamic HTML
 
+Die Template-Engine hat alle verwendeten Variablen automatisch bereinigt, sodass Sie Benutzereingaben sicher direkt in der Vorlage verwenden können. Um dynamisches HTML zu rendern, können Sie die Funktion html verwenden.
+
+```typescript
+import { html } from '@deepkit/template';
+helloWorld() {
+    const yes = "<b>yes!</b>";
+    return <div style="color: red">Hello World. {html(yes)}</div>;
+}
+```
+
 == Optimization
 
+Die Template-Engine versucht, den generierten JSX-Code so zu optimieren, dass es für NodeJS/V8 viel einfacher ist, den HTML-String zu generieren. Damit dies korrekt funktioniert, sollten Sie alle Ihre Komponenten aus der Hauptdatei app.tsx in separate Dateien verschieben. Eine Struktur könnte so aussehen:
+
+```
+.
+├── app.ts
+└── views
+    ├── user-detail.tsx
+    ├── user-list.tsx
+    └── website.tsx
+```

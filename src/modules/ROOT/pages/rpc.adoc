@@ -7,7 +7,7 @@ Der Vorteil von RPC besteht darin, dass die Client-Server Abstraktion leichtgewi
 
 Ein Schlüsselfeature von RPC ist, dass die Daten zwischen dem Client und Server automatisch serialisiert und deserialisiert werden. Aus diesem Grund sind meist typen-sichere RPC-Clients möglich. Manche RPC-Frameworks zwingen den Benutzern daher, die Typen (Parameter-Types und Return-Types) in einem bestimmten Format bereitzustellen. Dies kann in Form von einer eigenen DSL wie bei gRPC (Protocol Buffers) und GraphQL mit einem Code-Generator sein oder in Form von einem JavaScript Schema-Builder. Zusätzliche Validierung der Daten kann das RPC-Framework ebenfalls anbieten, wird aber nicht von allen unterstützt.
 
-In Deepkit RPC werden die Typen aus den Funktionen von dem TypeScript-Code selbst extrahiert (siehe <<runtime-types>>), sodass es nicht nötig ist, ein Code-Generator zu verwenden oder diese manuell zu definieren. Deepkit unterstützt dabei das automatische Serialisieren und Deserialisieren von Parametern und Resultaten. Sobald zusätzliche Einschränkungen aus <<validation>> definiert sind, werden diese auch automatisch validiert. Dies macht die Kommunikation über RPC extrem typen-sicher und effektiv. Die Unterstützung von Streaming via `rxjs` in Deepkit RPC macht dieses RPC-Framework auch zu einem geeigneten Tool für Echtzeitkommunikation.
+In Deepkit RPC werden die Typen aus den Funktionen von dem TypeScript-Code selbst extrahiert (siehe xref:runtime-types.adoc[Runtime Types]), sodass es nicht nötig ist, ein Code-Generator zu verwenden oder diese manuell zu definieren. Deepkit unterstützt dabei das automatische Serialisieren und Deserialisieren von Parametern und Resultaten. Sobald zusätzliche Einschränkungen aus xref:validation.adoc[Validation] definiert sind, werden diese auch automatisch validiert. Dies macht die Kommunikation über RPC extrem typen-sicher und effektiv. Die Unterstützung von Streaming via `rxjs` in Deepkit RPC macht dieses RPC-Framework auch zu einem geeigneten Tool für Echtzeitkommunikation.
 
 Um das Konzept hinter RPC zu veranschaulichen folgender Code:
 
@@ -71,7 +71,7 @@ Es ist zwar auch möglich, direkt `UserController` via `import type { UserContro
 
 == Installation
 
-Da Deepkit RPC auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu <<runtime-types-installation>>.
+Da Deepkit RPC auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann `@deepkit/rpc` installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
@@ -223,7 +223,7 @@ const kernel = new RpcKernel(injector);
 kernel.registerController(Controller);
 ```
 
-Siehe <<dependency-injection>>, um mehr zu erfahren.
+Siehe xref:dependency-injection.adoc[Dependency Injection], um mehr zu erfahren.
 
 [#rpc-nominal-types]
 == Nominal Types
@@ -257,7 +257,7 @@ user instanceof User; //true when @entity.name is used, and false if not
 
 == Error Forwarding
 
-RPC Funktionen können Fehler werfen. Diese Fehler werden standardmäßig an den Client weitergeleitet und dort erneut geworfen. Wenn eigene Error-Klassen genutzt werden, sollte ihr nominaler Typ aktiviert werden. Siehe dazu <<rpc-nominal-types>>.
+RPC Funktionen können Fehler werfen. Diese Fehler werden standardmäßig an den Client weitergeleitet und dort erneut geworfen. Wenn eigene Error-Klassen genutzt werden, sollte ihr nominaler Typ aktiviert werden. Siehe dazu xref:rpc.adoc#rpc-nominal-types[RPC Nominal Types].
 
 ```typescript
 @entity.name('@error:myError')
@@ -438,7 +438,7 @@ Sofern die Deepkit RPC Library direkt benutzt wird, wird die `RpcKernelSecurity`
 
 Wenn das Deepkit Framework genutzt wird, wird die Klasse von dem Dependency Injection Container instantiiert und hat so automatisch Zugriff auf alle anderen Provider der Anwendung.
 
-Siehe hierzu auch <<dependency-injection>>.
+Siehe hierzu auch xref:dependency-injection.adoc[Dependency Injection].
 
 == Streaming RxJS
 

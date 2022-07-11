@@ -26,7 +26,7 @@ Das Entity-Typensystem ist dabei so ausgelegt, dass diese Typen beziehungsweise 
 
 == Installation
 
-Da Deepkit ORM auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben.
+Da Deepkit ORM auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 Falls dies erfolgreich geschehen ist, kann `@deepkit/orm` selbst und ein Datenbank-Adapter installiert werden.
 
@@ -1137,8 +1137,117 @@ Um eine Standard-MongoDB-Instanz in ein Replikatset zu konvertieren, lesen Sie b
 
 == App Configuration
 
-== Composite Primary Key
+include::./database/composite-primary-key.adoc[leveloffset=+1]
 
 == Plugins
 
 === Soft-Delete
+
+Das Soft-Delete Plugin ermöglicht es, Datenbankeinträge versteckt zu halten, ohne sie tatsächlich zu löschen. Wenn ein Datensatz gelöscht wird, wird er nur als gelöscht markiert und nicht wirklich gelöscht. Alle Abfragen filtern automatisch nach dieser gelöschten Eigenschaft, sodass es sich für den Benutzer so anfühlt, als ob er tatsächlich gelöscht wäre.
+
+Um das Plugin zu verwenden, müssen Sie die SoftDelete-Klasse instanziieren und sie für jede Entität aktivieren.
+
+```typescript
+import { entity, PrimaryKey, AutoIncrement } from '@deepkit/type';
+import { SoftDelete } from '@deepkit/orm';
+
+@entity.name('user')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+
+    // this field is used as indicator whether the record is deleted.
+    deletedAt?: Date;
+
+    // this field is optional and can be used to track who/what deleted the record.
+    deletedBy?: string;
+
+    constructor(
+        public name: string
+    ) {
+    }
+}
+
+const softDelete = new SoftDelete(database);
+softDelete.enable(User);
+
+//or disable again
+softDelete.disable(User);
+```
+
+==== Löschen
+
+Um Datensätze sanft zu löschen, verwenden Sie die üblichen Methoden: `deleteOne` oder `deleteMany` in einer Abfrage, oder Sie verwenden die Session, um sie zu löschen. Das Soft-Delete Plugin erledigt den Rest automatisch im Hintergrund.
+
+==== Wiederherstellen
+
+Gelöschte Datensätze können mithilfe einer aufgehobenen Abfrage über `SoftDeleteQuery` wiederhergestellt werden. Es hat `restoreOne` und `restoreMany`.
+
+```typescript
+import { SoftDeleteQuery } from '@deepkit/orm';
+
+await database.query(User).lift(SoftDeleteQuery).filter({ id: 1 }).restoreOne();
+await database.query(User).lift(SoftDeleteQuery).filter({ id: 1 }).restoreMany();
+```
+
+Die Session unterstützt auch die Wiederherstellung von Elementen.
+
+```typescript
+import { SoftDeleteSession } from '@deepkit/orm';
+
+const session = database.createSession();
+const user1 = session.query(User).findOne();
+
+session.from(SoftDeleteSession).restore(user1);
+await session.commit();
+```
+
+==== Hard Delete
+
+Um Datensätze hart zu löschen, verwenden Sie eine gehobene Abfrage über SoftDeleteQuery. Dies stellt im Wesentlichen das alte Verhalten ohne das Plugin für eine einzelne Abfrage wieder her.
+
+```typescript
+import { SoftDeleteQuery } from '@deepkit/orm';
+
+await database.query(User).lift(SoftDeleteQuery).hardDeleteOne();
+await database.query(User).lift(SoftDeleteQuery).hardDeleteMany();
+
+//those are equal
+await database.query(User).lift(SoftDeleteQuery).withSoftDeleted().deleteOne();
+await database.query(User).lift(SoftDeleteQuery).withSoftDeleted().deleteMany();
+```
+
+==== Query deleted.
+
+Bei einem "lifted" Query über `SoftDeleteQuery` können Sie auch gelöschte Datensätze einbeziehen.
+
+```typescript
+import { SoftDeleteQuery } from '@deepkit/orm';
+
+// find all, soft deleted and not deleted
+await database.query(User).lift(SoftDeleteQuery).withSoftDeleted().find();
+
+// find only soft deleted
+await database.query(s).lift(SoftDeleteQuery).isSoftDeleted().count()
+```
+
+==== Deleted by
+
+`deletedBy` kann über Abfrage und Sessions festgelegt werden.
+
+```typescript
+import { SoftDeleteSession } from '@deepkit/orm';
+
+const session = database.createSession();
+const user1 = session.query(User).findOne();
+
+session.from(SoftDeleteSession).setDeletedBy('Peter');
+session.remove(user1);
+
+await session.commit();
+import { SoftDeleteQuery } from '@deepkit/orm';
+
+database.query(User).lift(SoftDeleteQuery)
+.deletedBy('Peter')
+.deleteMany();
+```

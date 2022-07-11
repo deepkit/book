@@ -1,25 +1,25 @@
 /* PrismJS 1.28.0
 https://prismjs.com/download.html#themes=prism&languages=markup+clike+javascript+bash+typoscript */
-code, pre {
-    color: #000;
-    background: 0 0;
-    text-shadow: 0 1px #fff;
-    font-family: 'LMMono10', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    text-align: left;
-    white-space: pre;
-    word-spacing: normal;
-    word-break: normal;
-    word-wrap: normal;
-    font-size: 0.7rem;
-    line-height: 0.9rem;
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
-    tab-size: 4;
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
-    hyphens: none
-}
+/*code, pre {*/
+/*    color: #000;*/
+/*    background: 0 0;*/
+/*    text-shadow: 0 1px #fff;*/
+/*    font-family: 'LMMono10', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;*/
+/*    text-align: left;*/
+/*    white-space: pre;*/
+/*    word-spacing: normal;*/
+/*    word-break: normal;*/
+/*    word-wrap: normal;*/
+/*    font-size: 0.7rem;*/
+/*    line-height: 0.9rem;*/
+/*    -moz-tab-size: 4;*/
+/*    -o-tab-size: 4;*/
+/*    tab-size: 4;*/
+/*    -webkit-hyphens: none;*/
+/*    -moz-hyphens: none;*/
+/*    -ms-hyphens: none;*/
+/*    hyphens: none*/
+/*}*/
 
 code[class*=language-] ::-moz-selection, code[class*=language-]::-moz-selection, pre[class*=language-] ::-moz-selection, pre[class*=language-]::-moz-selection {
     text-shadow: none;
@@ -37,11 +37,11 @@ code[class*=language-] ::selection, code[class*=language-]::selection, pre[class
     }
 }
 
-pre[class*=language-] {
-    /*padding: 1em;*/
-    /*margin: .5em 0;*/
-    overflow: visible;
-}
+/*pre[class*=language-] {*/
+/*    !*padding: 1em;*!*/
+/*    !*margin: .5em 0;*!*/
+/*    overflow: visible;*/
+/*}*/
 
 /*:not(pre) > code[class*=language-], pre[class*=language-] {*/
 /*    background: #f5f2f0*/
@@ -75,7 +75,7 @@ pre[class*=language-] {
 
 .language-css .token.string, .style .token.string, .token.entity, .token.operator, .token.url {
     color: #9a6e3a;
-    background: hsla(0, 0%, 100%, .5)
+    /*background: hsla(0, 0%, 100%, .5)*/
 }
 
 .token.atrule, .token.attr-value, .token.keyword {

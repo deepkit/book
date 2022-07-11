@@ -1,5 +1,5 @@
 @import "../font/CMUSerif/stylesheet.css";
-//@import "../font/latin-modern/stylesheet.css";
+@import "../font/latin-modern/stylesheet.css";
 
 body {
   //font-family: "Times New Roman", serif;
@@ -31,6 +31,46 @@ body {
 //  padding: 3px 0;
 //}
 
+
+code {
+  font-family: 'LMMono10', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  background-color: #eee;
+  border-radius: 3px;
+  padding: 1px 3px;
+}
+
+pre.highlight {
+  margin: 10px 0;
+}
+
+pre.highlight, pre.highlight > code {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  background: #f4f4f4;
+  font-family: Source Code Pro, monospace;
+  border-radius: 3px;
+  color: #333;
+  padding: 11px;
+  text-align: left;
+  max-width: 100%;
+  overflow: auto;
+  overflow: overlay;
+  scrollbar-width: thin;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+}
+
+pre.highlight > code {
+  font-size: unset;
+  line-height: unset;
+  background-color: unset;
+  border-radius: unset;
+  padding: unset;
+}
+
 .nav-container {
   min-width: 200px;
 }
@@ -56,7 +96,10 @@ body {
   line-height: 1.2rem;
 
   a, a:link {
-    text-decoration: underline;
+    color: #1d427b;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 
@@ -111,7 +154,7 @@ h2 {
 
 .imageblock {
   padding: 25px 0;
-  margin: 0 -100px;
+  margin: 0 -30px;
 
   img {
     max-width: 100%;
@@ -157,6 +200,7 @@ li.nav-item.is-current-page {
     color: var(--color-link);
   }
 }
+
 a.is-current-page, a:link.is-current-page {
   color: var(--color-link);
 }
