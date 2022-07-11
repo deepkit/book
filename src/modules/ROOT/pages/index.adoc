@@ -1,22 +1,23 @@
 = Documentation
 
-Welcome to the Deepkit documentation. In this documentation you will find more information about how to use each library and the Deepkit Framework in great detail with example code.
+Willkommen bei der Deepkit-Dokumentation.
+In dieser Dokumentation finden Sie weitere Informationen über die Verwendung der einzelnen Bibliotheken und des Deepkit-Frameworks in allen Einzelheiten mit Beispielcode.
 
 == Work in Progress
 
-This documentation is still in progress.
-Although there are already some titles, many especially in the database area have not been written yet.
-We are continuously improving the documentation.
-If you need something urgently, please head over to our Discord channel.
+Diese Dokumentation ist noch in Arbeit.
+Obwohl es bereits einige Platzhalter gibt, sind viele, besonders im Bereich der Datenbanken, noch nicht geschrieben worden.
+Wir sind ständig dabei, die Dokumentation zu verbessern.
+Wenn Sie dringend etwas brauchen, gehen Sie bitte in unseren Discord-Server.
 
 == API
 
-Use the API documentation to get very detailed information about the API of each module.
+Verwenden Sie die API-Dokumentation, um sehr detaillierte Informationen über die API der einzelnen Module zu erhalten.
 
 link:https://deepkit.io/assets/api-docs/modules.html[API Documentation, role=big]
 
 == Support
 
-If you need help, please join the Discord community server:
+Wenn Sie Hilfe benötigen, treten Sie bitte dem Discord-Community-Server bei:
 
 link:https://deepkit.io/community[Community, role=big]

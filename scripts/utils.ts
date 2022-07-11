@@ -66,6 +66,10 @@ export class Translation {
 
         // textQueue.length = 5;
 
+        if (this.textQueue.length>500) {
+            this.textQueue.length = 500;
+            console.log('!!! Translation truncated to 500 items. Rerun to get more.');
+        }
         console.log('load translations for', this.textQueue.length);
         const params = new URLSearchParams();
         const map: { [text: string]: { index: number } } = {};
