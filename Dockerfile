@@ -10,7 +10,7 @@ ADD package-lock.json /app/package-lock.json
 RUN npm ci
 
 ADD . /app
-RUN cd /app && git init
+RUN cd /app && git init && git add . && git commit --allow-empty -m "Initialize repository"
 
 RUN mkdir build
 ENV DIST_BUILD 1
