@@ -27,6 +27,9 @@ WORKDIR /usr/share/nginx/html
 COPY --from=0 /app/build /usr/share/nginx/html
 ADD src/index.html /usr/share/nginx/html/index.html
 
+RUN ls -al /usr/share/nginx/html
+RUN ls -al /usr/share/nginx/html/english
+
 RUN echo 'server {\
             port_in_redirect off;\
             listen $PORT default_server;\
