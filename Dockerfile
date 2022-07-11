@@ -10,6 +10,8 @@ ADD package-lock.json /app/package-lock.json
 RUN npm ci
 
 ADD . /app
+RUN git config --global user.email "you@example.com"
+RUN git config --global user.name "Your Name"
 RUN cd /app && git init && git add . && git commit --allow-empty -m "Initialize repository"
 
 RUN mkdir build
