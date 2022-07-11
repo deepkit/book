@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  website:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Image build
+        run: |
+          echo "${{secrets.GITHUB_TOKEN}}" | docker login docker.pkg.github.com --username \$GITHUB_ACTOR  --password-stdin
+          docker build -t docker.pkg.github.com/deepkit/book/book:latest -f Dockerfile .;
+          docker push docker.pkg.github.com/deepkit/book/book:latest
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: marcjschmidt.de
+          username: deploy
+          password: ${{secrets.SSH_PW}}
+          script_stop: true
+          script: |
+            echo "${{secrets.GITHUB_TOKEN}}" | docker login docker.pkg.github.com --username \$GITHUB_ACTOR  --password-stdin
+            docker pull docker.pkg.github.com/deepkit/book/book:latest
+            docker-compose up -d

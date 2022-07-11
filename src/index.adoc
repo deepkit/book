@@ -11,6 +11,10 @@ Marc J. Schmidt
 
 <<<
 
+include::modules/ROOT/pages/introduction.adoc[leveloffset=+1]
+
+<<<
+
 include::modules/ROOT/pages/runtime-types.adoc[leveloffset=+1]
 
 <<<
