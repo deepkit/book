@@ -1,0 +1,11 @@
+name: chinese
+title: Chinese
+start_page: ROOT:index.adoc
+version: master
+asciidoc:
+  attributes:
+    lang: ch
+    source-language: asciidoc@
+    table-caption: false
+nav:
+  - modules/ROOT/nav.adoc

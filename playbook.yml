@@ -8,6 +8,8 @@ content:
       start_path: src/
     - url: ./
       start_path: src/english
+    - url: ./
+      start_path: src/chinese
 ui:
   bundle:
     url: ./ui-bundle
