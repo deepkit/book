@@ -16,10 +16,12 @@ RUN cd /app && git init && git add . && git commit --allow-empty -m "Initialize 
 
 RUN mkdir build
 ENV DIST_BUILD 1
+RUN cd /app/src/chinese && ln -s ../modules modules
+RUN cd /app/src/english && ln -s ../modules modules
 RUN make all
-RUN #node -r ts-node/register scripts/build.ts german
-RUN #node -r ts-node/register scripts/build.ts english
-RUN #node -r ts-node/register scripts/build.ts chinese
+#RUN node -r ts-node/register scripts/build.ts german
+#RUN node -r ts-node/register scripts/build.ts english
+#RUN node -r ts-node/register scripts/build.ts chinese
 #RUN node -r ts-node/register scripts/build.ts polish
 
 FROM nginx:1.21
@@ -28,9 +30,6 @@ WORKDIR /usr/share/nginx/html
 
 COPY --from=0 /app/build /usr/share/nginx/html
 ADD src/index.html /usr/share/nginx/html/index.html
-
-RUN ls -al /usr/share/nginx/html
-RUN ls -al /usr/share/nginx/html/english
 
 RUN echo 'server {\
             port_in_redirect off;\
