@@ -28,7 +28,7 @@ COPY --from=0 /app/build /usr/share/nginx/html
 ADD src/index.html /usr/share/nginx/html/index.html
 
 RUN echo 'server {\
-            port_in_redirect off;
+            port_in_redirect off;\
             listen $PORT default_server;\
             location / {\
               root   /usr/share/nginx/html;\
