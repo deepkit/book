@@ -2,12 +2,10 @@
 import asciidoctor, { Asciidoctor } from "asciidoctor";
 import { cpSync, writeFileSync } from 'fs';
 
-import docbookConverter from '@asciidoctor/docbook-converter';
 import { extractOrApplyTranslations, macroPageBreak, Translation } from "./utils";
 import ProcessorOptions = Asciidoctor.ProcessorOptions;
 
 const asciidoc = asciidoctor();
-docbookConverter.register();
 
 async function main() {
     const translation = new Translation(process.argv[2]);

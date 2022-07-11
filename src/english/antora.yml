@@ -1,6 +1,6 @@
 name: english
 title: English
-start_page: ROOT:web.adoc
+start_page: ROOT:index.adoc
 version: master
 asciidoc:
   attributes:

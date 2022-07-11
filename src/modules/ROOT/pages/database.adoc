@@ -1,14 +1,134 @@
 [#database]
 = Database
 
+Deepkit bietet ein ORM, das es ermöglicht, auf Datenbanken auf moderne Art und Weise zuzugreifen.
+Entities werden dabei einfach über TypeScript Typen definiert:
+
+```typescript
+import { entity, PrimaryKey, AutoIncrement, Unique, MinLength, MaxLength } from '@deepkit/type';
+
+@entity.name('user')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+    firstName?: string;
+    lastName?: string;
+
+    constructor(
+        public username: string & Unique & MinLength<2> & MaxLength<16>,
+        public email: string & Unique,
+    ) {}
+}
+```
+
+Dabei können beliebige TypeScript Typen und Validierung-Dekoratoren von Deepkit benutzt werden, um die Entity vollumfänglich zu definieren.
+Das Entity-Typensystem ist dabei so ausgelegt, dass diese Typen beziehungsweise Klassen ebenfalls in anderen Bereichen wie HTTP-Routen, RPC-Aktionen, oder Frontend benutzt werden können. Das verhindert, dass man zum Beispiel einen User mehrmals in der gesamten Applikation verteilt definiert hat.
+
 == Installation
 
+Da Deepkit ORM auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben.
+
+Falls dies erfolgreich geschehen ist, kann `@deepkit/orm` selbst und ein Datenbank-Adapter installiert werden.
+
+Falls Klassen als Entities verwendet werden sollen, muss `experimentalDecorators` in der tsconfig.json aktiviert werden:
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true
+  }
+}
+```
+
+Sobald die Library installiert ist, kann ein Datenbank-Adapter installiert und die API davon direkt benutzt werden.
+
 === SQLite
+
+```sh
+npm install @deekpit/orm @deepkit/sqlite
+```
+
+```typescript
+import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
+
+const database = new Database(new SQLiteDatabaseAdapter('./example.sqlite'), [User]);
+const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User]);
+```
+
 === MySQL
+
+```sh
+npm install @deekpit/orm @deepkit/mysql
+```
+
+```typescript
+import { MySQLDatabaseAdapter } from '@deepkit/mysql';
+
+const database = new Database(new MySQLDatabaseAdapter({
+    host: 'localhost',
+    port: 3306
+}), [User]);
+```
+
 === Postgres
+
+```sh
+npm install @deekpit/orm @deepkit/postgres
+```
+
+```typescript
+import { PostgresDatabaseAdapter } from '@deepkit/postgres';
+
+const database = new Database(new PostgresDatabaseAdapter({
+    host: 'localhost',
+    port: 3306
+}), [User]);
+```
+
 === MongoDB
 
+```sh
+npm install @deekpit/orm @deepkit/bson @deepkit/mongo
+```
+
+```typescript
+import { MongoDatabaseAdapter } from '@deepkit/mongo';
+
+const database = new Database(new MongoDatabaseAdapter('mongodb://localhost/mydatabase'), [User]);
+```
+
 == Benutzung
+
+Es wird primär mit dem `Database` Objekt gearbeitet. Einmal instantiiert, kann es innerhalb der ganzen Anwendung genutzt werde, um Daten abzufragen oder zu manipulieren. Die Verbindung zur Datenbank wird dabei lazy initialisiert.
+
+Dem `Database` Objekt wird ein Adapter übergeben, welcher aus den Datenbank-Adaptern Libraries kommt.
+
+```typescript
+import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
+import { entity, PrimaryKey, AutoIncrement } from '@deepkit/type';
+import { Database } from '@deepkit/orm';
+
+async function main() {
+    @entity.name('user')
+    class User {
+        public id: number & PrimaryKey & AutoIncrement = 0;
+        created: Date = new Date;
+
+        constructor(public name: string) {
+        }
+    }
+
+    const database = new Database(new SQLiteDatabaseAdapter('./example.sqlite'), [User]);
+    await database.migrate(); //create tables
+
+    await database.persist(new User('Peter'));
+
+    const allUsers = await database.query(User).find();
+    console.log('all users', allUsers);
+}
+
+main();
+```
 
 === Database
 
@@ -18,21 +138,224 @@
 
 == Entity
 
+Eine Entity ist entweder eine Klasse oder Object Literal (interface) und hat immer einen Primary Key.
+Die Entity wird mittels Typen-Dekoratoren aus `@deepkit/type` mit alle notwendigen Informationen dekoriert. Zum Beispiel wird ein Primary Key definiert sowie diverse Felder und ihre Validierungen-Einschränkungen. Dieser Felder spiegeln die Datenbank-Struktur ab, in der Regel eine Tabelle oder eine Collection.
+
+Durch spezielle Typen-Dekoratoren wie `Mapped<'name'>` kann ein Feldnamen auch auf einen anderen Namen in der Datenbank abgebildet werden.
+
+=== Klasse
+
+```typescript
+import { entity, PrimaryKey, AutoIncrement, Unique, MinLength, MaxLength } from '@deepkit/type';
+
+@entity.name('user')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+    firstName?: string;
+    lastName?: string;
+
+    constructor(
+        public username: string & Unique & MinLength<2> & MaxLength<16>,
+        public email: string & Unique,
+    ) {}
+}
+
+const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User]);
+await database.migrate();
+
+await database.persist(new User('Peter'));
+
+const allUsers = await database.query(User).find();
+console.log('all users', allUsers);
+```
+
+=== Interface
+
+```typescript
+import { PrimaryKey, AutoIncrement, Unique, MinLength, MaxLength } from '@deepkit/type';
+
+interface User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+    firstName?: string;
+    lastName?: string;
+    username: string & Unique & MinLength<2> & MaxLength<16>;
+}
+
+const database = new Database(new SQLiteDatabaseAdapter(':memory:'));
+database.register<User>({name: 'user'});
+
+await database.migrate();
+
+const user: User = {id: 0, created: new Date, username: 'Peter'};
+await database.persist(user);
+
+const allUsers = await database.query<User>().find();
+console.log('all users', allUsers);
+```
+
 === Primitives
+
+Primitive Datentypen wie String, Number (bigint), und Boolean werden gängige Datenbank-Typen abgebildet. Es wird dabei lediglich der TypeScript Type genutzt.
+
+```typescript
+
+interface User {
+    logins: number;
+    username: string;
+    pro: boolean;
+}
+```
 
 === Primary Key
 
+Jede Entity braucht genau einen Primary Key. Mehrere Primary Keys werden nicht unterstützt.
+
+Der Basis-Typ eines Primary Keys kann dabei beliebig sein. Oft wird eine Nummer oder UUID verwendet.
+Für MongoDB wird gerne die MongoId bzw ObjectID verwendet.
+
+Bei Nummern bietet sich `AutoIncrement` an.
+
+```typescript
+import { PrimaryKey } from '@deepkit/type';
+
+interface User {
+    id: number & PrimaryKey;
+}
+```
+
 === Auto Increment
+
+Felder, die beim Einfügen automatisch inkrementiert werden sollen, werden mit dem `AutoIncrement` Dekorator annotiert. Alle Adapter unterstützen auto-increment Werte. Der MongoDB Adapter verwendet eine zusätzliche Collection, um den Zähler zu verfolgen.
+
+Ein Auto-Increment Feld ist ein automatischer Zähler und kann nur an einem Primary Key angewendet werden. Die Datenbank stellt automatisch sicher, dass eine ID nur einmal verwendet wird.
+
+```typescript
+import { PrimaryKey, AutoIncrement } from '@deepkit/type';
+
+interface User {
+    id: number & PrimaryKey & AutoIncrement;
+}
+```
 
 === UUID
 
+Felder, die vom Typ UUID (v4) sein sollten, werden mit dem Dekorator UUID annotiert. Der Laufzeittyp ist `string` und in der Datenbank selbst meist binär. Verwenden Sie die Funktion `uuid()`, um eine neue UUID v4 zu erzeugen.
+
+```typescript
+import { uuid, UUID, PrimaryKey } from '@deepkit/type';
+
+class User {
+    id: UUID & PrimaryKey = uuid();
+}
+```
+
 === MongoDB ObjectID
 
+Felder, die in MongoDB vom Typ ObjectID sein sollten, werden mit dem Dekorator `MongoId` annotiert. Der Laufzeittyp ist `string` und in der Datenbank selbst `ObjectId` (binär).
+
+MongoID-Felder erhalten beim Einfügen automatisch einen neuen Wert. Es ist nicht zwingend nötig, den Feldnamen `_id` zu verwenden. Er kann einen beliebigen Namen haben.
+
+```typescript
+import { PrimaryKey, MongoId } from '@deepkit/type';
+
+class User {
+    id: MongoId & PrimaryKey = '';
+}
+```
+
 === Optional / Nullable
+
+Optionale Felder werden mit `title?: string` oder `title: string | null` als TypeScript-Typ deklariert. Man sollte nur eine Variante davon verwenden, normalerweise die optionale `?` Syntax, die mit `undefined` funktioniert.
+Beide Varianten führen dazu, dass der Datenbank-Typ für alle SQL-Adapter `NULLABLE` ist. Der einzige Unterschied zwischen diesen Dekoratoren ist also, dass sie unterschiedliche Werte zur Laufzeit darstellen.
+
+Im folgenden Beispiel ist das geänderte Feld optional und kann daher zur Laufzeit undefiniert sein, obwohl es in der Datenbank immer als NULL dargestellt wird.
+
+```typescript
+import { PrimaryKey } from '@deepkit/type';
+
+class User {
+    id: number & PrimaryKey = 0;
+    modified?: Date;
+}
+```
+
+Dieses Beispiel zeigt, wie der nullable Typ funktioniert. Sowohl in der Datenbank als auch in der Javascript-Laufzeit wird NULL verwendet. Dies ist ausführlicher als `modified?: Date` und wird nicht häufig verwendet.
+
+```typescript
+import { PrimaryKey } from '@deepkit/type';
+
+class User {
+    id: number & PrimaryKey = 0;
+    modified: Date | null = null;
+}
+```
+
+=== Database Type Mapping
+
+|===
+|Runtime type|SQLite|MySQL|Postgres|Mongo
+
+|string|text|longtext|text|string
+|number|float|double|double precision|int/number
+|boolean|integer(1)|boolean|boolean|boolean
+|date|text|datetime|timestamp|datetime
+|array|text|json|jsonb|array
+|map|text|json|jsonb|object
+|map|text|json|jsonb|object
+|union|text|json|jsonb|T
+|uuid|blob|binary(16)|uuid|binary
+|ArrayBuffer/Uint8Array/...|blob|longblob|bytea|binary
+|===
+
+Mit `DatabaseField` ist es möglich, ein Feld auf einen beliebigen Datenbank-Typen zu mappen. Der Typ muss eine gültige SQL-Anweisung sein, die unverändert an das Migrationssystem übergeben wird.
+
+```typescript
+import { DatabaseField } from '@deepkit/type';
+
+interface User {
+    title: string & DatabaseField<{type: 'VARCHAR(244)'}>;
+}
+```
+
+Um ein Feld für eine bestimmte Datenbank zu mappen, kann entweder `SQLite`, `MySQL`, oder `Postgres` benutzt werden.
+
+==== SQLite
+
+```typescript
+import { SQLite } from '@deepkit/type';
+
+interface User {
+    title: string & SQLite<{type: 'text'}>;
+}
+```
+
+==== MySQL
+
+```typescript
+import { MySQL } from '@deepkit/type';
+
+interface User {
+    title: string & MySQL<{type: 'text'}>;
+}
+```
+
+==== Postgres
+
+```typescript
+import { Postgres } from '@deepkit/type';
+
+interface User {
+    title: string & Postgres<{type: 'text'}>;
+}
+```
 
 === Embedded Types
 
 === Default Values
+
+Default-Werte werden
 
 === Default Expressions
 
@@ -42,22 +365,136 @@
 
 === Database Specific Column Types
 
-
-
 == Session / Unit Of Work
 
+Eine Session ist so etwas wie eine Arbeitseinheit. Sie verfolgt alles, was Sie tun, und hält die Änderungen automatisch fest, sobald `commit()` aufgerufen wird. Es ist der bevorzugte Weg, um Änderungen in der Datenbank auszuführen, da es Anweisungen in einer Weise bündelt, die es sehr schnell macht. Eine Session ist sehr leichtgewichtig und kann zum Beispiel leicht in einem Request-Response-Lebenszyklus erstellt werden.
+
+```typescript
+import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
+import { entity, PrimaryKey, AutoIncrement } from '@deepkit/type';
+import { Database } from '@deepkit/orm';
+
+async function main() {
+
+    @entity.name('user')
+    class User {
+        id: number & PrimaryKey & AutoIncrement = 0;
+        created: Date = new Date;
+
+        constructor(public name: string) {
+        }
+    }
+
+    const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User]);
+    await database.migrate();
+
+    const session = database.createSession();
+    session.add(new User('User1'), new User('User2'), new User('User3'));
+
+    await session.commit();
+
+    const users = await session.query(User).find();
+    console.log(users);
+}
+
+main();
+```
+
+Fügen Sie der Session mit `session.add(T)` neue Instanz hinzu oder entfernen Sie bereits vorhandene Instanzen mit `session.remove(T)`. Sobald Sie mit dem Session-Objekt fertig sind, dereferenzieren Sie es einfach überall, damit der Garbage-Collector es entfernen kann.
+
+Änderungen werden bei Entity-Instanzen, die über das Session-Objekt geholt werden, automatisch erkannt.
+
+```typescript
+const users = await session.query(User).find();
+for (const user of users) {
+    user.name += ' changed';
+}
+
+await session.commit();//saves all users
+```
+
 === Identity Map
+
+Sessions bieten eine Identity-Map, die sicherstellt, dass es immer nur ein Javascript-Objekt pro Datenbank-Eintrag gibt. Wenn Sie zum Beispiel `session.query(User).find()` zweimal innerhalb derselben Sitzung ausführen, erhalten Sie zwei verschiedene Arrays, aber mit denselben Entitätsinstanzen darin.
+
+Wenn Sie mit `session.add(entity1)` eine neue Entität hinzufügen und diese erneut abrufen, erhalten Sie genau dieselbe Entitätsinstanz `entity1`.
+
+Wichtig: Sobald Sie anfangen, Sessions zu verwenden, sollten Sie deren Methode `Session.query` anstelle von `Database.query` verwenden. Nur bei Session-Queries ist die Identitätszuordnungsfunktion aktiviert.
 
 === Change Detection
 
 === Request/Response
 
-
 == Query
 
-=== Find
+Ein Query ist ein Objekt, das beschreibt, wie Daten aus der Datenbank abgerufen oder geändert werden sollen. Es hat mehrere Methoden um das Query zu beschreiben und Abbruchmethoden die diese ausführen. Der Datenbankadapter kann die Query-API auf viele Arten erweitern, um Datenbank spezifische Features zu unterstützen.
+
+Sie können ein Query erstellen, indem Sie `Database.query(T)` oder `Session.query(T)` verwenden. Wir empfehlen Sessions da es die Leistung verbessert.
+
+```typescript
+@entity.name('user')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+    birthdate?: Date;
+    visits: number = 0;
+
+    constructor(public username: string) {
+    }
+}
+
+const database = new Database(...);
+
+//[ { username: 'User1' }, { username: 'User2' }, { username: 'User2' } ]
+const users = await database.query(User).select('username').find();
+```
 
 === Filter
+
+Ein Filter kann angewendet werden, um die Ergebnismenge einzuschränken.
+
+```typescript
+//simple filters
+const users = await database.query(User).filter({name: 'User1'}).find();
+
+//multiple filters, all AND
+const users = await database.query(User).filter({name: 'User1', id: 2}).find();
+
+//range filter: $gt, $lt, $gte, $lte (greater than, lower than, ...)
+//equivalent to WHERE created < NOW()
+const users = await database.query(User).filter({created: {$lt: new Date}}).find();
+//equivalent to WHERE id > 500
+const users = await database.query(User).filter({id: {$gt: 500}}).find();
+//equivalent to WHERE id >= 500
+const users = await database.query(User).filter({id: {$gte: 500}}).find();
+
+//set filter: $in, $nin (in, not in)
+//equivalent to WHERE id IN (1, 2, 3)
+const users = await database.query(User).filter({id: {$in: [1, 2, 3]}}).find();
+
+//regex filter
+const users = await database.query(User).filter({username: {$regex: /User[0-9]+/}}).find();
+
+//grouping: $and, $nor, $or
+//equivalent to WHERE (username = 'User1') OR (username = 'User2')
+const users = await database.query(User).filter({
+    $or: [{username: 'User1'}, {username: 'User2'}]
+}).find();
+
+
+//nested grouping
+//equivalent to WHERE username = 'User1' OR (username = 'User2' and id > 0)
+const users = await database.query(User).filter({
+    $or: [{username: 'User1'}, {username: 'User2', id: {$gt: 0}}]
+}).find();
+
+
+//nested grouping
+//equivalent to WHERE username = 'User1' AND (created < NOW() OR id > 0)
+const users = await database.query(User).filter({
+    $and: [{username: 'User1'}, {$or: [{created: {$lt: new Date}, id: {$gt: 0}}]}]
+}).find();
+```
 
 ==== Equal
 
@@ -69,29 +506,432 @@
 
 ==== In
 
+=== Select
+
+Um die Felder einzugrenzen, die von der Datenbank empfangen werden sollen, kann `select('field1')` verwendet werden.
+
+```typescript
+const user = await database.query(User).select('username').findOne();
+const user = await database.query(User).select('id', 'username').findOne();
+```
+
+Wichtig dabei ist, dass sobald ein Eingrenzungen der Felder über `select` stattfindet, die Ergebnisse keine Instanzen der Entity mehr sind, sondern lediglich Object-Literals.
+
+```
+const user = await database.query(User).select('username').findOne();
+user instanceof User; //false
+```
+
 === Order
+
+Mit `orderBy(field, order)` kann die Reihenfolge der Einträge geändert werden.
+Es kann mehrere Male `orderBy` ausgeführt werden, um die Reihenfolge immer weiter zu verfeinern.
+
+```typescript
+const users = await session.query(User).orderBy('created', 'desc').find();
+const users = await session.query(User).orderBy('created', 'asc').find();
+```
 
 === Pagination
 
+Mit den Methoden `itemsPerPage()` und `page()` können die Ergebnisse paginiert werden. Seite beginnt bei 1.
+
+```typescript
+const users = await session.query(User).itemsPerPage(50).page(1).find();
+```
+
+Mit den alternativen Methoden `limit` und `skip` können Sie manuell paginieren.
+
+```typescript
+const users = await session.query(User).limit(5).skip(10).find();
+```
+
+[#database-join]
+=== Join
+
+Standardmäßig werden Referenzen aus der Entity weder in Abfragen einbezogen noch geladen. Um ein Join in die Abfrage aufzunehmen, ohne den Verweis zu laden, verwenden Sie `join()` (left join) oder `innerJoin()`. Um einen Join in die Abfrage aufzunehmen und die Referenz zu laden, verwenden Sie `joinWith()` oder `innerJoinWith()`.
+
+Alle folgenden Beispiele gehen von diesen Modellschemata aus:
+
+```typescript
+@entity.name('group')
+class Group {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+
+    constructor(public username: string) {
+    }
+}
+
+@entity.name('user')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+
+    group?: Group & Reference;
+
+    constructor(public username: string) {
+    }
+}
+```
+
+```typescript
+//select only users with a group assigned (INNER JOIN)
+const users = await session.query(User).innerJoin('group').find();
+for (const user of users) {
+    user.group; //error, since reference was not loaded
+}
+```
+
+```typescript
+//select only users with a group assigned (INNER JOIN) and load the relation
+const users = await session.query(User).innerJoinWith('group').find();
+for (const user of users) {
+    user.group.name; //works
+}
+```
+
+Um Join-Abfragen zu ändern, verwenden Sie dieselben Methoden, jedoch mit dem `use`-Präfix: `useJoin`, `useInnerJoin`, `useJoinWith` oder `useInnerJoinWith`. Um die Änderung der Join-Abfrage zu beenden, verwenden Sie `end()`, um so die übergeordnete Abfrage zurückzubekommen.
+
+```typescript
+//select only users with a group with name 'admins' assigned (INNER JOIN)
+const users = await session.query(User)
+    .useInnerJoinWith('group')
+        .filter({name: 'admins'})
+        .end()  // returns to the parent query
+    .find();
+
+for (const user of users) {
+    user.group.name; //always admin
+}
+```
+
 === Aggregation
 
-=== Join
+Mit Aggregationsmethoden können Sie Datensätze zählen und Felder aggregieren.
+
+Die folgenden Beispiele gehen von diesem Modellschema aus:
+
+```typescript
+@entity.name('file')
+class File {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+
+    downloads: number = 0;
+
+    category: string = 'none';
+
+    constructor(public path: string & Index) {
+    }
+}
+```
+
+`groupBy` ermöglicht es, das Ergebnis nach dem angegebenen Feld zu gruppieren.
+
+```typescript
+await database.persist(
+    cast<File>({path: 'file1', category: 'images'}),
+    cast<File>({path: 'file2', category: 'images'}),
+    cast<File>({path: 'file3', category: 'pdfs'})
+);
+
+//[ { category: 'images' }, { category: 'pdfs' } ]
+await session.query(File).groupBy('category').find();
+```
+
+Es gibt mehrere Aggregationsmethoden: `withSum`, `withAverage`, `withCount`, `withMin`, `withMax`, `withGroupConcat`. Jede erfordert einen Feldnamen als erstes Argument und ein optionales zweites Argument, um den Alias zu ändern.
+
+```typescript
+// first let's update some of the records:
+await database.query(File).filter({path: 'images/file1'}).patchOne({$inc: {downloads: 15}});
+await database.query(File).filter({path: 'images/file2'}).patchOne({$inc: {downloads: 5}});
+
+//[{ category: 'images', downloads: 20 },{ category: 'pdfs', downloads: 0 }]
+await session.query(File).groupBy('category').withSum('downloads').find();
+
+//[{ category: 'images', downloads: 10 },{ category: 'pdfs', downloads: 0 }]
+await session.query(File).groupBy('category').withAverage('downloads').find();
+
+//[ { category: 'images', amount: 2 }, { category: 'pdfs', amount: 1 } ]
+await session.query(File).groupBy('category').withCount('id', 'amount').find();
+```
 
 === Returning
 
+Mit `returning` können bei Änderungen via `patch` und `delete` zusätzliche Felder angefordert werden.
+
+Vorsicht: Nicht in allen Datenbank-Adaptern sind die Felder atomar zurückgegeben. Verwenden Sie Transaktionen, um Datenkonsistenz sicherzustellen.
+
+```typescript
+await database.query(User).patchMany({visits: 0});
+
+//{ modified: 1, returning: { visits: [ 5 ] }, primaryKeys: [ 1 ] }
+const result = await database.query(User)
+    .filter({username: 'User1'})
+    .returning('username', 'visits')
+    .patchOne({$inc: {visits: 5}});
+```
+
+=== Find
+
+Gibt ein Array an Einträgen zurück, die zu dem angegebenen Filter passen.
+
+```typescript
+const users: User[] = await database.query(User).filter({username: 'Peter'}).find();
+```
+
+=== FindOne
+
+Gibt ein Eintrag zurück, der zu dem angegebenen Filter passen.
+Wird kein Eintrag gefunden, wird ein `ItemNotFound` Fehler geworfen.
+
+```typescript
+const users: User = await database.query(User).filter({username: 'Peter'}).findOne();
+```
+
+=== FindOneOrUndefined
+
+Gibt ein Eintrag zurück, der zu dem angegebenen Filter passen.
+Wird kein Eintrag gefunden, wird undefined zurückgegeben.
+
+```typescript
+const query = database.query(User).filter({username: 'Peter'});
+const users: User|undefined = await query.findOneOrUndefined();
+```
+
+=== FindField
+
+Gibt eine Liste eines Feldes zurück, der zu dem angegebenen Filter passen.
+
+```typescript
+const usernames: string[] = await database.query(User).findField('username');
+```
+
+=== FindOneField
+
+Gibt eine Liste eines Feldes zurück, der zu dem angegebenen Filter passen.
+Wird kein Eintrag gefunden, wird ein `ItemNotFound` Fehler geworfen.
+
+```typescript
+const username: string = await database.query(User).filter({id: 3}).findOneField('username');
+```
+
 === Patch
+
+Patch ist eine Änderungsabfrage, die die in der Abfrage beschriebenen Datensätze patcht. Die Methoden
+`patchOne` und `patchMany` beenden die Abfrage und führen den Patch aus.
+
+`patchMany` ändert alle Einträge in der Datenbank, die zu dem angegebenen Filter passen. Ist kein Filter gesetzt, wird die gesamte Tabelle geändert. Nutzen Sie `patchOne`, um immer nur einen Eintrag zu verändern.
+
+```typescript
+await database.query(User).filter({username: 'Peter'}).patch({username: 'Peter2'});
+
+await database.query(User).filter({username: 'User1'}).patchOne({birthdate: new Date});
+await database.query(User).filter({username: 'User1'}).patchOne({$inc: {visits: 1}});
+
+await database.query(User).patchMany({visits: 0});
+```
 
 === Delete
 
+`deleteMany` löscht alle Einträge in der Datenbank, die zu dem angegebenen Filter passen.
+Ist kein Filter gesetzt, wird die gesamte Tabelle gelöscht. Nutzen Sie `deleteOne`, um immer nur einene Eintrag zu löschen.
+
+```typescript
+const result = await database.query(User)
+    .filter({visits: 0})
+    .deleteMany();
+
+const result = await database.query(User).filter({id: 4}).deleteOne();
+```
+
+=== Has
+
+Gibt zurück, ob mindestens ein Eintrag in der Datenbank existiert.
+
+```typescript
+const userExists: boolean = await database.query(User).filter({username: 'Peter'}).has();
+```
+
+=== Count
+
+Gibt die Anzahl der Einträge zurück.
+
+```typescript
+const userCount: number = await database.query(User).count();
+```
+
 === Lift
+
+Das Lifting einer Abfrage bedeutet, dass ihr neue Funktionen hinzugefügt werden. Dies wird in der Regel entweder von Plugins oder komplexen Architekturen verwendet, um größere Abfrageklassen in mehrere praktische, wiederverwendbare Klassen aufzuteilen.
+
+```typescript
+import { FilterQuery, Query } from '@deepkit/orm';
+
+class UserQuery<T extends {birthdate?: Date}> extends Query<T>  {
+    hasBirthday() {
+        const start = new Date();
+        start.setHours(0,0,0,0);
+        const end = new Date();
+        end.setHours(23,59,59,999);
+
+        return this.filter({$and: [{birthdate: {$gte: start}}, {birthdate: {$lte: end}}]} as FilterQuery<T>);
+    }
+}
+
+await session.query(User).lift(UserQuery).hasBirthday().find();
+```
 
 == Repository
 
 == Relations
 
+Beziehungen ermöglichen es Ihnen, zwei Entitäten auf eine bestimmte Art und Weise zu verbinden. Dies geschieht in Datenbanken in der Regel über das Konzept der Fremdschlüssel. Deepkit ORM unterstützt Relationen für alle offiziellen Datenbankadapter.
+
+Eine Relation wird mit dem `Reference`-Dekorator annotiert. Normalerweise hat eine Relation auch eine umgekehrte Relation, die mit dem Typ `BackReference` annotiert wird, aber nur benötigt wird, wenn die umgekehrte Relation in einer Datenbankabfrage verwendet werden soll. Rückreferenzen sind nur virtuell.
+
 === One To Many
 
+Die Entität, die einen Verweis speichert, wird in der Regel als die "besitzende Seite" oder diejenige, die den Verweis "besitzt", bezeichnet. Der folgende Code zeigt zwei Entitäten mit einer One-To-Many-Beziehung zwischen `User` und `Post`. Das bedeutet, dass ein `User` mehrere `Post` haben kann. Die Entität `Post` besitzt die Beziehung `Post->User`. In der Datenbank selbst gibt es nun ein Feld `Post."author"`, das den Primärschlüssel von `User` enthält.
+
+```typescript
+import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
+import { entity, PrimaryKey, AutoIncrement, Reference } from '@deepkit/type';
+import { Database } from '@deepkit/orm';
+
+async function main() {
+    @entity.name('user').collectionName('users')
+    class User {
+        id: number & PrimaryKey & AutoIncrement = 0;
+        created: Date = new Date;
+
+        constructor(public username: string) {
+        }
+    }
+
+    @entity.name('post')
+    class Post {
+        id: number & PrimaryKey & AutoIncrement = 0;
+        created: Date = new Date;
+
+        constructor(
+            public author: User & Reference,
+            public title: string
+        ) {
+        }
+    }
+
+    const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User, Post]);
+    await database.migrate();
+
+    const user1 = new User('User1');
+    const post1 = new Post(user1, 'My first blog post');
+    const post2 = new Post(user1, 'My second blog post');
+
+    await database.persist(user1, post1, post2);
+}
+
+main();
+```
+
+Referenzen werden in Abfragen standardmäßig nicht ausgewählt. Siehe dazu <<database-join>>.
+
+=== Many To One
+
+Ein Verweis hat in der Regel einen umgekehrten Verweis, der Many-to-One genannt wird. Es handelt sich nur um eine virtuelle Referenz, da sie nicht in der Datenbank selbst reflektiert wird. Eine Rückreferenz wird mit `BackReference` annotiert und wird hauptsächlich für Reflection und Query Joins verwendet. Wenn Sie eine `BackReference` von `User` zu `Post` hinzufügen, können Sie `Post` direkt aus `User`-Abfragen verbinden.
+
+```typescript
+@entity.name('user').collectionName('users')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+
+    posts?: Post[] & BackReference;
+
+    constructor(public username: string) {
+    }
+}
+```
+
+```typescript
+//[ { username: 'User1', posts: [ [Post], [Post] ] } ]
+const users = await database.query(User)
+    .select('username', 'posts')
+    .joinWith('posts')
+    .find();
+```
+
 === Many To Many
+
+Eine Many-to-many-Beziehung ermöglicht es Ihnen, viele Datensätze mit vielen anderen zu verbinden. Sie kann zum Beispiel für Benutzer in Gruppen verwendet werden. Ein Benutzer kann in keiner, einer oder vielen Gruppen sein. Folglich kann eine Gruppe 0, einen oder viele Benutzer enthalten.
+
+Many-to-many-Beziehungen werden normalerweise über eine Pivot-Entität implementiert. Die Pivot-Entität enthält die eigentlichen eigenen Referenzen auf zwei andere Entitäten, und diese beiden Entitäten haben Rückreferenzen auf die Pivot-Entität.
+
+```typescript
+@entity.name('user')
+class User {
+    id: number & PrimaryKey & AutoIncrement = 0;
+    created: Date = new Date;
+
+    groups?: Group[] & BackReference<{via: typeof UserGroup}>;
+
+    constructor(public username: string) {
+    }
+}
+
+@entity.name('group')
+class Group {
+    id: number & PrimaryKey & AutoIncrement = 0;
+
+    users?: User[] & BackReference<{via: typeof UserGroup}>;
+
+    constructor(public name: string) {
+    }
+}
+
+//the pivot entity
+@entity.name('userGroup')
+class UserGroup {
+    id: number & PrimaryKey & AutoIncrement = 0;
+
+    constructor(
+        public user: User & Reference,
+        public group: Group & Reference,
+    ) {
+    }
+}
+```
+
+Mit diesen Entities können Sie nun Benutzer und Gruppen erstellen und sie mit der Pivot-Entität verbinden. Durch die Verwendung eines Rückverweises in User können wir die Gruppen direkt mit einer User-Abfrage abrufen.
+
+```typescript
+const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User, Group, UserGroup]);
+await database.migrate();
+
+const user1 = new User('User1');
+const user2 = new User('User2');
+const group1 = new Group('Group1');
+
+await database.persist(user1, user2, group1, new UserGroup(user1, group1), new UserGroup(user2, group1));
+
+//[
+//   { id: 1, username: 'User1', groups: [ [Group] ] },
+//   { id: 2, username: 'User2', groups: [ [Group] ] }
+// ]
+const users = await database.query(User)
+    .select('username', 'groups')
+    .joinWith('groups')
+    .find();
+```
+
+Um die Verknüpfung eines Benutzers mit einer Gruppe aufzuheben, wird der Datensatz der UserGroup gelöscht:
+
+```typescript
+const users = await database.query(UserGroup)
+    .filter({user: user1, group: group1})
+    .deleteOne();
+```
 
 === One To One
 
@@ -106,9 +946,13 @@ On Delete/Update: RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
 === Single Table Inheritance
 
 == Index
+
 == Case Sensitivity
+
 == Character Sets
+
 == Collations
+
 == Batching
 
 == Caching
@@ -117,18 +961,164 @@ On Delete/Update: RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
 
 == Events
 
+Ereignisse sind eine Möglichkeit, sich in Deepkit ORM einzuklinken und ermöglichen es Ihnen, leistungsfähige Plugins zu schreiben. Es gibt zwei Kategorien von Ereignissen: Abfrage-Ereignisse und Unit-of-Work-Ereignisse. Plugin-Autoren verwenden in der Regel beide, um beide Möglichkeiten der Datenmanipulation zu unterstützen.
+
+Events werden über `Database.listen` un einem Event-Token registriert. Es kann auch kurzlebige Event-Listener auf Sessions registriert werden.
+
+```typescript
+import { Query, Database } from '@deepkit/orm';
+
+const database = new Database(...);
+database.listen(Query.onFetch, async (event) => {
+});
+
+const session = database.createSession();
+
+//will only be executed for this particular session
+session.eventDispatcher.listen(Query.onFetch, async (event) => {
+});
+```
+
 === Query Events
+
+Abfrageereignisse werden ausgelöst, wenn eine Abfrage über `Database.query()` oder `Session.query()` ausgeführt wird.
+
+Jedes Event hat seine eigenen zusätzlichen Eigenschaften wie den Typ der Entität, die Abfrage selbst und die Datenbanksitzung. Sie können die Abfrage überschreiben, indem Sie eine neue Abfrage auf `Event.query` setzen.
+
+```typescript
+import { Query, Database } from '@deepkit/orm';
+
+const database = new Database(...);
+
+const unsubscribe = database.listen(Query.onFetch, async event => {
+    //overwrite the query of the user, so something else is executed.
+    event.query = event.query.filterField('fieldName', 123);
+});
+
+//to delete the hook call unsubscribe
+unsubscribe();
+```
+
+`Query` hat dabei mehrere Event-Tokens:
+
+
+|===
+|Event-Token |Description
+
+|Query.onFetch|
+|Query.onDeletePre|
+|Query.onDeletePost|
+|Query.onPatchPre|
+|Query.onPatchPost|
+|===
+
 === Unit Of Work Events
+
+Unit-of-Work-Ereignisse werden ausgelöst, wenn eine neue Session änderungen absetzt.
+
+|===
+|Event-Token |Description
+
+|DatabaseSession.onUpdatePre|
+|DatabaseSession.onUpdatePost|
+|DatabaseSession.onInsertPre|
+|DatabaseSession.onInsertPost|
+|DatabaseSession.onDeletePre|
+|DatabaseSession.onDeletePost|
+|DatabaseSession.onCommitPre|
+|===
 
 == Transactions
 
+Eine Transaktion ist eine sequentielle Gruppe von Anweisungen, Abfragen oder Operationen wie Select, Insert, Update oder Delete, die als eine einzige Arbeitseinheit ausgeführt werden, die bestätigt oder rückgängig gemacht werden kann.
+
+Deepkit unterstützt Transaktionen für alle offiziell unterstützten Datenbanken. Standardmäßig werden für jede Abfrage und Datenbanksitzung keine Transaktionen verwendet. Um Transaktionen zu aktivieren, gibt es zwei Hauptmethoden: Sessions und Callback.
+
+=== Session Transactions
+
+Sie können für jede erstellte Session eine neue Transaktion starten und zuweisen. Dies ist die bevorzugte Art der Interaktion mit der Datenbank, da Sie das Session-Objekt einfach weitergeben können und alle Abfragen, die von dieser Session instanziiert werden, automatisch seiner Transaktion zugewiesen werden.
+
+Ein typisches Muster ist, alle Operationen in einen try-catch-Block zu verpacken und `commit()` in der allerletzten Zeile auszuführen (das nur ausgeführt wird, wenn alle vorherigen Befehle erfolgreich waren) und `rollback()` im catch-Block, um alle Änderungen zurückzunehmen sobald ein Fehler auftritt.
+
+Obwohl es eine alternative API gibt (siehe unten), funktionieren alle Transaktionen nur mit Datenbanksitzungsobjekten. Um offene Änderungen aus der Unit-of-Work in einer Datenbanksitzung an die Datenbank zu übertragen, wird normalerweise `commit()` aufgerufen. In einer transaktionalen Sitzung überträgt `commit()` nicht nur alle ausstehenden Änderungen in die Datenbank, sondern schließt auch die Transaktion ab ("commits") und schließt damit die Transaktion. Alternativ können Sie `session.flush()` aufrufen, um alle anstehenden Änderungen ohne `Commit` und damit ohne Abschluss der Transaktion zu übertragen. Um eine Transaktion zu committen, ohne die Unit-of-Work zu leeren, verwenden Sie `session.commitTransaction()`.
+
+```typescript
+const session = database.createSession();
+
+//this assigns a new transaction, and starts it with the very next database operation.
+session.useTransaction();
+
+try {
+    //this query is executed in the transaction
+    const users = await session.query(User).find();
+
+    await moreDatabaseOperations(session);
+
+    await session.commit();
+} catch (error) {
+    await session.rollback();
+}
+```
+
+Sobald `commit()` oder `rollback()` in einer Session ausgeführt wird, wird die Transaktion freigegeben. Sie müssen dann `useTransaction()` erneut aufrufen, wenn Sie in einer neuen Transaktion weiterarbeiten wollen.
+
+Bitte beachten Sie, dass sobald die erste Datenbankoperation in einer transaktionalen Session ausgeführt wird, wird die zugewiesene Datenbankverbindung dem aktuellen Sitzungsobjekt fest und exklusiv zugewiesen (sticky). Somit werden alle nachfolgenden Operationen auf derselben Verbindung (und somit in den meisten Datenbanken auf demselben Datenbankserver) ausgeführt. Erst wenn entweder die transaktionale Session beendet wird (commit oder rollback), wird die Datenbankverbindung wieder freigegeben. Es ist daher zu empfehlen, eine Transaktion nur so kurz wie nötig zu halten.
+
+Wenn eine Session bereits mit einer Transaktion verbunden ist, gibt ein Aufruf von `session.useTransaction()` immer das gleiche Objekt zurück. Verwenden Sie `session.isTransaction()`, um zu prüfen, ob der Sitzung eine Transaktion zugeordnet ist.
+
+Verschachtelte Transaktionen werden nicht unterstützt.
+
+=== Transaktion Callback
+
+Eine Alternative zu transaktionalen Sessions ist `database.transaction(callback)`.
+
+```typescript
+await database.transaction(async (session) => {
+    //this query is executed in the transaction
+    const users = await session.query(User).find();
+
+    await moreDatabaseOperations(session);
+});
+```
+
+Die Methode `database.transaction(callback)` führt einen asynchronen Callback innerhalb einer neuen transaktionalen Session aus. Wenn der Callback erfolgreich ist (das heisst kein Fehler geworfen wird), wird die Session automatisch committed (und damit ihre Transaktion committed und alle Änderungen geleert). Wenn der Callback fehlschlägt, führt die Sitzung automatisch `rollback()` aus, und der Fehler wird weitergeleitet.
+
 === Isolations
+
+Viele Datenbanken unterstützen verschiedene Arten von Transaktionen. Um das Transaktionsverhalten zu ändern, können Sie verschiedene Methoden für das zurückgegebene Transaktionsobjekt von `useTransaction()` aufrufen. Die Schnittstelle dieses Transaktionsobjekts hängt von dem verwendeten Datenbankadapter ab. Zum Beispiel hat das von einer MySQL-Datenbank zurückgegebene Transaktionsobjekt andere Optionen als das von einer MongoDB-Datenbank zurückgegebene. Verwenden Sie die Code-Vervollständigung oder sehen Sie sich die Schnittstelle des Datenbankadapters an, um eine Liste der möglichen Optionen zu erhalten.
+
+```typescript
+const database = new Database(new MySQLDatabaseAdapter());
+
+const session = database.createSession();
+session.useTransaction().readUncommitted();
+
+try {
+    //...operations
+    await session.commit();
+} catch () {
+    await session.rollback();
+}
+
+//or
+await database.transaction(async (session) => {
+    //this works as long as no database operation has been exuected.
+    session.useTransaction().readUncommitted();
+
+    //...operations
+});
+```
+
+Während Transaktionen für MySQL, PostgreSQL und SQLite standardmäßig funktionieren, müssen Sie MongoDB zunächst als "Replikatsatz" einrichten.
+
+Um eine Standard-MongoDB-Instanz in ein Replikatset zu konvertieren, lesen Sie bitte die offizielle Dokumentation link:https://docs.mongodb.com/manual/tutorial/convert-standalone-to-replica-set/[Convert a Standalone to a Replica Set].
 
 == Naming Strategy
 
 == Locking
 
 === Optimistic Locking
+
 === Pessimistic Locking
 
 == Custom Types

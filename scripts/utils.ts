@@ -18,7 +18,10 @@ export class Translation {
     fileLoaded: boolean = false;
 
     constructor(public targetLanguage?: string) {
-        if (targetLanguage) this.setLanguage(targetLanguage);
+        if (targetLanguage) {
+            this.targetLanguage = '';
+            this.setLanguage(targetLanguage);
+        }
     }
 
     setLanguage(targetLanguage: string) {
@@ -26,6 +29,8 @@ export class Translation {
         if (this.targetLanguage === targetLanguage) return;
 
         this.targetLanguage = targetLanguage;
+        console.log('setLanguage', this.targetLanguage);
+
         if (!this.targetLanguage) this.targetLanguage = 'german';
 
         if (!languageMap[this.targetLanguage]) throw new Error(`Language ${languageMap} not supported`);
@@ -50,6 +55,7 @@ export class Translation {
 
     async loadTranslations(): Promise<void> {
         if (!this.textQueue.length || !process.env.DEEPL_KEY) {
+            console.log('this.textQueue', this.textQueue);
             console.log('Load translation failed since either textQueue empty or DEEPL_KEY missing');
             return;
         }

@@ -40,7 +40,7 @@ async function main() {
 
     //load to extract all texts to translate
     let doc = asciidoc.loadFile('src/index.adoc', options);
-    // console.log('textQueue', textQueue);
+    console.log('textQueue', translation.textQueue);
 
     //if new texts to translate is found, load them, and loadFile again so that
     //extractOrApplyTranslations applies all found translations

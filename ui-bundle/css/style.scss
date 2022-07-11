@@ -54,6 +54,10 @@ body {
 .doc {
   font-size: 0.95rem;
   line-height: 1.2rem;
+
+  a, a:link {
+    text-decoration: underline;
+  }
 }
 
 button.big, a.button.big, a.big {
@@ -71,6 +75,7 @@ button.big, a.button.big, a.big {
   font-weight: 500;
   letter-spacing: 1px;
   padding: 12px 40px;
+  text-decoration: none !important;
 
   &:hover {
     color: #eee;
@@ -147,12 +152,12 @@ a, a:link {
   }
 }
 
-li.nav-item.is-active {
+li.nav-item.is-current-page {
   > a, > a:link {
     color: var(--color-link);
   }
 }
-a.is-active, a:link.is-active {
+a.is-current-page, a:link.is-current-page {
   color: var(--color-link);
 }
 

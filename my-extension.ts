@@ -17,8 +17,8 @@ module.exports.register = function ({ config }) {
         args[1].extension_registry.treeProcessor(function () {
             extractOrApplyTranslations.call(this, translation);
         })
-        const document = asciiLoad.call(this, ...args);
         translation.setLanguage(args[1].attributes['page-component-name']);
+        const document = asciiLoad.call(this, ...args);
         // console.log('YOLO', document.reader?.file, args[1].attributes['page-component-name']);
         // console.log('YOLO', document);
         return document;
@@ -35,8 +35,6 @@ module.exports.register = function ({ config }) {
         // console.log('lang', this.getVariables());
         // console.log('contentCatalog', contentCatalog.getComponents());
         // translation.setLanguage(args[1].attributes.lang);
-
-        //todo we need here to set translation.setLanguage()
 
         const components: {[name: string]: true} = {};
         for (const page of contentCatalog.getPages()) {
