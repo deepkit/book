@@ -49,14 +49,14 @@ include::modules/ROOT/pages/rpc.adoc[leveloffset=+1]
 
 include::modules/ROOT/pages/database.adoc[leveloffset=+1]
 
-<<<
-
-== Broker
-=== Installation
-=== Server
-=== Client
-=== Key/Value
-=== Publish / Subscribe
+//<<<
+//
+//== Broker
+//=== Installation
+//=== Server
+//=== Client
+//=== Key/Value
+//=== Publish / Subscribe
 
 <<<
 
@@ -66,25 +66,25 @@ include::modules/ROOT/pages/template.adoc[leveloffset=+1]
 
 include::modules/ROOT/pages/framework.adoc[leveloffset=+1]
 
-<<<
+//<<<
 
-== Debugger
-=== Module
-=== Profiler
-=== Database
-
-== Deployment
-
-=== Compiling
-
-=== Packaging
-
-=== Docker
+//== Debugger
+//=== Module
+//=== Profiler
+//=== Database
+//
+//== Deployment
+//
+//=== Compiling
+//
+//=== Packaging
+//
+//=== Docker
 
 ++++
 <!--<script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>-->
-<script src="../src/assets/prism.js"></script>
-<link rel="stylesheet" href="../src/assets/prism.css">
+<script src="./assets/prism.js"></script>
+<link rel="stylesheet" href="./assets/prism.css">
 <script>
   class MyHandler extends Paged.Handler {
     afterPreview(pageFragment, page) {

@@ -5,9 +5,9 @@ ebook-build:
 	./node_modules/.bin/tsc --project tsconfig.json
 
 ebook: ebook-build
-	node scripts/build.js german
-	node scripts/build.js english
-	node scripts/build.js chinese
+	DIST_BUILD=1 node scripts/build.js german
+	DIST_BUILD=1 node scripts/build.js english
+	DIST_BUILD=1 node scripts/build.js chinese
 
 web-build: ebook-build
 	./node_modules/.bin/sass src/assets/style.scss > src/assets/style.css

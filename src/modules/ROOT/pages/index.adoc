@@ -5,8 +5,7 @@ In dieser Dokumentation finden Sie weitere Informationen über die Verwendung de
 
 == Work in Progress
 
-Diese Dokumentation ist noch in Arbeit.
-Obwohl es bereits einige Platzhalter gibt, sind viele, besonders im Bereich der Datenbanken, noch nicht geschrieben worden.
+Diese Dokumentation ist noch in Arbeit. Innerhalb der Dokumentation sind noch viele Platzhalter, die nicht geschrieben wurden.
 Wir sind ständig dabei, die Dokumentation zu verbessern.
 Wenn Sie dringend etwas brauchen, gehen Sie bitte in unseren Discord-Server.
 
