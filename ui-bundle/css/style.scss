@@ -246,6 +246,11 @@ td {
   line-height: 1.1;
 }
 
+main.article {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 //
 //main {
 //  flex: 1;
