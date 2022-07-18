@@ -5,7 +5,7 @@ body {
   //font-family: "Times New Roman", serif;
   font-family: "CMU Serif", "Times New Roman", serif;
   font-size: 1rem;
-  line-height: 1.2rem;
+  line-height: 1.3rem;
   --text-color: #000;
   color: var(--text-color);
   --page-margin: 22mm;
@@ -91,9 +91,6 @@ pre.highlight > code {
 }
 
 .doc {
-  font-size: 0.95rem;
-  line-height: 1.2rem;
-
   a, a:link {
     color: #1d427b;
     &:hover {
