@@ -1,18 +1,18 @@
-@import "../font/CMUSerif/stylesheet.css";
-@import "../font/latin-modern/stylesheet.css";
+//@import "../font/CMUSerif/stylesheet.css";
+//@import "../font/latin-modern/stylesheet.css";
 
 body {
   //font-family: "Times New Roman", serif;
-  font-family: "CMU Serif", "Times New Roman", serif;
-  font-size: 1rem;
-  line-height: 1.3rem;
+  //font-family: "CMU Serif", "Times New Roman", serif;
+  font-size: 0.9rem;
+  line-height: 1.30rem;
   --text-color: #000;
   color: var(--text-color);
   --page-margin: 22mm;
 
-  //-webkit-font-smoothing: antialiased;
-  //text-rendering: geometricPrecision;
-  //-moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  -moz-osx-font-smoothing: grayscale;
 
   --text-color: #000;
   --color-link: #1565c0;
@@ -33,7 +33,7 @@ body {
 
 
 code {
-  font-family: 'LMMono10', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  //font-family: 'LMMono10', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
   font-size: 14px;
   background-color: #eee;
   border-radius: 3px;
@@ -45,9 +45,12 @@ pre.highlight {
 }
 
 pre.highlight, pre.highlight > code {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   font-weight: 400;
+  -webkit-font-smoothing: subpixel-antialiased;
+  text-rendering: initial;
+  -moz-osx-font-smoothing: initial;
   background: #f4f4f4;
   border-radius: 3px;
   color: #333;
