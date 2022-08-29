@@ -178,7 +178,7 @@ Da Dependency Injection in Deepkit auf den Runtime Types basiert, ist es notwend
 
 Falls dies erfolgreich geschehen ist, kann `@deepkit/injector` selbst installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
-	npm install @deekpit/injector
+	npm install @deepkit/injector
 
 Sobald die Library installiert ist, kann die API davon direkt benutzt werden.
 

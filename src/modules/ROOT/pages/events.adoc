@@ -35,7 +35,7 @@ Da das Event-System von Deepkit basiert auf den Runtime Types basiert, ist es no
 Falls dies erfolgreich geschehen ist, kann `@deepkit/event` installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
 ```sh
-npm install @deekpit/event
+npm install @deepkit/event
 ```
 
 Zu beachten ist, dass `@deepkit/event` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss, sobald die Controller API verwendet wird.
