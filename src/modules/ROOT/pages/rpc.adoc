@@ -76,7 +76,7 @@ Da Deepkit RPC auf den Runtime Types basieren, ist es notwendig `@deepkit/type` 
 Falls dies erfolgreich geschehen ist, kann `@deepkit/rpc` installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
 ```sh
-npm install @deekpit/rpc
+npm install @deepkit/rpc
 ```
 
 Zu beachten ist, dass Controller-Klassen in `@deepkit/rpc` auf TypeScript-Decorators basieren und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss

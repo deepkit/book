@@ -45,7 +45,7 @@ Sobald die Library installiert ist, kann ein Datenbank-Adapter installiert und d
 === SQLite
 
 ```sh
-npm install @deekpit/orm @deepkit/sqlite
+npm install @deepkit/orm @deepkit/sqlite
 ```
 
 ```typescript
@@ -58,7 +58,7 @@ const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User]);
 === MySQL
 
 ```sh
-npm install @deekpit/orm @deepkit/mysql
+npm install @deepkit/orm @deepkit/mysql
 ```
 
 ```typescript
@@ -73,7 +73,7 @@ const database = new Database(new MySQLDatabaseAdapter({
 === Postgres
 
 ```sh
-npm install @deekpit/orm @deepkit/postgres
+npm install @deepkit/orm @deepkit/postgres
 ```
 
 ```typescript
@@ -88,7 +88,7 @@ const database = new Database(new PostgresDatabaseAdapter({
 === MongoDB
 
 ```sh
-npm install @deekpit/orm @deepkit/bson @deepkit/mongo
+npm install @deepkit/orm @deepkit/bson @deepkit/mongo
 ```
 
 ```typescript

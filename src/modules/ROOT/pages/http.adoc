@@ -53,7 +53,7 @@ Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@d
 Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
 
 ```sh
-npm install @deekpit/http
+npm install @deepkit/http
 ```
 
 Zu beachten ist, dass `@deepkit/http` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss, sobald die Controller API verwendet wird.
