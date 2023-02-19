@@ -13,7 +13,7 @@ Wenn Sie dringend etwas brauchen, gehen Sie bitte in unseren Discord-Server.
 
 Verwenden Sie die API-Dokumentation, um sehr detaillierte Informationen über die API der einzelnen Module zu erhalten.
 
-link:https://deepkit.io/assets/api-docs/modules.html[API Documentation, role=big]
+link:https://api.framework.deepkit.io/[API Documentation, role=big]
 
 == Support
 
