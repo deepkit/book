@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-RUN apk --no-cache add openssh g++ gcc git libgcc libstdc++ linux-headers make python3 libexecinfo-dev
+RUN apk --no-cache add openssh g++ gcc git libgcc libstdc++ linux-headers make python3
 
 WORKDIR /app
 
