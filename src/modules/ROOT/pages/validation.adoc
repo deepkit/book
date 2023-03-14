@@ -116,8 +116,8 @@ Ein Type-Guard auf den obige genutzten Typen `User` könnte in einfachster Form 
 ```typescript
 function isUser(data: any): data is User {
     return 'object' === typeof data
-           && 'number' === data.id
-           && 'string' === data.username;
+           && 'number' === typeof data.id
+           && 'string' === typeof data.username;
 }
 
 isUser({}); //false
