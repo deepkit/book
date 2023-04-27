@@ -317,13 +317,13 @@ class MyKernelSecurity extends RpcKernelSecurity {
 }
 ```
 
-Um diese zu nutzen wird entweder dem `RpcKernel` eine Instanz davon übergeben:
+Um diese zu nutzen wird entweder dem `RpcKernel` der Provider übergeben:
 
 ```typescript
-const kernel = new RpcKernel(undefined, new MyKernelSecurity);
+const kernel = new RpcKernel([{provide: RpcKernelSecurity, useClass: MyKernelSecurity, scope: 'rpc'}]);
 ```
 
-Oder im Falle einer Deepkit Framework Anwendung die Klasse `RpcKernelSecurity` mit einem Provider überschrieben.
+Oder im Falle einer Deepkit Framework Anwendung die Klasse `RpcKernelSecurity` mit einem Provider in der App überschrieben.
 
 ```typescript
 import { App } from '@deepkit/type';
@@ -333,7 +333,7 @@ import { FrameworkModule } from '@deepkit/framework';
 new App({
     controllers: [MyRpcController],
     providers: [
-        {provide: RpcKernelSecurity, useClass: MyRpcKernelSecurity}
+        {provide: RpcKernelSecurity, useClass: MyRpcKernelSecurity, scope: 'rpc'}
     ],
     imports: [new FrameworkModule]
 }).run();
