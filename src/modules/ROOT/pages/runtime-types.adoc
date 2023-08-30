@@ -56,5 +56,10 @@ class AnnotatedClass<T> {
 annotateClass(ExternalClass, AnnotatedClass);
 ```
 
+== Import Type
+
+The `import type` syntax is designed by TypeScript to avoid importing actual JavaScript code and use it only for type-checking. This is useful for example when you want to use a type from a package that is not available at runtime, but only at compile-time or if you don't want to actually load that package at runtime.
+
+Deepkit supports the reasoning of `import type` and will not generate any runtime code. This means if you use `import type`, no type information will be available at runtime.
 
 include::./runtime-types/bytecode.adoc[leveloffset=+1]
