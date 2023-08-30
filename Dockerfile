@@ -15,8 +15,8 @@ RUN git config --global user.name "Your Name"
 RUN cd /app && git init && git add . && git commit --allow-empty -m "Initialize repository"
 
 RUN mkdir build
-RUN cd /app/src/chinese && ln -s ../modules modules
-RUN cd /app/src/german && ln -s ../modules modules
+#RUN cd /app/src/chinese && ln -s ../modules modules
+#RUN cd /app/src/german && ln -s ../modules modules
 RUN make all
 #RUN node -r ts-node/register scripts/build.ts german
 #RUN node -r ts-node/register scripts/build.ts english
