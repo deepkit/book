@@ -3,23 +3,23 @@
 
 == Installation
 
-Deepkit Framework basiert auf Runtime Types in Deepkit Type. Stelle sicher, dass `@deepkit/type` korrekt installiert ist. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
+Deepkit Framework is based on runtime types in Deepkit Type. Make sure that `@deepkit/type` is installed correctly. See xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
 ```sh
 npm install ts-node @deepkit/framework
 ```
 
-Stellen Sie sicher, dass alle Peer-Abhängigkeiten installiert sind. Standardmäßig werden sie von NPM 7+ automatisch installiert.
+Make sure that all peer dependencies are installed. By default, NPM 7+ installs them automatically.
 
-Um Ihre Anwendung zu kompilieren, benötigen wir den TypeScript-Compiler und empfehlen `ts-node`, um die App einfach auszuführen.
+To compile your application, we need the TypeScript compiler and recommend `ts-node` to easily run the app.
 
-Eine Alternative zur Verwendung von `ts-node` besteht darin, den Quellcode mit dem TypeScript-Compiler zu kompilieren und den JavaScript-Quellcode direkt auszuführen. Dies hat den Vorteil, dass sich die Ausführungsgeschwindigkeit für kurze Befehle drastisch erhöht. Allerdings wird dadurch auch zusätzlicher Workflow-Overhead erzeugt, indem der Compiler entweder manuell ausgeführt oder ein Watcher eingerichtet wird. Aus diesem Grund wird in dieser Dokumentation in allen Beispielen `ts-node` verwendet.
+An alternative to using `ts-node` is to compile the source code with the TypeScript compiler and execute the JavaScript source code directly. This has the advantage of dramatically increasing execution speed for short commands. However, it also creates additional workflow overhead by either manually running the compiler or setting up a watcher. For this reason, `ts-node` is used in all examples in this documentation.
 
-== Erste Applikation
+== First application
 
-Da das Deepkit Framework keine Konfigurationsdateien oder eine spezielle Ordnerstruktur verwendet, können Sie Ihr Projekt so strukturieren, wie Sie es wünschen. Die einzigen beiden Dateien, die Sie für den Start benötigen, sind die TypeScript-Datei app.ts und die TypeScript-Konfiguration tsconfig.json.
+Since the Deepkit framework does not use configuration files or a special folder structure, you can structure your project however you want. The only two files you need to get started are the TypeScript app.ts file and the TypeScript configuration tsconfig.json.
 
-Unser Ziel ist es, die folgenden Dateien in unserem Projektordner zu haben:
+Our goal is to have the following files in our project folder:
 
 ```
 .
@@ -29,7 +29,7 @@ Unser Ziel ist es, die folgenden Dateien in unserem Projektordner zu haben:
 └── tsconfig.json
 ```
 
-_Datei: tsconfig.json_
+_File: tsconfig.json_
 
 ```json
 {
@@ -49,7 +49,7 @@ _Datei: tsconfig.json_
 }
 ```
 
-_Datei: app.ts_
+_File: app.ts_
 
 ```typescript
 #!/usr/bin/env ts-node-script
@@ -74,9 +74,9 @@ new App({
 }).run();
 ```
 
-In diesem Code sehen Sie, dass wir einen Testbefehl über die Klasse `TestCommand` definiert und eine neue Anwendung erstellt haben, die wir direkt mit `run()` ausführen. Durch das Ausführen dieses Skripts starten wir die App.
+In this code, you can see that we have defined a test command using the `TestCommand` class and created a new app that we run directly using `run()`. By running this script, we start the app.
 
-Mit dem Shebang in der ersten Zeile (`#!...`) können wir unser Skript mit dem folgenden Befehl ausführbar machen.
+With the shebang in the first line (`#!...`) we can make our script executable with the following command.
 
 ```sh
 chmod +x app.ts
@@ -101,30 +101,30 @@ COMMANDS
   test
 ```
 
-Um nun unseren Testbefehl auszuführen, führen wir folgenden Befehl aus.
+Now, to execute our test command, we run the following command.
 
 ```sh
 $ ./app.ts test
 Hello World
 ```
 
-In Deepkit Framework geschieht nun alles über diese `app.ts`. Sie können die Datei beliebig umbennen oder weitere anlegen. Eigene CLI commands, HTTP/RPC server, Migration commands, usw werden alle über diesen Einstiegspunkt gestartet.
+In Deepkit Framework everything is now done via this `app.ts`. You can rename the file as you like or create more. Custom CLI commands, HTTP/RPC server, migration commands, and so on are all started from this entry point.
 
-Um den HTTP/RPC-Server zu starten, führen Sie folgendes aus:
+To start the HTTP/RPC server, run the following:
 
 ```sh
 ./app.ts server:start
 ```
 
-Um Anfragen bedienen zu können, lesen Sie bitte das Kapitel xref:http.adoc[HTTP] oder xref:rpc.adoc[RPC]. Im Kapitel xref:cli.adoc[CLI] kann mehr über CLI commands erfahren werden.
+To serve requests please read chapter xref:http.adoc[HTTP] or xref:rpc.adoc[RPC]. In chapter xref:cli.adoc[CLI] you can learn more about CLI commands.
 
 == App
 
-Über das `App`-Objekt startet wie Applikation.
+Via the `App` object starts like application.
 
-Die `run()`-Methode list dabei die Argumente aus und führt den entsprechenden CLI-Controller aus. Da `FrameworkModule` eigene CLI-Controller bereitstellt, die zum Beispiel für das Starten des HTTP-Servers verantwortlich sind, können diese darüber aufgerufen werden.
+The `run()` method lists the arguments and executes the corresponding CLI controller. Since `FrameworkModule` provides its own CLI controllers, which are responsible for starting the HTTP server, for example, these can be called via it.
 
-Über das `App`-Objekt kann auch der Dependency Injection Container angesprochen werden, ohne dass ein CLI-Controller ausgeführt wird.
+The `App` object can also be used to access the Dependency Injection container without running a CLI controller.
 
 ```typescript
 const app = new App({
@@ -143,11 +143,11 @@ app.run();
 [#framework-modules]
 == Module
 
-Deepkit Framework ist hochgradig modular und ermöglicht es Ihnen, Ihre Anwendung in mehrere praktische Module aufzuteilen. Jedes Modul hat seine eigene Dependency Injektion Sub-Container, Konfiguration, Befehle und vieles mehr. Im Kapitel "Erste Applikation" haben Sie bereits ein Modul erstellt - das Root-Modul. `new App` benötigt fast die gleichen Argumente wie ein Modul, denn es erstellt das Root-Modul im Hintergrund für Sie automatisch.
+Deepkit framework is highly modular and allows you to split your application into several handy modules. Each module has its own dependency injection sub-container, configuration, commands and much more. In the chapter "First application" you have already created one module - the root module. `new App` takes almost the same arguments as a module, because it creates the root module for you automatically in the background.
 
-Sie können dieses Kapitel überspringen, wenn Sie nicht vorhaben, Ihre Anwendung in Untermodule aufzuteilen, oder wenn Sie nicht vorhaben, ein Modul als Paket für andere zur Verfügung zu stellen.
+You can skip this chapter if you do not plan to split your application into submodules, or if you do not plan to make a module available as a package to others.
 
-Ein Modul ist eine einfache Klasse:
+A module is a simple class:
 
 ```typescript
 import { createModule } from '@deepkit/app';
@@ -156,7 +156,7 @@ export class MyModule extends createModule({}) {
 }
 ```
 
-Es hat zu diesem Zeitpunkt im Grunde keine Funktionalität, da seine Moduldefinition ein leeres Objekt ist und es keine Methoden hat, aber dies demonstriert die Beziehung zwischen Modulen und Ihrer Anwendung (Ihrem Stammmodul). Dieses Modul MyModule kann dann in Ihrer Anwendung oder in anderen Modulen importiert werden.
+It basically has no functionality at this point because its module definition is an empty object and it has no methods, but this demonstrates the relationship between modules and your application (your root module). This MyModule module can then be imported into your application or other modules.
 
 ```typescript
 import { MyModule } from './module.ts'
@@ -168,13 +168,13 @@ new App({
 }).run();
 ```
 
-Sie können nun diesem Modul Features hinzufügen, wie Sie es mit `App` tun würden. Die Argumente sind die gleichen, nur dass Importe in einer Moduldefinition nicht verfügbar sind. Fügen Sie HTTP/RPC/CLI-Controller, Dienste, eine Konfiguration, Event-Listener sowie verschiedene Modul-Hooks hinzu, um Module dynamischer zu gestalten.
+You can now add features to this module as you would with `App`. The arguments are the same, except that imports are not available in a module definition. Add HTTPRPCCLI controllers, services, a configuration, event listeners, and various module hooks to make modules more dynamic.
 
 === Controllers
 
-Module können Controller definieren, die von anderen Modulen verarbeitet werden. Wenn Sie zum Beispiel einen Controller mit Dekoratoren aus dem `@deepkit/http`-Paket hinzufügen, wird sein Modul `HttpModule` dies aufgreifen und die gefundenen Routen in seinem Router registrieren. Ein einzelner Controller kann mehrere solcher Dekoratoren enthalten. Es liegt an dem Modulautor, der Ihnen diese Dekoratoren gibt, wie er die Controller verarbeitet.
+Modules can define controllers that are processed by other modules. For example, if you add a controller with decorators from the `@deepkit/http` package, its `HttpModule` module will pick this up and register the found routes in its router. A single controller may contain several such decorators. It is up to the module author who gives you these decorators how he processes the controllers.
 
-In Deepkit gibt es drei Pakete, die solche Controller verarbeitet: HTTP, RPC, und CLI. Siehe jeweils deren Kapitel, um mehr zu erfahren. Nachfolgend ist ein Beispiel eines HTTP-Controllers:
+In Deepkit there are three packages that handles such controllers: HTTP, RPC, and CLI. See their respective chapters to learn more. Below is an example of an HTTP controller:
 
 ```typescript
 import { createModule } from '@deepkit/app';
@@ -200,9 +200,9 @@ new App({
 
 === Provider
 
-Wenn Sie einen Provider im `providers`-Bereich Ihrer Anwendung definieren, ist dieser in Ihrer gesamten Anwendung zugänglich. Bei Modulen hingegen werden diese Provider automatisch in den Subcontainer für die Injektion von Abhängigkeiten dieses Moduls gekapselt. Sie müssen jeden Provider manuell exportieren, um ihn für ein anderes Modul bzw. ihrer Anwendung verfügbar zu machen.
+When you define a provider in the `providers` section of your application, it is accessible throughout your application. For modules, however, these providers are automatically encapsulated in that module's dependency injection subcontainer. You must manually export each provider to make it available to another module or your application.
 
-Um mehr darüber zu erfahren, wie Provider funktionieren, lesen Sie bitte das Kapitel xref:dependency-injection.adoc[Dependency Injection].
+To learn more about how providers work, see the xref:dependency-injection.adoc[Dependency Injection] chapter.
 
 ```typescript
 import { createModule } from '@deepkit/app';
@@ -236,11 +236,11 @@ new App({
 }).run();
 ```
 
-Wenn ein Benutzer dieses Modul importiert, hat er keinen Zugriff auf `HelloWorldService`, da dieser im Subdependency-Injection-Container von `MyModule` gekapselt ist.
+When a user imports this module, he has no access to `HelloWorldService` because it is encapsulated in the sub-dependency injection container of `MyModule`.
 
 === Exports
 
-Um Provider im Modul des Importeurs verfügbar zu machen, können Sie den Token des Providers in `exports` aufnehmen. Dadurch wird der Provider im Wesentlichen eine Ebene nach oben in den Dependency-Injection-Container des übergeordneten Moduls - des Importeurs - verschoben.
+To make providers available in the importer's module, you can include the provider's token in `exports`. This essentially moves the provider up one level into the dependency injection container of the parent module - the importer.
 
 ```typescript
 import { createModule } from '@deepkit/app';
@@ -252,7 +252,7 @@ export class MyModule extends createModule({
 }) {}
 ```
 
-Wenn Sie andere Provider wie `FactoryProvider`, `UseClassProvider` usw. haben, sollten Sie trotzdem nur den Klassentyp in den Exporten verwenden.
+If you have other providers like `FactoryProvider`, `UseClassProvider` etc., you should still use only the class type in the exports.
 
 ```typescript
 import { createModule } from '@deepkit/app';
@@ -292,14 +292,14 @@ new App({
 }).run();
 ```
 
-Lesen Sie das Kapitel xref:dependency-injection.adoc[Dependency Injection] um mehr darüber zu erfahren.
+Read the xref:dependency-injection.adoc[Dependency Injection] chapter to learn more.
 
 [#confiruration]
 == Konfiguration
 
-Im Deepkit Framework können Module und Ihre Anwendung über Konfigurationsoptionen verfügen. Eine Konfiguration kann z.B. aus Datenbank-URLs, Passwörtern, IPs usw. bestehen. Services, HTTP/RPC/CLI Controller sowie Template Funktionen können diese Konfigurationsoptionen über Dependency Injection auslesen.
+In Deepkit framework, modules and your application can have configuration options. For example, a configuration can consist of database URLs, passwords, IPs, and so on. Services, HTTPRPCCLI controllers, and template functions can read these configuration options via dependency injection.
 
-Eine Konfiguration kann durch die Definition einer Klasse mit Eigenschaften definiert werden. Dies ist ein typsicherer Weg, um eine Konfiguration für Ihre gesamte Anwendung zu definieren, und ihre Werte werden automatisch serialisiert und validiert.
+A configuration can be defined by defining a class with properties. This is a type-safe way to define a configuration for your entire application, and its values are automatically serialized and validated.
 
 === Beispiel
 
@@ -337,7 +337,7 @@ $ curl http://localhost:8080/
 Hello from Cool site via example.com
 ```
 
-=== Konfigurationsklasse
+=== Configuration class
 
 ```typescript
 import { MinLength } from '@deepkit/type';
@@ -369,7 +369,7 @@ new App({
 }).run();
 ```
 
-Um die Konfigurationsoptionen eines importierten Moduls dynamisch zu ändern, können Sie den `process` Hook verwenden. Dies ist ein guter Ort, um entweder Konfigurationsoptionen umzuleiten oder ein importiertes Modul abhängig von der aktuellen Modulkonfiguration oder anderen Modulinstanzinformationen einzurichten.
+To dynamically change the configuration options of an imported module, you can use the `process` hook. This is a good place to either redirect configuration options or set up an imported module depending on the current module configuration or other module instance information.
 
 ```typescript
 import { MyModule } from './module.ts';
@@ -382,7 +382,7 @@ export class MainModule extends createModule({
 }
 ```
 
-Auf der Anwendungsebene funktioniert es etwas anders:
+At the application level, it works a little differently:
 
 ```typescript
 new App({
@@ -394,7 +394,7 @@ new App({
     .run();
 ```
 
-Wenn das Root-Anwendungsmodul aus einem regulären Modul erstellt wird, funktioniert es ähnlich wie reguläre Module.
+When the root application module is created from a regular module, it works similarly to regular modules.
 
 ```typescript
 class AppModule extends createModule({
@@ -407,13 +407,13 @@ class AppModule extends createModule({
 App.fromModule(new AppModule()).run();
 ```
 
-=== Konfigurationsoptionen Auslesen
+=== Read configuration values
 
-Um eine Konfigurationsoption in einem Dienst zu verwenden, können Sie die normale Dependency Injection verwenden. Es ist möglich, entweder das gesamte Konfigurationsobjekt, einen einzelnen Wert oder einen Teil der Konfiguration zu injizieren.
+To use a configuration option in a service, you can use normal dependency injection. It is possible to inject either the entire configuration object, a single value, or a portion of the configuration.
 
 ==== Partial
 
-Um nur einen Teilbereich der Konfigurationswerte zu injizieren, verwenden Sie den Typ `Pick`.
+To inject only a subset of the configuration values, use the `Pick` type.
 
 ```typescript
 import { Config } from './module.config';
@@ -441,7 +441,7 @@ export class MyService {
 
 ==== Single value
 
-Um nur einen einzigen Wert zu injizieren, verwenden Sie den Indexzugriffsoperator.
+To inject only a single value, use the index access operator.
 
 ```typescript
 import { Config } from './module.config';
@@ -475,7 +475,7 @@ export class MyService {
 
 === Debugger
 
-Die Konfigurationswerte Ihrer Anwendung und aller Module können im Debugger angezeigt werden. Aktivieren Sie die Debug-Option im `FrameworkModul` und öffnen Sie `http://localhost:8080/_debug/configuration`.
+The configuration values of your application and all modules can be displayed in the debugger. Enable the debug option in `FrameworkModule` and open `http://localhost:8080/_debug/configuration`.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -494,7 +494,7 @@ new App({
 
 image::debugger-configuration.png[]
 
-Sie können auch `ts-node app.ts app:config` verwenden, um alle verfügbaren Konfigurationsoptionen, den aktiven Wert, ihren Standardwert, die Beschreibung und den Datentyp anzuzeigen.
+You can also use `ts-node app.ts app:config` to display all available configuration options, the active value, their default value, description and data type.
 
 ```sh
 $ ts-node app.ts app:config
@@ -525,21 +525,21 @@ Modules config
 ...
 ```
 
-=== Konfigurationswerte setzen
+=== Set configuration values
 
-Standardmäßig werden keine Werte überschrieben, es werden also Standardwerte verwendet. Es gibt mehrere Möglichkeiten, Konfigurationswerte zu setzen.
+By default, no values are overwritten, so default values are used. There are several ways to set configuration values.
 
-* Umgebungsvariablen für jede Option
-* Umgebungsvariable über JSON
-* dotenv-Dateien
+* Environment variables for each option
+* Environment variable via JSON
+* dotenv-Files
 
-Sie können mehrere Methoden zum Laden der Konfiguration gleichzeitig verwenden. Die Reihenfolge, in der sie aufgerufen werden, ist dabei wichtig.
+You can use several methods to load the configuration at the same time. The order in which they are called is important.
 
 ==== Environment variables
 
-Um die Einstellung jeder Konfigurationsoption über eine eigene Umgebungsvariable zu ermöglichen, verwenden Sie `loadConfigFromEnv`. Das Standardpräfix ist `APP_`, aber Sie können es ändern. Es lädt auch automatisch `.env`-Dateien. Standardmäßig wird eine Benennungsstrategie mit Großbuchstaben verwendet, aber auch das können Sie ändern.
+To allow setting each configuration option via its own environment variable, use `loadConfigFromEnv`. The default prefix is `APP_`, but you can change it. It also automatically loads `.env` files. By default, it uses an uppercase naming strategy, but you can change that too.
 
-Für Konfigurationsoptionen wie oben `pageTitle`, können Sie `APP_PAGE_TITLE="Anderer Titel"` verwenden, um den Wert zu verändern.
+For configuration options like `pageTitle` above, you can use `APP_PAGE_TITLE="Other Title"` to change the value.
 
 ```typescript
 new App({
@@ -556,7 +556,7 @@ APP_PAGE_TITLE="Other title" ts-node app.ts server:start
 
 ==== JSON environment variable
 
-Um mehrere Konfigurationsoptionen über eine einzige Umgebungsvariable zu ändern, verwenden Sie `loadConfigFromEnvVariable`. Das erste Argument ist der Name der Umgebungsvariablen.
+To change multiple configuration options via a single environment variable, use `loadConfigFromEnvVariable`. The first argument is the name of the environment variable.
 
 ```typescript
 new App({
@@ -571,9 +571,9 @@ new App({
 APP_CONFIG='{"pageTitle": "Other title"}' ts-node app.ts server:start
 ```
 
-==== DotEnv Dateien
+==== DotEnv Files
 
-Um mehrere Konfigurationsoptionen über eine dotenv-Datei zu ändern, verwenden Sie `loadConfigFromEnv`. Das erste Argument ist entweder ein Pfad zu einer dotenv (relativ zu `cwd`) oder mehrere Pfade. Wenn es ein Array ist, wird jeder Pfad ausprobiert, bis eine vorhandene Datei gefunden wird.
+To change multiple configuration options via a dotenv file, use `loadConfigFromEnv`. The first argument is either a path to a dotenv (relative to `cwd`) or multiple paths. If it is an array, each path is tried until an existing file is found.
 
 ```typescript
 new App({
@@ -592,9 +592,9 @@ $ ts-node app.ts server:start
 
 ==== Module Configuration
 
-Jedes importierte Modul kann einen Modulnamen haben. Dieser Name wird für die oben verwendeten Konfigurationspfade verwendet.
+Each imported module can have a module name. This name is used for the configuration paths used above.
 
-Für die Konfiguration von Umgebungsvariablen lautet der Pfad für die `FrameworkModule`-Option port beispielsweise `FRAMEWORK_PORT`. Alle Namen werden standardmäßig in Großbuchstaben geschrieben. Wenn ein Präfix von `APP_` verwendet wird, kann der Port über folgendes geändert werden:
+For example, for configuring environment variables, the path for the `FrameworkModule` option port is `FRAMEWORK_PORT`. All names are written in uppercase by default. If a prefix of `APP_` is used, the port can be changed via the following:
 
 ```sh
 $ APP_FRAMEWORK_PORT=9999 ts-node app.ts server:start
@@ -604,23 +604,23 @@ $ APP_FRAMEWORK_PORT=9999 ts-node app.ts server:start
 2021-06-12T18:59:26.366Z [LOG] HTTP listening at http://localhost:9999/
 ```
 
-In Dotenv-Dateien wäre es auch `APP_FRAMEWORK_PORT=9999`.
+In dotenv files it would also be `APP_FRAMEWORK_PORT=9999`.
 
-In JSON-Umgebungsvariablen über `loadConfigFromEnvVariable('APP_CONFIG')` hingegen ist es die Struktur der eigentlichen Konfigurationsklasse. `framework` wird zu einem Objekt.
+In JSON environment variables via `loadConfigFromEnvVariable('APP_CONFIG')` on the other hand, it is the structure of the actual configuration class. `framework` becomes an object.
 
 ```sh
 $ APP_CONFIG='{"framework": {"port": 9999}}' ts-node app.ts server:start
 ```
 
-Dies funktioniert für alle Module gleich. Für die Konfigurationsoption Ihrer Anwendung (`new App`) ist kein Modulpräfix erforderlich.
+This works the same for all modules. No module prefix is required for your application configuration option (`new App`).
 
 == Application Server
 
 === Public Directory
 
-Das FrameworkModule bietet eine Möglichkeit, statische Dateien wie Bilder, PDFs, Binärdateien usw. über HTTP bereitzustellen. Mit der Konfigurationsoption `publicDir` können Sie angeben, welcher Ordner als Standard-Einstiegspunkt für Anfragen verwendet werden soll, die nicht zu einer HTTP-Controller-Route führen. Standardmäßig ist dieses Verhalten deaktiviert (leerer Wert).
+The FrameworkModule provides a way to serve static files such as images, PDFs, binaries, etc. over HTTP. The `publicDir` configuration option lets you specify which folder to use as the default entry point for requests that do not lead to an HTTP controller route. By default, this behavior is disabled (empty value).
 
-Um die Bereitstellung öffentlicher Dateien zu aktivieren, setzen Sie `publicDir` auf einen Ordner Ihrer Wahl. Normalerweise würden Sie einen Namen wie `publicDir` wählen, um die Dinge offensichtlich zu machen.
+To enable the provision of public files, set `publicDir` to a folder of your choice. Normally you would choose a name like `publicDir` to make things obvious.
 
 ```
 .
@@ -629,7 +629,7 @@ Um die Bereitstellung öffentlicher Dateien zu aktivieren, setzen Sie `publicDir
     └── logo.jpg
 ```
 
-Um die Option `publicDir` zu ändern, können Sie das erste Argument von `FrameworkModule` ändern.
+To change the `publicDir` option, you can change the first argument of `FrameworkModule`.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -649,21 +649,21 @@ new App({
     .run();
 ```
 
-Alle Dateien innerhalb dieses konfigurierten Ordners sind nun über HTTP zugänglich. Wenn Sie  beispielsweise `http://localhost:8080/logo.jpg` öffnen, sehen Sie das Bild `logo.jpg` im Verzeichnis `publicDir`.
+All files within this configured folder are now accessible via HTTP. For example, if you open `http:localhost:8080logo.jpg`, you will see the image `logo.jpg` in the `publicDir` directory.
 
 == File Structure
 
 == Database
 
-Deepkit verfügt über eine eigene leistungsstarke Datenbankabstraktionsbibliothek namens Deepkit ORM. Es handelt sich um eine ORM-Bibliothek (Object-Relational Mapping), die die Arbeit mit SQL-Datenbanken und MongoDB erleichtert.
+Deepkit has its own powerful database abstraction library called Deepkit ORM. It is an Object-Relational Mapping (ORM) library that facilitates work with SQL databases and MongoDB.
 
-Obwohl Sie jede beliebige Datenbankbibliothek verwenden können, empfehlen wir Deepkit ORM, da es die schnellste TypeScript-Datenbankabstraktionsbibliothek ist, die perfekt in das Deepkit-Framework integriert ist und viele Funktionen hat, die Ihren Workflow und Ihre Effizienz verbessern.
+Although you can use any database library, we recommend Deepkit ORM as it is the fastest TypeScript database abstraction library that is perfectly integrated with the Deepkit framework and has many features that will improve your workflow and efficiency.
 
-Um alle Informationen über Deepkit ORM zu erhalten, lesen Sie das Kapitel xref:database.adoc[Database].
+To get all the information about Deepkit ORM, see the xref:database.adoc[Database] chapter.
 
-=== Database Klassen
+=== Database Classes
 
-Die einfachste Art, das `Database`-Objekt von Deepkit ORM innerhalb der Applikation zu verwenden, ist das Registrieren einer Klasse, die davon ableitet.
+The simplest way to use the `Database` object of Deepkit ORM within the application is to register a class that derives from it.
 
 ```typescript
 import { Database } from '@deepkit/orm';
@@ -678,11 +678,11 @@ export class SQLiteDatabase extends Database {
 }
 ```
 
-Erstellen Sie eine neue Klasse und geben Sie in ihrem Konstruktor den Adapter mit seinen Parametern an und fügen Sie dem zweiten Parameter alle Entitäten/Modelle hinzu, die mit dieser Datenbank verbunden sein sollen.
+Create a new class and in its constructor specify the adapter with its parameters and add to the second parameter all entity models that should be connected to this database.
 
-Sie können nun diese Datenbankklasse als Provider registrieren. Wir aktivieren auch `migrateOnStartup`, das alle Tabellen in Ihrer Datenbank automatisch beim Bootstrap erstellt. Dies ist ideal für Rapid Prototyping, wird aber für ein ernsthaftes Projekt oder eine Produktionseinrichtung nicht empfohlen. Hier sollten dann normale Datenbank Migrationen verwendet werden.
+You can now register this database class as a provider. We also enable `migrateOnStartup` which will automatically create all tables in your database at bootstrap. This is ideal for rapid prototyping, but is not recommended for a serious project or production setup. Normal database migrations should then be used here.
 
-Außerdem aktivieren wir `debug`, was uns erlaubt, den Debugger zu öffnen, wenn der Server der Anwendung gestartet wird, und Ihre Datenbankmodelle direkt in seinem integrierten ORM-Browser zu verwalten.
+We also enable `debug`, which allows us to open the debugger when the application's server is started and manage your database models directly in its built-in ORM browser.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -700,7 +700,7 @@ new App({
 }).run();
 ```
 
-Sie können nun überall auf `SQLiteDatabase` zugreifen, indem Sie Dependency Injection verwenden:
+You can now access `SQLiteDatabase` anywhere using Dependency Injection:
 
 ```typescript
 import { SQLiteDatabase } from './database.ts';
@@ -716,13 +716,13 @@ export class Controller {
 }
 ```
 
-=== Mehr Datenbanken
+=== Multiple Databases
 
-Sie können so viele Datenbankklassen hinzufügen, wie Sie möchten, und sie so benennen, wie Sie möchten. Achten Sie darauf, den Namen jeder Datenbank zu ändern, damit sie bei der Verwendung des ORM-Browsers nicht mit anderen in Konflikt gerät.
+You can add as many database classes as you like and name them as you like. Be sure to change the name of each database so that it doesn't conflict with others when you use the ORM browser.
 
-=== Daten Verwalten
+=== Manage Data
 
-Sie haben jetzt alles eingerichtet, um Ihre Datenbankdaten mit dem Deepkit ORM Browser zu verwalten. Um den ORM-Browser zu öffnen und den Inhalt zu verwalten, schreiben Sie alle Schritte von oben in die Datei `app.ts` und starten den Server.
+You now have everything set up to manage your database data with the Deepkit ORM Browser. To open the ORM Browser and manage the content, write all the steps from above in the `app.ts` file and start the server.
 
 ```sh
 $ ts-node app.ts server:start
@@ -741,24 +741,24 @@ You can now open http://localhost:8080/_debug/database/default.
 
 image::debugger-database.png[]
 
-Sie können das ER-Diagramm sehen. Im Moment ist nur eine Entität verfügbar. Wenn Sie weitere mit Beziehungen hinzufügen, sehen Sie alle Informationen auf einen Blick.
+You can see the ER (entity relationship) diagram. At the moment only one entity is available. If you add more with relationships, you will see all the information at a glance.
 
-Wenn Sie in der linken Seitenleiste auf `User` klicken, können Sie dessen Inhalt verwalten. Klicken Sie auf das `+`-Symbol, und ändern Sie den Titel des neuen Datensatzes. Nachdem Sie die erforderlichen Werte (wie den Benutzernamen) geändert haben, klicken Sie auf "Bestätigen". Dadurch werden alle Änderungen an die Datenbank übertragen und bleiben dauerhaft bestehen. Die Autoinkrement-ID wird automatisch zugewiesen.
+If you click on `User` in the left sidebar, you can manage its content. Click the `+` icon and change the title of the new record. After you have changed the required values (such as the user name), click `Confirm`. This will commit all changes to the database and make them permanent. The auto increment ID will be assigned automatically.
 
 image::debugger-database-user.png[]
 
-=== Mehr Lernen
+=== Learn More
 
-Um mehr über die Funktionsweise von `SQLiteDatabase` zu erfahren, lesen Sie bitte das Kapitel xref:database.adoc[Database] und seine Unterkapitel, wie z.B. die Abfrage von Daten, die Manipulation von Daten über Sessions, die Definition von Relationen und vieles mehr.
-Bitte beachten Sie, dass sich die Kapitel dort auf die eigenständige Bibliothek `@deepkit/orm` beziehen und keine Dokumentation über den Teil des Deepkit Frameworks enthalten, den Sie oben in diesem Kapitel gelesen haben. In der Standalone-Bibliothek instanziieren Sie Ihre Datenbankklasse manuell, z. B. über `new SQLiteDatabase()`. In Ihrer Deepkit-Framework-Anwendung wird dies jedoch automatisch mithilfe des Dependency Injection Containers durchgeführt.
+To learn more about how `SQLiteDatabase` works, please read the chapter xref:database.adoc[Database] and its subchapters, such as querying data, manipulating data via sessions, defining relations and much more.
+Please note that the chapters there refer to the standalone library `@deepkit/orm` and do not include documentation about the part of the deepkit framework you read above in this chapter. In the standalone library, you instantiate your database class manually, for example via `new SQLiteDatabase()`. However, in your Deepkit framework application, this is done automatically using the Dependency Injection container.
 
 === Migration
 
 == Logger
 
-Deepkit Logger ist eine eigenständige Bibliothek mit einer primären Klasse Logger, die Sie zur Protokollierung von Informationen verwenden können. Diese Klasse wird automatisch im Dependency Injection Container Ihrer Deepkit Framework-Anwendung bereitgestellt.
+Deepkit Logger is a standalone library with a primary Logger class that you can use to log information. This class is automatically deployed in the Dependency Injection container of your Deepkit Framework application.
 
-Die Klasse `Logger` verfügt über mehrere Methoden, die sich jeweils wie `console.log` verhalten.
+The `Logger` class has several methods, each of which behaves like `console.log`.
 
 |===
 |Name |Log Level|Level id
@@ -769,11 +769,11 @@ Die Klasse `Logger` verfügt über mehrere Methoden, die sich jeweils wie `conso
 |logger.debug()|Debug information|5
 |===
 
-Standardmäßig hat ein Logger den Level "info", d.h. er verarbeitet nur Info-Meldungen und mehr (d.h. log, warning, error, aber nicht debug). Um den Log-Level zu ändern, rufen Sie zum Beispiel `logger.level = 5` auf.
+By default, a logger has `info` level, i.e. it processes only info messages and more (i.e. log, warning, error, but not debug). To change the log level call for example `logger.level = 5`.
 
-=== Benutzen in der Anwendung
+=== Use in the application
 
-Um den Logger in Ihrer Deepkit-Framework-Anwendung zu verwenden, können Sie einfach `Logger` in Ihre Services oder Controller injizieren.
+To use the logger in your Deepkit framework application, you can simply inject `Logger` into your services or controllers.
 
 ```typescript
 import { Logger } from '@deepkit/logger';
@@ -788,24 +788,23 @@ class MyService {
 }
 ```
 
-=== Farben
+=== Colors
 
-Der Logger unterstützt farbige Protokollmeldungen. Sie können Farben bereitstellen, indem Sie XML-Tags verwenden, die den Text umgeben, der in Farbe erscheinen soll.
+The logger supports colored log messages. You can provide colors by using XML tags that surround the text you want to appear in color.
 
 ```typescript
 const username = 'Peter';
 logger.log(`Hi <green>${username}</green>`);
 ```
 
-Bei Transportern, die keine Farben unterstützen, werden die Farbinformationen automatisch entfernt. Im Standardtransporter (`ConsoleTransport`) wird die Farbe angezeigt. Die folgenden Farben sind verfügbar: `black`, `red`, `green`, `blue`, `cyan`, `magenta`, `white` und `grey`/`gray`.
+For transporters that do not support colors, the color information is automatically removed. In the default transporter (`ConsoleTransport`) the color is displayed. The following colors are available: `black`, `red`, `green`, `blue`, `cyan`, `magenta`, `white` and `grey`/`gray`.
 
 === Transporter
 
-Sie können einen einzelnen oder mehrere Transporter konfigurieren. In einer Deepkit Framework-Anwendung wird der Transporter `ConsoleTransport` automatisch konfiguriert. Um zusätzliche Transporter zu konfigurieren, können Sie xref:dependency-injection.adoc#di-setup-calls[Setup Calls] verwenden:
+You can configure a single transporter or multiple transporters. In a Deepkit Framework application, the `ConsoleTransport` transporter is configured automatically. To configure additional transporters, you can use xref:dependency-injection.adoc#di-setup-calls[Setup Calls]:
 
 ```typescript
 import { Logger, LoggerTransport } from '@deepkit/logger';
-
 
 export class MyTransport implements LoggerTransport {
     write(message: string, level: LoggerLevel, rawMessage: string) {
@@ -824,7 +823,7 @@ new App()
     .run();
 ```
 
-Um alle Transporter durch eine neue Gruppe von Transportern zu ersetzen, verwenden Sie `setTransport`:
+To replace all transporters with a new set of transporters, use `setTransport`:
 
 ```typescript
 import { Logger } from '@deepkit/logger';
@@ -848,11 +847,11 @@ new App()
 
 === Formatter
 
-Mit Formatierern können Sie das Nachrichtenformat ändern, z. B. den Zeitstempel hinzufügen. Wenn eine Anwendung über `server:start` gestartet wird, wird automatisch ein `DefaultFormatter` hinzugefügt (der Zeitstempel, Bereich und Protokollstufe hinzufügt), wenn kein anderer Formatter vorhanden ist.
+With formatters you can change the message format, e.g. add the timestamp. When an application is started via `server:start`, a `DefaultFormatter` is automatically added (which adds timestamp, range and log level) if no other formatter is available.
 
 === Scoped Logger
 
-Scoped Logger fügen jedem Protokolleintrag einen beliebigen Bereichsnamen hinzu, der hilfreich sein kann, um festzustellen, aus welchem Teilbereich Ihrer Anwendung der Protokolleintrag stammt.
+Scoped loggers add an arbitrary area name to each log entry, which can be helpful in determining which subarea of your application the log entry originated from.
 
 ```typescript
 const scopedLogger = logger.scoped('database');
@@ -861,11 +860,11 @@ scopedLogger.log('Query', query);
 
 === JSON Transporter
 
-Um die Ausgabe in JSON-Protokolle zu ändern, können Sie den mitgelieferten `JSONTransport` verwenden.
+To change the output to JSON protocols, you can use the supplied `JSONTransport`.
 
 === Context Data
 
-Um einem Protokolleintrag kontextbezogene Daten hinzuzufügen, fügen Sie ein einfaches Objektliteral als letztes Argument hinzu. Nur Protokollaufrufe mit mindestens zwei Argumenten können kontextbezogene Daten enthalten.
+To add contextual data to a log entry, add a simple object literal as the last argument. Only log calls with at least two arguments can contain contextual data.
 
 ```typescript
 const query = 'SELECT *';
@@ -880,13 +879,13 @@ logger.log({query, user}); //this is not handled as context data.
 
 == Events
 
-Deepkit Framework kommt mit diversen Event-Tokens, auf die Event-Listener registriert werden können.
+Deepkit framework comes with various event tokens on which event listeners can be registered.
 
-Siehe das Kapitel xref:events.adoc[Events], um mehr darüber zu erfahren, wie Events funktionieren.
+See the xref:events.adoc[Events] chapter to learn more about how events work.
 
 === Dispatch Events
 
-Events werden über die Klasse `EventDispatcher` gesendet. In einer Deepkit Framework Applikation kann dieser über Dependency Injection bereitgestellt werden.
+Events are sent via the `EventDispatcher` class. In a Deepkit Framework application, this can be provided via dependency injection.
 
 ```typescript
 import { cli, Command } from '@deepkit/app';
@@ -905,8 +904,8 @@ export class TestCommand implements Command {
 
 === Event Listener
 
-Es gibt zwei Arten auf Events zu reagieren. Entweder über Controller Klassen oder reguläre Funktionen.
-Beide werden in der App oder in Modulen unter `listeners` registriert.
+There are two ways to react to events. Either via controller classes or regular functions.
+Both are registered in the app or in modules under `listeners`.
 
 _Controller Listener_
 ```typescript
@@ -937,7 +936,7 @@ new App({
 
 === Framework Events
 
-Deepkit Framework selbst hat mehrere Ereignisse aus dem Anwendungsserver, auf die Sie hören können.
+Deepkit Framework itself has several events from the application server that you can listen for.
 
 _Functional Listener_
 ```typescript
@@ -967,11 +966,11 @@ new App({
 
 == Deployment
 
-In diesem Kapitel erfahren Sie, wie Sie Ihre Anwendung in JavaScript kompilieren, für Ihre Produktionsumgebung konfigurieren und über Docker bereitstellen können.
+In this chapter, you will learn how to compile your application in JavaScript, configure it for your production environment, and deploy it using Docker.
 
-=== TypeScript kompilieren
+=== Compile TypeScript
 
-Nehmen wir an, Sie haben eine Anwendung wie diese in einer Datei `app.ts`:
+Suppose you have an application like this in an `app.ts` file:
 
 ```typescript
 #!/usr/bin/env ts-node-script
@@ -1002,15 +1001,15 @@ new App({
     .run();
 ```
 
-Wenn Sie `ts-node app.ts server:start` verwenden, sehen Sie, dass alles korrekt funktioniert. In einer Produktionsumgebung würden Sie den Server in der Regel nicht mit `ts-node` starten. Sie würden ihn in JavaScript kompilieren und dann den Node verwenden. Dazu müssen Sie eine korrekte `tsconfig.json` mit den richtigen Konfigurationsoptionen haben. In der Sektion "Erste Applikation" ist Ihre `tsconfig.json` so konfiguriert, dass sie JavaScript im Ordner `./dist` ausgibt. Wir gehen davon aus, dass Sie das auch so konfiguriert haben.
+If you use `ts-node app.ts server:start`, you will see that everything works correctly. In a production environment, you would not typically start the server with `ts-node`. You would compile it into JavaScript and then use the node. To do this, you must have a correct `tsconfig.json` with the correct configuration options. In the "First Application" section, your `tsconfig.json` is configured to output JavaScript to the `.dist` folder. We assume that you have configured it that way as well.
 
-Wenn alle Compiler-Einstellungen korrekt sind und Ihr `outDir` auf einen Ordner wie z.B. `dist` zeigt, dann werden, sobald Sie den Befehl `tsc` in Ihrem Projekt ausführen, alle Ihre verlinkten Dateien in den Dateien in der `tsconfig.json` zu JavaScript kompiliert. Es reicht, wenn Sie Ihre Einstiegsdateien in dieser Liste angeben. Alle importierten Dateien werden ebenfalls automatisch kompiliert und müssen nicht explizit in die `tsconfig.json` eingefügt werden. `tsc` ist Teil von Typescript, wenn Sie `npm install typescript` installieren.
+If all compiler settings are correct and your `outDir` points to a folder like `dist`, then as soon as you run the `tsc` command in your project, all your linked files in the files in the `tsconfig.json` will be compiled to JavaScript. It is enough to specify your entry files in this list. All imported files are also compiled automatically and do not need to be explicitly added to `tsconfig.json`. `tsc` is part of Typescript when you install `npm install typescript`.
 
 ```sh
 $ ./node_modules/.bin/tsc
 ```
 
-Der TypeScript-Compiler gibt nichts aus, wenn er erfolgreich war. Sie können die Ausgabe von `dist` jetzt überprüfen.
+The TypeScript compiler does not output anything if it was successful. You can now check the output of `dist`.
 
 ```sh
 $ tree dist
@@ -1018,22 +1017,22 @@ dist
 └── app.js
 ```
 
-Sie sehen, dass es nur eine Datei gibt. Sie können sie über `node dist/app.js` ausführen und erhalten die gleiche Funktionalität wie mit `ts-node app.ts`.
+You can see that there is only one file. You can run it via `node distapp.js` and get the same functionality as with `ts-node app.ts`.
 
-Für ein Deployment ist es wichtig, dass die TypeScript-Dateien korrekt kompiliert werden und alles direkt über Node funktioniert. Sie könnten nun einfach Ihren `dist`-Ordner einschließlich Ihrer `node_modules` verschieben und `node dist/app.js server:start` ausführen und Ihre App ist erfolgreich deployed. Sie würden jedoch andere Lösungen wie Docker verwenden, um Ihre Anwendung korrekt zu verpacken.
+For a deployment, it is important that the TypeScript files are compiled correctly and everything works directly through Node. You could now simply move your `dist` folder including your `node_modules` and run `node distapp.js server:start` and your app is successfully deployed. However, you would use other solutions like Docker to package your app correctly.
 
-=== Konfiguration
+=== Configuration
 
-In einer Produktionsumgebung würden Sie den Server nicht an `localhost` binden, sondern höchstwahrscheinlich an alle Geräte über `0.0.0.0`. Wenn Sie nicht hinter einem Reverse-Proxy stehen, würden Sie auch den Port auf 80 einstellen. Um diese beiden Einstellungen zu konfigurieren, müssen Sie das `FrameworkModule` anpassen. Die beiden Optionen, die uns interessieren, sind `host` und `port`. Damit sie von außen über Umgebungsvariablen oder über .dotenv-Dateien konfiguriert werden können, müssen wir dies zunächst zulassen. Glücklicherweise hat unser obiger Code dies bereits mit der Methode `loadConfigFromEnv()` getan.
+In a production environment, you would not bind the server to `localhost`, but most likely to all devices via `0.0.0.0`. If you are not behind a reverse proxy, you would also set the port to 80. To configure these two settings, you need to customize the `FrameworkModule`. The two options we are interested in are `host` and `port`. In order for them to be configured externally via environment variables or via .dotenv files, we must first allow this. Fortunately, our code above has already done this with the `loadConfigFromEnv()` method.
 
-Bitte lesen Sie das Kapitel xref:framework.adoc#confiruration[Konfiguration], um mehr darüber zu erfahren, wie Sie die Konfigurationsoptionen der Anwendung einstellen können.
+Please refer to the xref:framework.adoc#confiruration[Konfiguration] chapter to learn more about how to set the application configuration options.
 
-Um zu sehen, welche Konfigurationsoptionen verfügbar sind und welchen Wert sie haben, können Sie den Befehl `ts-node app.ts app:config` verwenden. Sie können sie auch im Framework-Debugger sehen.
+To see what configuration options are available and what value they have, you can use the `ts-node app.ts app:config` command. You can also see them in the Framework Debugger.
 
 ==== SSL
 
-Es wird empfohlen (und manchmal auch vorgeschrieben), Ihre Anwendung über HTTPS mit SSL laufen zu lassen. Es gibt mehrere Optionen zur Konfiguration von SSL. Um SSL zu aktivieren, verwenden Sie
-`framework.ssl` und konfigurieren Sie dessen Parameter mit den folgenden Optionen.
+It is recommended (and sometimes required) to run your application over HTTPS with SSL. There are several options for configuring SSL. To enable SSL, use
+`framework.ssl` and configure its parameters with the following options.
 
 |===
 |Name|Type|Description
@@ -1071,7 +1070,7 @@ new App({
 
 ==== Local SSL
 
-In der lokalen Entwicklungsumgebung können Sie selbstsignierte HTTPs mit der Option `framework.selfSigned` aktivieren.
+In the local development environment, you can enable self-signed HTTPs with the `framework.selfSigned` option.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -1102,19 +1101,19 @@ $ ts-node app.ts server:start
 2021-06-13T18:04:01.606Z [LOG] HTTPS listening at https://localhost:8080/
 ```
 
-Wenn Sie diesen Server jetzt starten, ist Ihr HTTP-Server als HTTPS unter `https://localhost:8080/` verfügbar. In Chrome erhalten Sie beim Öffnen dieser URL jetzt die Fehlermeldung "NET::ERR_CERT_INVALID", da selbstsignierte Zertifikate als Sicherheitsrisiko gelten: `chrome://flags/#allow-insecure-localhost`.
+If you start this server now, your HTTP server is available as HTTPS at `https:localhost:8080`. In Chrome, you now get the error message "NET::ERR_CERT_INVALID" when you open this URL because self-signed certificates are considered a security risk: `chrome:flagsallow-insecure-localhost`.
 
 == Testing
 
-Die Services und Controller im Deepkit Framework sind so konzipiert, dass sie SOLID und sauberen Code unterstützen, der gut konzipiert, gekapselt und getrennt ist. Diese Eigenschaften machen den Code einfach zu testen.
+The services and controllers in the Deepkit framework are designed to support SOLID and clean code that is well-designed, encapsulated, and separated. These features make the code easy to test.
 
-Diese Dokumentation zeigt Ihnen, wie Sie ein Test-Framework namens link:https://jestjs.io[Jest] mit `ts-jest` einrichten können. Führen Sie dazu den folgenden Befehl aus, um `jest` und `ts-jest` zu installieren.
+This documentation shows you how to set up a testing framework named link:https://jestjs.io[Jest] with `ts-jest`. To do this, run the following command to install `jest` and `ts-jest`.
 
 ```sh
 npm install jest ts-jest @types/jest
 ```
 
-Jest benötigt ein paar Konfigurationsoptionen, um zu wissen, wo die Testanzüge zu finden sind und wie der TS-Code zu kompilieren ist. Fügen Sie die folgende Konfiguration zu Ihrer `package.json` hinzu:
+Jest needs a few configuration options to know where to find the test suits and how to compile the TS code. Add the following configuration to your `package.json`:
 
 ```json
 {
@@ -1133,7 +1132,7 @@ Jest benötigt ein paar Konfigurationsoptionen, um zu wissen, wo die Testanzüge
 }
 ```
 
-Ihre Testdateien sollten den Namen `*.spec.ts` tragen. Erstellen Sie eine Datei `test.spec.ts` mit folgendem Inhalt.
+Your test files should be named `.spec.ts`. Create a `test.spec.ts` file with the following content.
 
 ```typescript
 test('first test', () => {
@@ -1141,7 +1140,7 @@ test('first test', () => {
 });
 ```
 
-Mit dem Befehl jest können Sie nun alle Ihre Testanzüge auf einmal ausführen.
+You can now use the jest command to run all your test suits at once.
 
 ```sh
 $ node_modules/.bin/jest
@@ -1155,11 +1154,11 @@ Time:        0.23 s, estimated 1 s
 Ran all test suites.
 ```
 
-Bitte lesen Sie die link:https://jestjs.io[Jest-Dokumentation], um mehr darüber zu erfahren, wie das Jest CLI-Tool funktioniert und wie Sie anspruchsvollere Tests und ganze Test-Suites schreiben können.
+Please read the link:https://jestjs.io[Jest-Dokumentation] to learn more about how the Jest CLI tool works and how you can write more sophisticated tests and entire test suites.
 
 === Unit Test
 
-Wann immer möglich sollten Sie Ihre Services mit einem Unit-Test teste. Je einfacher, besser getrennt und besser definiert Ihre Service-Abhängigkeiten sind, desto einfacher ist es, sie zu testen. In diesem Fall können Sie einfache Tests wie den folgenden schreiben:
+Whenever possible, you should unit test your services. The simpler, better separated, and better defined your service dependencies are, the easier it is to test them. In this case, you can write simple tests like the following:
 
 ```typescript
 export class MyService {
@@ -1181,9 +1180,9 @@ test('hello world', () => {
 
 === Integration tests
 
-Es ist nicht immer möglich, Unit-Tests zu schreiben, und es ist auch nicht immer der effizienteste Weg, um geschäftskritischen Code und Verhalten abzudecken. Besonders wenn Ihre Architektur sehr komplex ist, ist es von Vorteil, wenn Sie einfach End-to-End-Integrationstests durchführen können.
+It's not always possible to write unit tests, nor is it always the most efficient way to cover business-critical code and behavior. Especially if your architecture is very complex, it is beneficial to be able to easily perform end-to-end integration tests.
 
-Wie Sie bereits im Kapitel Dependency Injection gelernt haben, ist der Dependency Injection Container das Herzstück von Deepkit. Hier werden alle Dienste aufgebaut und betrieben. Ihre Anwendung definiert Dienste (Provider), Controller, Listener und Importe. Bei Integrationstests wollen Sie nicht unbedingt alle Dienste in einem Testfall zur Verfügung haben, aber Sie wollen in der Regel eine abgespeckte Version der Anwendung zur Verfügung haben, um die kritischen Bereiche zu testen.
+As you have already learned in the Dependency Injection chapter, the Dependency Injection Container is the heart of Deepkit. This is where all services are built and run. Your application defines services (providers), controllers, listeners, and imports. For integration testing, you don't necessarily want to have all services available in a test case, but you usually want to have a stripped down version of the application available to test the critical areas.
 
 ```typescript
 import { createTestingApp } from '@deepkit/framework';
@@ -1227,7 +1226,7 @@ test('service', async () => {
 });
 ```
 
-Wenn Sie Ihre Anwendung in mehrere Module aufgeteilt haben, können Sie diese leichter testen. Nehmen wir zum Beispiel an, Sie haben ein `AppCoreModul` erstellt und möchten einige Services testen.
+If you have divided your application into several modules, you can test them more easily. For example, suppose you have created an `AppCoreModule` and want to test some services.
 
 ```typescript
 class Config {
@@ -1251,7 +1250,7 @@ export AppCoreModule = new AppModule({
 }, 'core');
 ```
 
-Sie verwenden Ihr Modul wie folgt:
+You use your module as follows:
 
 ```typescript
 import { AppCoreModule } from './app-core.ts';
@@ -1261,7 +1260,7 @@ new App({
 }).run();
 ```
 
-Und testen Sie es, ohne den gesamten Anwendungsserver zu booten.
+And test it without booting the entire application server.
 
 ```typescript
 import { createTestingApp } from '@deepkit/framework';

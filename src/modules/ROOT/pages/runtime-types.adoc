@@ -1,62 +1,17 @@
 [#runtime-types]
 = Runtime Types
 
-Typeninformationen in TypeScript zur Laufzeit zur Verfügung zu stellen ändert vieles. Es erlaubt neue Arbeitsweisen, die zuvor nur über Umwege oder gar nicht möglich waren. Das Deklarieren von Typen und Schemas ist mittlerweile ein großer Teil moderner Entwicklungsprozessen geworden. So sind GraphQL, Validatoren, ORMs, und Encoder wie zum Beispiel ProtoBuf, und viele mehr darauf angewiesen, Schema-Informationen auch zur Laufzeit zur Verfügung zu haben, um so fundamentale Funktionalitäten überhaupt erst bereitstellen zu können. Diese Tools und Libraries verlangen vom Entwickler teilweise komplett neue Sprachen zu lernen, die sehr spezifisch für den Anwendungsfall entwickelt worden sind. So haben ProtoBuf und GraphQL ihre eigene Deklarationssprache, auch Validatoren basieren oft auf eigene Schema-APIs oder gar JSON-Schema, welches ebenfalls eine eigenständige Art ist, Strukturen zu definieren. Einige davon verlangen bei jeder Änderung das Ausführen von Code-Generatoren, um die Schema-Informationen auch der Laufzeit bereitzustellen. Ein anderes bekanntes Muster ist, experimentelle TypeScript Decorators zu verwenden, um Meta-Informationen an Klassen der Laufzeit zur Verfügung zu stellen.
+Runtime type information in TypeScript unlocks new workflows and features that were previously unavailable or required workarounds. Modern development processes rely heavily on declaring types and schemas for tools like GraphQL, validators, ORMs, and encoders such as ProtoBuf. These tools may require developers to learn new languages specific to their use case, like ProtoBuf and GraphQL having their own declaration language, or validators using their own schema APIs or JSON-Schema.
 
-Aber ist das alles nötig? TypeScript bietet eine sehr mächtige Sprache, um auch sehr komplexe Strukturen zu beschreiben. Tatsächlich ist TypeScript mittlerweile Touring-Complete, was grob bedeutet, dass theoretisch jede Art von Program in TypeScript abbildbar ist. Natürlich hat dies seine praktischen Grenzen, der wichtige Punkt ist jedoch, dass TypeScript in der Lage ist, jegliche Deklarationsformate wie GraphQL, ProtoBuf, JSON-Schema, und viele andere komplett zu ersetzen. In Kombination mit einem Typensystem zur Laufzeit ist es möglich, all die beschriebenen Tools und deren Anwendungsfälle in TypeScript selbst ohne jeglichen Code-Generator abzudecken. Warum gibt es aber noch keine Lösung, die genau dies erlaubt?
+TypeScript has become powerful enough to describe complex structures and even replace declaration formats like GraphQL, ProtoBuf, and JSON-Schema entirely. With a runtime type system, it's possible to cover the use cases of these tools without any code generators or runtime JavaScript type declaration libraries like "Zod". The Deepkit library aims to provide runtime type information and make it easier to develop efficient and compatible solutions.
 
-Historisch gesehen ist TypeScript in den letzten Jahren einem massiven Wandel unterzogen worden. Es wurde diverse male komplett neu geschrieben, hat grundlegende Features erhalten, und unterlief eine ganze Reihe von Iterationen und Breaking-Changes. Mittlerweile ist TypeScript jedoch an einem Produkt-Market-Fit angekommen, das die Geschwindigkeit, in der grundlegende Innovationen und Breaking-Changes passieren, stark verlangsamt. TypeScript hat sich bewährt und gezeigt, wie ein äußerst charmantes Typensystem für eine hochdynamische Sprache wie JavaScript auszusehen hat. Der Markt hat diesen Vorstoß dankend angenommen und eine neue Äre in der Entwicklung mit JavaScript eingeleitet.
+Deepkit is built upon the ability to read type information at runtime, using as much TypeScript type information as possible for efficiency. The runtime type system allows reading and computing dynamic types, such as class properties, function parameters, and return types. Deepkit hooks into TypeScript's compilation process to ensure that all type information is embedded into the generated JavaScript using a https://github.com/microsoft/TypeScript/issues/47658[custom bytecode and virtual machine], enabling developers to access type information programmatically.
 
-Genau dann ist der richtige Zeitpunkt gekommen, Tools auf der Sprache selbst in fundamentaler Ebene aufzusetzen, um so das oben beschriebene möglich zu machen. Deepkit möchte der Anstoß sein, um über jahrzehnte bewährte Design-Muster aus dem Enterprise von Sprachen wie Java und PHP nicht nur fundamental zu TypeScript zu bringen, sondern in einer neuen und besseren Art, die nicht gegen, sondern mit JavaScript arbeitet. Durch Typeninformationen zur Laufzeit sind diese nun zum ersten Mal nicht nur prinzipiell möglich, sondern erlauben ganz neue viel einfacherer Design-Muster, die mit Sprachen wie Java und PHP nicht möglich sind. TypeScript selbst hat hier das Fundament gelegt, um mit ganz neue Ansätzen in starker Kombination mit Bewährtem dem Entwickler das Leben beträchtlich zu vereinfachen.
-
-Typeninformationen zur Laufzeit auszulesen ist die Fähigkeit auf die Deepkit in seinem Fundament aufsetzt. Die API der Deepkit Libraries sind maßgeblich darauf ausgerichtet, soviel TypeScript Typeninformation wie möglich zu verwenden, um so effizient wie möglich zu sein. Typensystem zur Laufzeit bedeutet, dass Typeninformationen zur Laufzeit auslesbar und dynamische Typen berechenbar sind. Das heisst, dass zum Beispiel bei Klassen alle Eigenschaften und bei Funktionen alle Parameter und Return-Typen ausgelesen werden können.
-
-Nehmen wir als Beispiel diese Funktion:
-
-```typescript
-function log(message: string): void {
-    console.log(message);
-}
-```
-
-In JavaScript selbst können mehrere Informationen zu Laufzeit ausgelesen werden. Zum Beispiel der Name der Funktion (sofern nicht mit einem Minimizer abgeändert wurde):
-
-```typescript
-log.name; //‘log’
-```
-
-Zum anderen kann die Anzahl der Parameter ausgelesen werden:
-
-```typescript
-log.length; //1
-```
-
-Mit ein bisschen mehr Code kann auch ausgelesen werden, wie die Parameter heissen. Das ist jedoch ohne einen rudimentären JavaScript-Parser oder RegExp auf log.toString() nicht ohne weiteres zu bewerkstelligen, sodass ab hier schon schluss ist. Da TypeScript die obige Funktion wie folgt in JavaScript übersetzt:
-
-```typescript
-function log(message) {
-    console.log(message);
-}
-```
-
-sind die Informationen, dass `message` vom Typ string und der Return-Typ vom Type `void` ist nicht mehr verfügbar. Diese Informationen wurden unwiderruflich von TypeScript zerstört.
-
-Mit einem Typensystem zur Laufzeit können jedoch diese Informationen überleben, so dass man die Typen von message und den Return-Typ programmatisch auslesen kann.
-
-```typescript
-import { typeOf, ReflectionKind } from '@deepkit/type';
-
-const type = typeOf(log);
-type.kind; //ReflectionKind.function
-type.parameters[0].name; //'message'
-type.parameters[0].type; //{kind: ReflectionKind.string}
-type.return; //{kind: ReflectionKind.void}
-```
-
-Deepkit macht genau das möglich. Es hängt sich in die Kompilierung von TypeScript ein und stellt sicher, dass alle Typeninformationen in dem generierten JavaScript eingebaut sind. Funktionen wie typeOf() (nicht zu verwechseln mit dem operator typeof, mit kleinem o) erlauben dem Entwickler dann darauf zuzugreifen. Es können daher auch Libraries entwickelt werden, die auf diesen Typeninformationen basieren und so dem Entwickler es erlauben, bereits geschriebene TypeScript Typen für eine ganze Palette von Anwendungsmöglichkeiten zu verwenden.
-
+With Deepkit, developers can use their existing TypeScript types for various application possibilities, simplifying their development process and making their work more efficient.
 
 include::./runtime-types/installation.adoc[leveloffset=+1]
+include::./runtime-types/reflection.adoc[leveloffset=+1]
+
 include::./runtime-types/type-decorators.adoc[leveloffset=+1]
 
 == External Classes
@@ -101,5 +56,5 @@ class AnnotatedClass<T> {
 annotateClass(ExternalClass, AnnotatedClass);
 ```
 
-include::./runtime-types/reflection.adoc[leveloffset=+1]
+
 include::./runtime-types/bytecode.adoc[leveloffset=+1]

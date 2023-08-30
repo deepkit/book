@@ -40,7 +40,7 @@ npm install @deepkit/event
 
 Zu beachten ist, dass `@deepkit/event` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss, sobald die Controller API verwendet wird.
 
-_Datei: tsconfig.json_
+_File: tsconfig.json_
 
 ```json
 {

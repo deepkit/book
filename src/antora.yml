@@ -1,10 +1,10 @@
-name: german
-title: German
+name: english
+title: English
 start_page: ROOT:index.adoc
 version: master
 asciidoc:
   attributes:
-    lang: german
+    lang: english
     source-language: asciidoc@
     table-caption: false
 nav:

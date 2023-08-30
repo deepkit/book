@@ -1,9 +1,9 @@
 [#dependency-injection]
 = Dependency Injection
 
-Dependency Injection (DI) ist ein Design-Pattern, bei dem Klassen und Funktionen ihre Abhängigkeiten _empfangen_. Es folgt dem Prinzip von Inversion of Control (IoC, zu Deutsch "Umkehrung der Steuerung") und hilft dabei vor allem komplexen Code besser zu separieren, um so die Testbarkeit, Modularität, und Übersichtlichkeit deutlich zu verbessern. Zwar gibt es noch andere Design-Patterns wie zum Beispiel den Service-Locator Pattern, um das Prinzip von IoC anzuwenden, jedoch hat sich DI als dominantes Pattern vor allem in Enterprise-Software etabliert.
+Dependency Injection (DI) is a design pattern in which classes and functions _receive_ their dependencies. It follows the principle of Inversion of Control (IoC) and helps to better separate complex code in order to significantly improve testability, modularity and clarity. Although there are other design patterns, such as the service locator pattern, for applying the principle of IoC, DI has established itself as the dominant pattern, especially in enterprise software.
 
-Um das Prinzip von IoC zu veranschaulichen nachfolgend ein Beispiel:
+To illustrate the principle of IoC, here is an example:
 
 ```typescript
 import { HttpClient } from 'http-library';
@@ -16,11 +16,12 @@ class UserRepository {
 }
 ```
 
-Die Klasse UserRepository hat dabei einen HttpClient als Abhängigkeit. Diese Abhängigkeit an sich ist nichts Auffälliges, allerdings ist problematisch, dass UserRepository den HttpClient selbst erstellt. Dies ist auf den ersten Blick naheliegend, hat jedoch seine Nachteile: Was, wenn wir den HttpClient austauschen möchten? Was, wenn wir UserRepository in einem Unit-Test testen wollen, ohne dass echte HTTP-Anfragen herausgehen dürfen? Woher wissen wir, dass die Klasse überhaupt einen HttpClient benutzt?
+The UserRepository class has an HttpClient as a dependency. This dependency in itself is nothing remarkable, but it is problematic that `UserRepository` creates the HttpClient itself.
+It seems to be a good idea to encapsulate the creation of the HttpClient in the UserRepository, but this is not the case. What if we want to replace the HttpClient? What if we want to test UserRepository in a unit test without allowing real HTTP requests to go out? How do we know that the class even uses an HttpClient?
 
 == Inversion of Control
 
-Im Gedanke von Inversion of Control (IoC) ist folgende alternative Variante, die den HttpClient als explizite Abhängigkeit im Constructor setzt (auch bekannt als Constructor-Injection).
+In the thought of Inversion of Control (IoC) is the following alternative variant that sets the HttpClient as an explicit dependency in the constructor (also known as constructor injection).
 
 ```typescript
 class UserRepository {
@@ -34,11 +35,11 @@ class UserRepository {
 }
 ```
 
-Nun ist nicht mehr UserRepository dafür verantwortlich den HttpClient anzulegen, sondern der User von UserRepository. Das ist Inversion of Control (IoC). Die Steuerung wurde umgedreht bzw. invertiert. Ganz konkret wendet dieser Code Dependency Injection an, denn Abhängigkeiten werden empfangen (injiziert) und nicht mehr selbst angelegt oder angefordert. Dependency Injection ist dabei nur eine Variante IoC anzuwenden.
+Now UserRepository is no longer responsible for creating the HttpClient, but the user of UserRepository. This is Inversion of Control (IoC). The control has been reversed or inverted. Specifically, this code applies dependency injection, because dependencies are received (injected) and no longer created or requested. Dependency Injection is only one variant of IoC.
 
 == Service Locator
 
-Neben DI ist auch Service Locator (SL) eine Möglichkeit, das IoC Prinzip anzuwenden. Dies gilt gemeinhin als das Gegenstück zu Dependency Injection, da es Abhängigkeiten anfordert und nicht empfängt. Würde HttpClient im obigen Code wie folgt angefordert werden, würde man von einem Service Locator Pattern sprechen.
+Besides DI, Service Locator (SL) is also a way to apply the IoC principle. This is commonly considered the counterpart to Dependency Injection, as it requests dependencies rather than receiving them. If HttpClient were requested in the above code as follows, it would be called a Service Locator pattern.
 
 ```typescript
 class UserRepository {
@@ -49,7 +50,7 @@ class UserRepository {
 }
 ```
 
-Die Funktion `locator.getHttpClient` kann dabei einen ganz beliebigen Namen tragen. Alternativen wären zum Beispiel Funktionsaufrufe wie `useContext(HttpClient)`, `getHttpClient()`, `await import("client"),` oder ein Container-Aufruf wie `container.get(HttpClient)`. Ein Import eines Globals ist eine etwas andere Variante eines Service Locators, bei dem das Module-System selbst als Locator benutzt wird:
+The function `locator.getHttpClient` can have any name. Alternatives would be function calls like `useContext(HttpClient)`, `getHttpClient()`, `await import("client"),` or a container call like `container.get(HttpClient)`. An import of a global is a slightly different variant of a service locator, using the module system itself as the locator:
 
 ```typescript
 import { httpClient } from 'clients'
@@ -61,30 +62,30 @@ class UserRepository {
 }
 ```
 
-Alle diese Varianten haben gemeinsam, dass sie die Abhängigkeit HttpClient explizit anfordern. Dieses Anfordern kann nicht nur an Properties als Default-Value geschehen, sondern auch irgendwo mitten im Code. Da mitten im Code bedeutet, dass es nicht Bestandteil eines Typen-Interfaces ist, ist die Nutzung des HttpClients versteckt. Abhängig der Variante wie der HttpClient angefordert wird, kann es mitunter sehr schwer oder komplett unmöglich sein, diesen durch eine andere Implementierung auszutauschen. Vor allem im Bereich von Unit-Tests und zwecks Übersichtlichkeit kann es hier zu Schwierigkeiten kommen, sodass der Service Locator mittlerweile in bestimmten Situationen als ein Anti-Pattern eingestuft wird.
+All these variants have in common that they explicitly request the HttpClient dependency. This request can happen not only to properties as a default value, but also somewhere in the middle of the code. Since in the middle of the code means that it is not part of a type interface, the use of the HttpClient is hidden. Depending on the variant of how the HttpClient is requested, it can sometimes be very difficult or completely impossible to replace it with another implementation. Especially in the area of unit tests and for the sake of clarity, difficulties can arise here, so that the service locator is now classified as an anti-pattern in certain situations.
 
 == Dependency Injection
 
-Bei Dependency Injection wird nichts angefordert, sondern es wird explizit vom Nutzer bereitgestellt beziehungsweise von dem Code empfangen. Wie im Beispiel von Inversion of Control zu sehen, ist dort bereits das Dependency Injection Pattern angewendet worden. Konkret ist dort Constructor-Injection zu sehen, da die Abhängigkeit im Constructor deklariert ist. So muss UserRepository nun wie folgt genutzt werden.
+With Dependency Injection, nothing is requested, but it is explicitly provided by the user or received by the code. As can be seen in the example of Inversion of Control, the dependency injection pattern has already been applied there. Specifically, constructor injection can be seen there, since the dependency is declared in the constructor. So UserRepository must now be used as follows.
 
 ```typescript
 const users = new UserRepository(new HttpClient());
 ```
 
-Der Code, der UserRepository verwenden will, muss auch all seine Abhängigkeiten bereitstellen (injizieren). Ob HttpClient dabei jedes Mal neu erstellt oder jedes Mal derselbe genutzt werden soll, entscheidet nun der User der Klasse und nicht mehr die Klasse selbst. Es wird nicht mehr (aus der Sicht der Klasse) wie beim Service-Locator angefordert oder bei dem initialen Beispiel komplett selbst erstellt. Dieses Invertieren des Flows hat diverse Vorteile:
+The code that wants to use UserRepository must also provide (inject) all its dependencies. Whether HttpClient should be created each time or the same one should be used each time is now decided by the user of the class and no longer by the class itself. It is no longer requested (from the class's point of view) as in the case of the service locator, or created entirely by itself in the initial example. This inversion of the flow has various advantages:
 
-* Der Code ist einfacher zu verstehen, da alle Abhängigkeiten explizit sichtbar sind.
-* Der Code ist einfacher zu testen, da alle Abhängigkeiten eindeutig sind und bei Bedarf einfach abgeändert werden können.
-* Der Code ist modularer, da Abhängigkeiten einfach ausgetauscht werden können.
-* Es fördert das Separation of Concern Prinzip, da UserRepository nicht mehr dafür verantwortlich ist, im Zweifel sehr komplexe Abhängigkeiten selbst zu erstellen.
+* The code is easier to understand because all dependencies are explicitly visible.
+* The code is easier to test because all dependencies are unique and can be easily modified if needed.
+* The code is more modular, as dependencies can be easily exchanged.
+* It promotes the Separation of Concern principle, as UserRepository is no longer responsible for creating very complex dependencies itself when in doubt.
 
-Aber ein offensichtlicher Nachteil kann auch direkt erkannt werden: Muss ich nun wirklich alle Abhängigkeiten wie den HttpClient selbst anlegen bzw. verwalten? Ja und Nein. Ja, es gibt viele Fälle, in denen es völlig legitim ist, die Abhängigkeiten selbst zu verwalten. Eine gute API zeichnet sich dadurch aus, dass Abhängigkeiten nicht ausufern und die Nutzung selbst dann noch angenehm ist. Bei vielen Applikationen oder komplexen Libraries kann dies durchaus der Fall sein. Um eine sehr komplexe low-level API mit vielen Abhängigkeiten vereinfacht dem Nutzer bereitzustellen, sind Facades wunderbar geeignet.
+But an obvious disadvantage can also be recognized directly: Do I really need to create or manage all dependencies like the HttpClient myself? Yes and No. Yes, there are many cases where it is perfectly legitimate to manage the dependencies yourself. The hallmark of a good API is that dependencies don't get out of hand, and that even then they are pleasant to use. For many applications or complex libraries, this may well be the case. To provide a very complex low-level API with many dependencies in a simplified way to the user, facades are wonderfully suitable.
 
 == Dependency Injection Container
 
-Für komplexere Applikationen ist es hingegen nicht nötig alle Abhängigkeiten selbst zu verwalten, denn genau dafür ist ein sogenannter Dependency Injection Container da. Dieser legt nicht nur alle Objekte automatisch an, sondern "injiziert" die Abhängigkeiten auch ganz automatisch, sodass ein manueller "new" Aufruf nicht mehr notwendig ist. Dabei gibt es diverse Arten des Injizierens wie zum Beispiel Constructor-Injection, Method-Injection, oder Property-Injection. So sind auch komplizierte Konstruktionen mit vielen Abhängigkeiten einfach zu verwalten.
+For more complex applications, however, it is not necessary to manage all dependencies yourself, because that is exactly what a so-called dependency injection container is for. This not only creates all objects automatically, but also "injects" the dependencies automatically, so that a manual "new" call is no longer necessary. There are various types of injection, such as constructor injection, method injection, or property injection. This makes it easy to manage even complicated constructions with many dependencies.
 
-Ein Dependency Injection Container (auch DI Container oder IoC Container genannt) bringt Deepkit in `@deepkit/injector` mit oder bereits fertig integriert über App-Module in dem Deepkit Framework. Der obige Code würde mittels eines Low-Level API aus dem Paket `@deepkit/injector` wie folgt aussehen.
+A dependency injection container (also called DI container or IoC container) brings Deepkit in `@deepkit/injector` or already ready integrated via App modules in the Deepkit Framework. The above code would look like this using a low-level API from the `@deepkit/injector` package.
 
 ```typescript
 import { InjectorContext } from '@deepkit/injector';
@@ -98,12 +99,12 @@ const userRepo = injector.get(UserRepository);
 const users = await userRepo.getUsers();
 ```
 
-Das `injector` Objekt ist in diesem Fall der Dependency Injection Container. Statt mit "new UserRepository" liefert der Container eine Instanz von UserRepository mittels `get(UserRepository)` zurück. Um den Container statisch zu initialisieren wird der Funktion `InjectorContext.forProviders` eine Liste von Providern übergeben (in diesem Fall einfach die Klassen).
-Da sich bei DI alles um das Bereitstellen von Abhängigkeiten handelt, wird dem Container die Abhängigkeiten bereitgestellt (englisch "provided"), daher der Fachbegriff "Provider". Es gibt diverse Arten von Provider: ClassProvider, ValueProvider, ExistingProvider, FactoryProvider. Alle zusammen erlauben es sehr flexible Architekturen mit einem DI container abzubilden.
+The `injector` object in this case is the dependency injection container. Instead of using "new UserRepository", the container returns an instance of UserRepository using `get(UserRepository)`. To statically initialize the container, a list of providers is passed to the `InjectorContext.forProviders` function (in this case, simply the classes).
+Since DI is all about providing dependencies, the container is provided with the dependencies, hence the technical term "provider". There are several types of providers: ClassProvider, ValueProvider, ExistingProvider, FactoryProvider. All together, they allow very flexible architectures to be mapped with a DI container.
 
-Alle Abhängigkeiten zwischen den Providern werden automatisch aufgelöst und sobald ein `injector.get()` Aufruf stattfindet, werden die Objekte und Abhängigkeiten angelegt, gecacht, und korrekt entweder als Constructor-Argument (Constructor-Injection) übergeben, als Property (Property-Injection) gesetzt, oder einem Methoden-Aufruf (Method-Injection) übergeben.
+All dependencies between providers are automatically resolved and as soon as an `injector.get()` call occurs, the objects and dependencies are created, cached, and correctly passed either as a constructor argument (which is known as constructor injection), set as a property (which is known as property injection), or passed to a method call (which is known as method injection).
 
-Um nun den HttpClient mit einem anderen auszutauschen, kann ein anderer Provider (hier der ValueProvider) für HttpClient definiert werden:
+Now to exchange the HttpClient with another one, another provider (here the ValueProvider) can be defined for HttpClient:
 
 ```typescript
 const injector = InjectorContext.forProviders([
@@ -112,7 +113,7 @@ const injector = InjectorContext.forProviders([
 ]);
 ```
 
-Sobald nun UserRepository mittels `injector.get(UserRepository)` angefordert wird, erhält es das AnotherHttpClient Objekt. Alternativ kann hier auch sehr gut ein ClassProvider genutzt werden, sodass alle Abhängigkeiten von AnotherHttpClient ebenfalls vom DI Container verwaltet werden.
+As soon as UserRepository is requested via `injector.get(UserRepository)`, it receives the AnotherHttpClient object. Alternatively, a ClassProvider can be used here very well, so that all dependencies of AnotherHttpClient are also managed by the DI container.
 
 ```typescript
 const injector = InjectorContext.forProviders([
@@ -121,15 +122,15 @@ const injector = InjectorContext.forProviders([
 ]);
 ```
 
-Alle Arten von Providern werden in der Sektion xref:dependency-injection.adoc#di-providers[Dependency Injection Providers] aufgelistet und erklärt.
+All types of providers are listed and explained in the xref:dependency-injection.adoc#di-providers[Dependency Injection Providers] section.
 
-An dieser Stelle sei zu erwähnen, dass Deepkit's DI Container nur mit Runtime Typen von Deepkit funktioniert. Das bedeutet, dass jeder Code, der Klassen, Typen, Interfaces, und Funktionen beinhaltet durch den Deepkit Type Compiler kompiliert werden muss, um so die Typeninformationen zur Laufzeit zur Verfügung zu haben. Siehe dazu das Kapitel xref:runtime-types.adoc[Runtime Types].
+It should be mentioned here that Deepkit's DI container only works with Deepkit's runtime types. This means that any code that contains classes, types, interfaces, and functions must be compiled by the Deepkit Type Compiler in order to have the type information available at runtime. See the chapter xref:runtime-types.adoc[Runtime Types].
 
 == Dependency Inversion
 
-Das Beispiel von UserRepository unter Inversion of Control zeigt auf, dass UserRepository von einer niedrigeren Ebene, nämlich einer HTTP library, abhängt. Zusätzlich wird eine konkrete Implementierung (Klasse) statt einer Abstraktion (Interface) als Abhängigkeit deklariert. Dies mag auf den ersten Blick den Objekt-Orientierten Paradigmen entsprechen, kann aber insbesondere in komplexen und grossen Architekturen zu Problemen führen.
+The example of UserRepository under Inversion of Control shows that UserRepository depends on a lower level HTTP library. In addition, a concrete implementation (class) is declared as a dependency instead of an abstraction (interface). At first glance, this may seem to be in line with the object-oriented paradigms, but it can lead to problems, especially in complex and large architectures.
 
-Eine alternative Variante wäre es, wenn die Abhängigkeit HttpClient in eine Abstraktion (Interface) überführt wird und so kein Code von einer HTTP-Library in UserRepository importiert wird.
+An alternative variant would be to convert the HttpClient dependency into an abstraction (interface) and thus not import code from an HTTP library into UserRepository.
 
 ```typescript
 interface HttpClientInterface {
@@ -147,12 +148,12 @@ class UserRepository {
 }
 ```
 
-Dies wird Dependency Inversion Prinzip genannt. UserRepository hat keine Abhängigkeit mehr direkt zu einer HTTP library und basiert stattdessen auf einer Abstraktion (Interface). Es löst damit zwei fundamentale Ziele in diesem Prinzip:
+This is called the dependency inversion principle. UserRepository no longer has a dependency directly on an HTTP library and is instead based on an abstraction (interface). It thus solves two fundamental goals in this principle:
 
-* High-Level Module sollen nichts aus low-level Modulen importieren.
-* Implementierungen sollen auf Abstraktionen (Interfaces) basieren.
+* High-level modules should not import anything from low-level modules.
+* Implementations should be based on abstractions (interfaces).
 
-Das Zusammenführen der beiden Implementierungen (UserRepository mit einer HTTP-Library) kann nun über den DI Container geschehen.
+Merging the two implementations (UserRepository with an HTTP library) can now be done via the DI container.
 
 ```typescript
 import { HttpClient } from 'http-library';
@@ -164,38 +165,43 @@ const injector = InjectorContext.forProviders([
 ]);
 ```
 
-Da Deepkit's DI container in der Lage ist, abstrakte Abhängigkeiten (Interfaces) wie hier von HttpClientInterface aufzulösen, erhält UserRepository automatisch die Implementierung von HttpClient, da HttpClient das Interface HttpClientInterface implementiert hat. Dies geschieht entweder, indem HttpClient ganz konkret HttpClientInterface implementiert (`class HttpClient implements HttpClientInterface`), oder dadurch, dass HttpClient's API schlicht kompatibel zu HttpClientInterface ist.
-Sobald HttpClient seine API abändert (zum Beispiel die Methode `get` entfernt) und so nicht mehr kompatibel zu HttpClientInterface ist, wirft der DI Container einen Fehler ("die Abhängigkeit HttpClientInterface wurde nicht bereitgestellt").
-Hier ist der User, der beide Implementierungen zusammenbringen will, in der Pflicht eine Lösung zu finden. Als Beispiel könnte hier dann eine Adapter-Klasse registriert werden, die HttpClientInterface implementiert und die Methoden-Aufrufe korrekt an HttpClient weiterleitet.
+Since Deepkit's DI container is capable of resolving abstract dependencies (interfaces) such as this one of HttpClientInterface, UserRepository automatically gets the implementation of HttpClient since HttpClient implemented the interface HttpClientInterface. This is done either by HttpClient specifically implementing HttpClientInterface (`class HttpClient implements HttpClientInterface`), or by HttpClient's API simply being compatible with HttpClientInterface.
 
-Hier sei zu beachten, dass obwohl in Theorie das Dependency Inversion Prinzip seine Vorteile hat, so hat es in der Praxis auch erhebliche Nachteile. So führt es nicht nur zu mehr Code (da mehr Interfaces geschrieben werden müssen), sondern auch zu mehr Komplexität (da jede Implementierung für jede Abhängigkeit nun ein Interface hat). Dieser zu zahlende Preis lohnt sich erst dann, wenn die Applikation eine gewisse Größe erreicht hat und diese Flexibilität auch gebraucht wird. Wie jedes Design-Pattern und Prinzip hat auch dieses seinen Kosten-Nutzung-Faktor, welche vor seiner Anwendung durchdacht sein sollte.
-Design-Patterns sollen nicht für jeden noch so simplen Code pauschal und blind genutzt werden. Sind jedoch die Voraussetzungen wie zum Beispiel einer komplexen Architektur, grossen Applikationen, oder eines skalierendes Teams gegeben, entfaltet Dependency Inversion und andere Design-Patterns erst seine wahre Stärke.
+As soon as HttpClient modifies its API (for example, removes the `get` method) and is thus no longer compatible with HttpClientInterface, the DI container throws an error ("the HttpClientInterface dependency was not provided").
+
+Here the user, who wants to bring both implementations together, is in the obligation to find a solution. As an example, an adapter class could be registered here that implements HttpClientInterface and correctly forwards the method calls to HttpClient.
+
+It should be noted here that although in theory the dependency inversion principle has its advantages, in practice it also has significant disadvantages. It not only leads to more code (since more interfaces have to be written), but also to more complexity (since each implementation now has an interface for each dependency). This price to pay is only worth it when the application reaches a certain size and this flexibility is needed. Like any design pattern and principle, this one has its cost-use factor, which should be thought through before it is applied.
+
+Design patterns should not be used blindly and across the board for even the simplest code. However, if the prerequisites such as a complex architecture, large applications, or a scaling team are given, dependency inversion and other design patterns only unfold their true strength.
 
 [#di-installation]
 == Installation
 
-Da Dependency Injection in Deepkit auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
+Since Dependency Injection in Deepkit is based on Runtime Types, it is necessary to have `@deepkit/type` already installed correctly. See xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
-Falls dies erfolgreich geschehen ist, kann `@deepkit/injector` selbst installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
+If this is done successfully, `@deepkit/injector` can be installed by itself or the Deepkit framework which already uses the library under the hood.
 
+```sh
 	npm install @deepkit/injector
+```
 
-Sobald die Library installiert ist, kann die API davon direkt benutzt werden.
+Once the library is installed, the API of it can be used directly.
 
 [#di-usage]
-== Benutzung
+== Use
 
-Um Dependency Injection nun zu benutzen, gibt es drei Möglichkeiten.
+To use Dependency Injection now, there are three ways.
 
 * Injector API (Low Level)
 * Module API
 * App API (Deepkit Framework)
 
-Wenn `@deepkit/injector` ohne das Deepkit Framework benutzt werden soll, empfehlen sich die ersten zwei Varianten.
+If `@deepkit/injector` is to be used without the deepkit framework, the first two variants are recommended.
 
 === Injector API
 
-Die Injector API wurde bereits in der Einführung zu Dependency Injection kennengelernt. Es zeichnet sich durch eine sehr einfache Benutzung mittels einer einzigen Klasse `InjectorContext` aus, die einen einzigen DI Container anlegt und ist besonders geeignet für einfachere Anwendungen ohne Module.
+The Injector API has already been introduced in the introduction to Dependency Injection. It is characterized by a very simple usage by means of a single class `InjectorContext` that creates a single DI container and is particularly suitable for simpler applications without modules.
 
 ```typescript
 import { InjectorContext } from '@deepkit/injector';
@@ -208,14 +214,14 @@ const injector = InjectorContext.forProviders([
 const repository = injector.get(UserRepository);
 ```
 
-Das `injector` Objekt ist in diesem Fall der Dependency Injection Container. Die Funktion `InjectorContext.forProviders` nimmt dabei ein Array von Providern entgegen. Siehe die Sektion xref:dependency-injection.adoc#di-providers[Dependency Injection Providers], um zu erfahren, welche Werte übergeben werden können.
+The `injector` object in this case is the dependency injection container. The function `InjectorContext.forProviders` takes an array of providers. See the section xref:dependency-injection.adoc#di-providers[Dependency Injection Providers] to learn which values can be passed.
 
 [#di-module-api]
 === Module API
 
-Eine etwas komplexere API ist die `InjectorModule` Klasse, welche es erlaubt, die Provider in unterschiedlichen Modulen auszulagern, um so mehrere encapsulated DI Container per Module zu erstellen. Auch erlaubt dies das Verwenden von Konfiguration-Klassen per Module, welche es vereinfacht, Konfigurationswerte automatisch validiert den Providern bereitzustellen. Module können sich untereinander importieren, Provider exportieren, um so eine Hierarchie und schön separierte Architektur aufzubauen.
+A more complex API is the `InjectorModule` class, which allows to store the providers in different modules to create multiple encapsulated DI containers per module. Also this allows using configuration classes per module, which makes it easier to provide configuration values automatically validated to the providers. Modules can import themselves among themselves, providers export, in order to build up so a hierarchy and nicely separated architecture.
 
-Diese API sollte genutzt werden, wenn die Applikation komplexer ist und nicht das Deepkit Framework genutzt wird.
+This API should be used if the application is more complex and the Deepkit framework is not used.
 
 ```typescript
 import { InjectorModule, InjectorContext } from '@deepkit/injector';
@@ -229,8 +235,8 @@ const rootModule = new InjectorModule([UserRepository])
 const injector = new InjectorContext(rootModule);
 ```
 
-Das `injector` Objekt ist in diesem Fall der Dependency Injection Container. Es können Provider in unterschiedliche Module aufgesplittet werden und dann mittels Module-Imports diese in unterschiedlichen Stellen wieder importiert werden. So entsteht eine natürliche Hierarchie, die die Hierarchie der Anwendung bzw. Architektur abbildet.
-Dem InjectorContext sollte dabei immer das oberste Modul in der Hierarchie gegeben werden, auch Root-Module oder App-Module genannt. Der InjectorContext hat hierbei dann nur einen vermittelnden Auftrag: Aufrufe auf `injector.get()` werden schlicht an das Root-Modul weitergeleitet. Es können jedoch auch Provider aus nicht-root Modulen erhalten werden, in dem man das Modul als zweites Argument übergibt.
+The `injector` object in this case is the dependency injection container. Providers can be split into different modules and then imported again in different places using module imports. This creates a natural hierarchy that reflects the hierarchy of the application or architecture.
+The InjectorContext should always be given the top module in the hierarchy, also called root module or app module. The InjectorContext then only has an intermediary role: calls to `injector.get()` are simply forwarded to the root module. However, it is also possible to get providers from non-root modules by passing the module as a second argument.
 
 ```typescript
 const repository = injector.get(UserRepository);
@@ -238,9 +244,9 @@ const repository = injector.get(UserRepository);
 const httpClient = injector.get(HttpClient, lowLevelModule);
 ```
 
-All nicht-root Module sind per default verschlossen ("encapsulated"), sodass alle Provider in diesem Modul nur ihm selbst zur Verfügung stehen. Soll ein Provider auch anderen Modulen zur Verfügung stehen, muss dieser Provider exportiert werden. Durch das Exportieren wandert der Provider in das Eltern-Modul der Hierarchie und kann so genutzt werden.
+All non-root modules are encapsulated by default, so that all providers in this module are only available to itself. If a provider is to be available to other modules, this provider must be exported. By exporting, the provider moves to the parent module of the hierarchy and can be used that way.
 
-Um alle Provider per default auf die oberste Ebene, dem Root-Module, zu exportieren, kann die Option `forRoot` genutzt werden. Dadurch können alle Provider von allen anderen Modulen genutzt werden.
+To export all providers by default to the top level, the root module, the option `forRoot` can be used. This allows all providers to be used by all other modules.
 
 ```typescript
 const lowLevelModule = new InjectorModule([HttpClient])
@@ -249,11 +255,8 @@ const lowLevelModule = new InjectorModule([HttpClient])
 
 === App API
 
-Sobald das Deepkit Framework benutzt wird, werden Module mit der `@deepkit/app` API definiert. Diese basiert auf der Module API, sodass die Fähigkeiten von dort ebenfalls verfügbar sind. Zusätzlich ist es möglich mit mächtigen Hooks zu arbeiten sowie Konfiguration-Loader zu definieren, um so noch dynamischere Architekturen abzubilden.
+Once the Deepkit framework is used, modules are defined with the `@deepkit/app` API. This is based on the Module API, so the capabilities from there are also available. In addition, it is possible to work with powerful hooks and define configuration loaders to map even more dynamic architectures.
 
-In xref:framework.adoc#framework-modules[Framework Modules] ist näheres hierzu beschrieben.
-
-[lang=english]
 The xref:framework.adoc#framework-modules[Framework Modules] chapter describes this in more detail.
 
 [lang=chinese]
@@ -262,7 +265,7 @@ xref:framework.adoc#framework-modules[Framework Modules]一章对此有更详细
 [#di-providers]
 == Providers
 
-In dem Dependency Injection Container gibt es mehrere Möglichkeiten Abhängigkeiten bereitzustellen. Die einfachste Variante ist dabei einfach die Angabe einer Klasse. Dies ist auch als short ClassProvider bekannt.
+There are several ways to provide dependencies in the Dependency Injection container. The simplest variant is simply the specification of a class. This is also known as short ClassProvider.
 
 ```typescript
 InjectorContext.forProviders([
@@ -270,9 +273,9 @@ InjectorContext.forProviders([
 ]);
 ```
 
-Dies stellt einen speziellen Provider dar, da lediglich die Klasse spezifiziert wird. Alle anderen Provider müssen als Object-Literal angegeben werden.
+This represents a special provider, since only the class is specified. All other providers must be specified as object literals.
 
-Standardmäßig sind alle Provider als Singleton markiert, sodass zu jedem Zeitpunkt nur eine Instanz existiert. Um bei jedem Bereitstellen eine neue Instanz anzulegen, kann die Option `transient` genutzt werden. Dies führt dazu, dass Klassen jedes Mal neu erstellt werden oder Factories jedes Mal neu ausgeführt werden.
+By default, all providers are marked as singletons, so only one instance exists at any given time. To create a new instance each time a provider is deployed, the `transient` option can be used. This will cause classes to be recreated each time or factories to be executed each time.
 
 ```typescript
 InjectorContext.forProviders([
@@ -282,7 +285,7 @@ InjectorContext.forProviders([
 
 === ClassProvider
 
-Neben dem short ClassProvider gibt es auch den regulären ClassProvider, welches ein Object-Literal statt einer Klasse ist.
+Besides the short ClassProvider there is also the regular ClassProvider, which is an object literal instead of a class.
 
 ```typescript
 InjectorContext.forProviders([
@@ -290,7 +293,7 @@ InjectorContext.forProviders([
 ]);
 ```
 
-Dies ist Äquivalent zu diesen beiden:
+This is equivalent to these two:
 
 ```typescript
 InjectorContext.forProviders([
@@ -302,7 +305,7 @@ InjectorContext.forProviders([
 ]);
 ```
 
-Es kann genutzt werden, um einen Provider mit einer anderen Klasse auszutauschen.
+It can be used to exchange a provider with another class.
 
 ```typescript
 InjectorContext.forProviders([
@@ -310,11 +313,11 @@ InjectorContext.forProviders([
 ]);
 ```
 
-In diesem Beispiel wird die Klasse `OtherUserRepository` nun ebenfalls in dem DI Container verwaltet und all seine Abhängigkeiten automatisch aufgelöst.
+In this example, the `OtherUserRepository` class is now also managed in the DI container and all its dependencies are resolved automatically.
 
 === ValueProvider
 
-Statische Werte können mit diesem Provider bereitgestellt werden.
+Static values can be provided with this provider.
 
 ```typescript
 InjectorContext.forProviders([
@@ -322,7 +325,7 @@ InjectorContext.forProviders([
 ]);
 ```
 
-Da nicht nur Klassen-Instanzen als Abhängigkeiten bereitgestellt werden können, kann als `useValue` ein beliebiger Wert angegeben werden. Als Provider-Token könnte auch ein Symbol oder ein Primitive (string, number, boolean) genutzt werden.
+Since not only class instances can be provided as dependencies, any value can be specified as `useValue`. A symbol or a primitive (string, number, boolean) could also be used as a provider token.
 
 ```typescript
 InjectorContext.forProviders([
@@ -330,7 +333,7 @@ InjectorContext.forProviders([
 ]);
 ```
 
-Primitive Provider-Tokens müssen mit dem Inject-Typen als Abhängigkeit deklariert werden.
+Primitive provider tokens must be declared with the Inject type as a dependency.
 
 ```typescript
 import { Inject } from '@deepkit/injector';
@@ -340,7 +343,7 @@ class EmailService {
 }
 ```
 
-Mit der Kombination aus einem Inject-Alias und primitive Provider-Tokens können auch Abhängigkeiten aus Paketen bereitgestellt, die keine Runtime-Typeninformationen beinhalten.
+The combination of an inject alias and primitive provider tokens can also be used to provide dependencies from packages that do not contain runtime type information.
 
 ```typescript
 import { Inject } from '@deepkit/injector';
@@ -353,7 +356,7 @@ InjectorContext.forProviders([
 ]);
 ```
 
-Und dann auf der Nutzerseite wie folgt deklariert werden:
+And then declared on the user side as follows:
 
 ```typescript
 class PaymentService {
@@ -363,7 +366,7 @@ class PaymentService {
 
 === ExistingProvider
 
-Es kann eine Weiterleitung zu einem bereits definierten Provider definiert werden.
+A forwarding to an already defined provider can be defined.
 
 ```typescript
 InjectorContext.forProviders([
@@ -374,7 +377,7 @@ InjectorContext.forProviders([
 
 === FactoryProvider
 
-Es kann eine Funktion genutzt werden, um einen Wert für den Provider bereitzustellen. Diese Funktion kann auch Parameter beinhalten, die wiederum von dem DI Container bereitgestellt werden. So sind andere Abhängigkeiten oder Konfiguration-Optionen zugreifbar.
+A function can be used to provide a value for the provider. This function can also contain parameters, which in turn are provided by the DI container. Thus, other dependencies or configuration options are accessible.
 
 ```typescript
 InjectorContext.forProviders([
@@ -405,7 +408,7 @@ InjectorContext.forProviders([
 
 === InterfaceProvider
 
-Neben Klassen und Primitives können auch Abstraktionen (Interfaces) bereitgestellt werden. Dies geschieht über die Funktion `provide` und ist dann besonders sinnvoll, wenn der zu bereitstellende Wert keine Typeninformationen beinhaltet.
+In addition to classes and primitives, abstractions (interfaces) can also be provided. This is done via the function `provide` and is particularly useful if the value to be provided does not contain any type information.
 
 ```typescript
 import { provide } from '@deepkit/injector';
@@ -428,20 +431,9 @@ InjectorContext.forProviders([
 ]);
 ```
 
-=== Asynchronous Providers
+If multiple providers have implemented the Connection interface, the last provider is used.
 
-Asynchroner Provider sind aufgrund des Designs nicht möglich, da eine asynchroner
-Dependency Injection Container bedeuten würde, dass das Anfordern von Providern ebenfalls asynchron
-wäre und damit die gesamte Anwendung auf höchster Ebene bereits zur asynchronität gezwungen ist.
-
-Um etwas asynchron zu initialisieren, sollte dieses Initialisieren in den Application Server Bootstrap verlagert werden,
-da dort die Events asynchron sein können. Alternativ kann eine Initialisierung manuell angestossen werden.
-
-TODO: Explain it better, maybe example
-
-Wenn mehrere Provider das Interface Connection implementiert haben, wird der letzte Provider genutzt.
-
-Als Argument für provide() sind alle anderen Provider möglich.
+As argument for provide() all other providers are possible.
 
 ```typescript
 const myConnection = {write: (data: any) => undefined};
@@ -455,10 +447,16 @@ InjectorContext.forProviders([
 ]);
 ```
 
+=== Asynchronous Providers
+
+The design of `@deepkit/injector` precludes the use of asynchronous providers with an asynchronous Dependency Injection container. This is because requesting providers would also need to be asynchronous, necessitating the entire application to operate at the highest level asynchronously.
+
+To initialize something asynchronously, this initialization should be moved to the application server bootstrap,  because there the events can be asynchronous. Alternatively, an initialization can be triggered manually.
+
 [#di-injection]
 == Constructor/Property Injection
 
-In den meisten Fällen wird Constructor-Injection verwendet. Alle Abhängigkeiten werden dabei als Constructor-Argumente angegeben und werden vom DI Container automatisch injiziert.
+In most cases, constructor injection is used. All dependencies are specified as constructor arguments and are automatically injected by the DI container.
 
 ```typescript
 class MyService {
@@ -467,7 +465,7 @@ class MyService {
 }
 ```
 
-Optionale Abhängigkeiten sollten als solche gekennzeichnet werden, da sonst ein Fehler ausgelöst werden könnte, wenn kein Provider gefunden werden kann.
+Optional dependencies should be marked as such, otherwise an error could be triggered if no provider can be found.
 
 ```typescript
 class MyService {
@@ -476,7 +474,7 @@ class MyService {
 }
 ```
 
-Eine Alternative zur Constructor-Injection ist die Property-Injection. Diese wird in der Regel verwendet, wenn die Abhängigkeit optional oder der Constructor sonst zu voll ist. Die Properties werden automatisch zugewiesen, sobald die Instanz erstellt ist (und damit der Constructor ausgeführt wurde).
+An alternative to constructor injection is property injection. This is usually used when the dependency is optional or the constructor is otherwise too full. The properties are automatically assigned once the instance is created (and thus the constructor is executed).
 
 ```typescript
 import { Inject } from '@deepkit/injector';
@@ -491,11 +489,11 @@ class MyService {
 ```
 
 [#di-configuration]
-== Konfiguration
+== Configuration
 
-Der Dependency Injection Container erlaubt auch das Injizieren von Konfigurationsoptionen. Diese Configuration-Injection kann via Constructor-Injection oder Property-Injection empfangen werden.
+The dependency injection container also allows configuration options to be injected. This configuration injection can be received via constructor injection or property injection.
 
-Die Module API unterstützt dabei das Definieren einer Konfiguration-Definition, welche eine reguläre Klasse ist. Durch das Bereitstellen solch einer Klasse mit Properties agiert jedes Property als Konfiguration-Option. Durch die Art und Weise wie in TypeScript Klassen definiert werden können, erlaubt dies das Definieren eines Types und Default-Values pro Property.
+The Module API supports the definition of a configuration definition, which is a regular class. By providing such a class with properties, each property acts as a configuration option. Because of the way classes can be defined in TypeScript, this allows defining a type and default values per property.
 
 ```typescript
 class RootConfiguration {
@@ -508,7 +506,7 @@ const rootModule = new InjectorModule([UserRepository])
      .addImport(lowLevelModule);
 ```
 
-Die Konfigurationsoptionen `domain` und `debug` können nun ganz bequem typen-sicher in Providern genutzt werden.
+The configuration options `domain` and `debug` can now be used quite conveniently type-safe in providers.
 
 ```typescript
 class UserRepository {
@@ -520,13 +518,13 @@ class UserRepository {
 }
 ```
 
-Die Werte der Optionen selbst können über `configure()` gesetzt werden.
+The values of the options themselves can be set via `configure()`.
 
 ```typescript
 	rootModule.configure({debug: true});
 ```
 
-Optionen, die keinen Default-Value haben, aber trotzdem notwendig sind, können mit einem `!` versehen werden. Dies zwingt den User des Modules dazu, den Wert bereitzustellen, da ansonsten es zu einem Fehler kommt.
+Options that do not have a default value but are still necessary can be provided with a `!`. This forces the user of the module to provide the value, otherwise an error will occur.
 
 ```typescript
 class RootConfiguration {
@@ -536,7 +534,7 @@ class RootConfiguration {
 
 === Validation
 
-Auch können alle Serialization und Validation Typen aus den vorherigen Kapiteln xref:validation.adoc[Validation] und xref:serialization.adoc[Serialization] genutzt werden, um so sehr detailliert festzulegen, welchen Typ und inhaltliche Einschränkungen eine Option haben muss.
+Also, all serialization and validation types from the previous chapters xref:validation.adoc[Validation] and xref:serialization.adoc[Serialization] can be used to specify in great detail what type and content restrictions an option must have.
 
 ```typescript
 class RootConfiguration {
@@ -546,7 +544,7 @@ class RootConfiguration {
 
 === Injection
 
-Konfigurationsoptionen können wie bereits gezeigt wie andere Abhängigkeiten sicher und einfach durch den DI Container injiziert werden. Als einfachste Methode ist das Referenzieren einer einzigen Option mittels dem Index-Access Operators:
+Configuration options, like other dependencies, can be safely and easily injected through the DI container as shown earlier. The simplest method is to reference a single option using the index access operator:
 
 ```typescript
 class WebsiteController {
@@ -558,7 +556,7 @@ class WebsiteController {
 }
 ```
 
-Es können Konfigurationsoptionen nicht nur einzeln, sondern auch als Gruppe referenziert werden. Hierzu wird der TypeScript Utility-Typ `Partial` genutzt:
+Configuration options can be referenced not only individually, but also as a group. The TypeScript utility type `Partial` is used for this purpose:
 
 ```typescript
 class WebsiteController {
@@ -570,7 +568,7 @@ class WebsiteController {
 }
 ```
 
-Um alle Konfigurationsoptionen zu erhalten, kann auch die Konfigurationsklasse direkt referenziert werden:
+To get all configuration options, the configuration class can also be referenced directly:
 
 ```typescript
 class WebsiteController {
@@ -582,16 +580,16 @@ class WebsiteController {
 }
 ```
 
-Es wird jedoch empfohlen nur die Konfigurationsoptionen zu referenzieren, die auch wirklich genutzt werden. Das vereinfacht nicht nur Unit-Tests, sondern lässt auch einfacher einsehen, was nun konkret von dem Code gebraucht wird.
+However, it is recommended to reference only the configuration options that are actually used. This not only simplifies unit tests, but also makes it easier to see what is actually needed from the code.
 
 [#di-scopes]
 == Scopes
 
-Per Default sind alle Provider des DI Containers ein Singleton und werden dadurch nur einmal instantiiert. Das bedeutet in dem Beispiel von UserRepository gibt es immer nur eine Instanz von UserRepository während der gesamten Laufzeit. Zu keinem Zeitpunkt wird eine zweite Instanz erzeugt, außer der User macht dies manuell mit dem "new" Keyword.
+By default, all providers of the DI container are singletons and are therefore instantiated only once. This means that in the example of UserRepository there is always only one instance of UserRepository during the entire runtime. At no time is a second instance created, unless the user does this manually with the "new" keyword.
 
-Nun gibt es jedoch diverse Anwendungsfälle, in denen ein Provider nur für eine kurze Zeit instantiiert werden soll oder nur während eines bestimmten Ereignisses. Solch ein Ereignis könnte zum Beispiel ein HTTP-Request oder ein RPC-Call sein. Dies würde dann bedeuten, dass pro Ereignis jedes Mal eine neue Instanz erstellt wird und nachdem diese Instanz nicht mehr benutzt wird diese automatisch entfernt wird (durch den Garbage-Collector).
+However, there are various use cases where a provider should only be instantiated for a short time or only during a certain event. Such an event could be, for example, an HTTP request or an RPC call. This would mean that a new instance is created for each event and after this instance is no longer used it is automatically removed (by the garbage collector).
 
-Ein HTTP-Request ist ein klassisches Beispiel für einen Scope. So können zum Beispiel Provider wie eine Session, ein User-Objekt, oder andere Request-bezogenen Provider auf diesen Scope registriert werden. Um einen Scope zu erstellen, wird lediglich ein beliebiger Scopename gewählt und dann bei den Providern angegeben.
+An HTTP request is a classic example of a scope. For example, providers such as a session, a user object, or other request-related providers can be registered to this scope. To create a scope, simply choose an arbitrary scope name and then specify it with the providers.
 
 ```typescript
 import { InjectorContext } from '@deepkit/injector';
@@ -603,27 +601,27 @@ const injector = InjectorContext.forProviders([
 ]);
 ```
 
-Sobald ein Scope angegeben ist, ist dieser Provider nicht mehr direkt über den DI Container zu erhalten, sodass folgender Aufruf fehlschlägt:
+Once a scope is specified, this provider cannot be obtained directly from the DI container, so the following call will fail:
 
 ```typescript
 const session = injector.get(UserSession); //throws
 ```
 
-Stattdessen muss ein scoped DI Container erstellt werden. Dies würde jedes Mal geschehen sobald ein HTTP-Request reinkommt:
+Instead, a scoped DI container must be created. This would happen every time an HTTP request comes in:
 
 ```typescript
 const httpScope = injector.createChildScope('http');
 ```
 
-Auf diesen scoped DI Container können nun auch Provider angefordert werden, die in diesem Scope auch registriert sind, sowie alle Provider die keinen Scope definiert haben.
+Providers that are also registered in this scope can now be requested on this scoped DI container, as well as all providers that have not defined a scope.
 
 ```typescript
 const session = httpScope.get(UserSession); //works
 ```
 
-Da alle Provider per default Singleton sind, wird auch hier jeder Aufruf zu `get(UserSession)` immer dieselbe Instanz pro scoped Container zurückgeben. Erstellt man mehrere scoped Container werden auch mehrere UserSession angelegt.
+Since all providers are singleton by default, each call to `get(UserSession)` will always return the same instance per scoped container. If you create multiple scoped containers, multiple UserSessions will be created.
 
-Scoped DI Container haben die Fähigkeit, Werte dynamisch von außen zu setzen. So ist es zum Beispiel bei einem HTTP-Scope einfach möglich, die Objekte HttpRequest und HttpResponse zu setzen.
+Scoped DI containers have the ability to set values dynamically from the outside. For example, in an HTTP scope, it is easy to set the HttpRequest and HttpResponse objects.
 
 ```typescript
 const injector = InjectorContext.forProviders([
@@ -638,15 +636,14 @@ httpServer.on('request', (req, res) => {
 });
 ```
 
-Applikationen, die mit dem Deepkit Framework arbeiten, haben per default einen `http`, einen `rpc`, und einen `cli` Scope. Siehe dazu jeweils das Kapitel xref:cli.adoc[CLI], xref:http.adoc[HTTP], oder
-xref:rpc.adoc[RPC].
+Applications using the Deepkit framework have by default an `http`, an `rpc`, and a `cli` scope. See respectively the chapter xref:cli.adoc[CLI], xref:http.adoc[HTTP], or xref:rpc.adoc[RPC].
 
 [#di-setup-calls]
 == Setup Calls
 
-Setup-Calls erlauben es das Ergebnis eines Providers zu manipulieren. Das ist nützlich um zum Beispiel eine weitere Dependency Injection Variante, das Method-Injection, zu nutzen.
+Setup calls allow to manipulate the result of a provider. This is useful for example to use another dependency injection variant, the method injection.
 
-Setup-Calls sind nur mit der Modul-API beziehungsweise der App-API nutzbar und werden über dem Modul registriert.
+Setup calls can only be used with the module API or the app API and are registered above the module.
 
 ```typescript
 class UserRepository  {
@@ -662,9 +659,9 @@ const rootModule = new InjectorModule([UserRepository])
 rootModule.setupProvider(UserRepository).setDatabase(db);
 ```
 
-Die Methode `setupProvider` gibt dabei ein Proxy-Objekt von UserRepository zurück, auf welchem seine Methoden aufgerufen werden können. Zu beachten ist, dass diese Methoden-Aufrufen lediglich in eine Warteschlange platziert werden und zu diesem Zeitpunkt nicht ausgeführt werden. Entsprechend gibt es auch kein Return-Value zurück.
+The `setupProvider` method thereby returns a proxy object of UserRepository on which its methods can be called. It should be noted that these method calls are merely placed in a queue and are not executed at this time. Accordingly, no return value is returned.
 
-Neben Methoden-Aufrufen können auch Properties gesetzt werden.
+In addition to method calls, properties can also be set.
 
 ```typescript
 class UserRepository  {
@@ -677,11 +674,11 @@ const rootModule = new InjectorModule([UserRepository])
 rootModule.setupProvider(UserRepository).db = db;
 ```
 
-Auch diese Zuweisung wird lediglich in einer Warteschlange platziert.
+This assignment is also simply placed in a queue.
 
-Die Aufrufe beziehungsweise die Zuweisungen in der Warteschlange werden dann auf das eigentliche Resultat des Providers ausgeführt, sobald dieser erstellt wird. Das heisst bei einem ClassProvider werden diese auf die Klassen-Instanz angewendet, sobald die Instanz erstellt wird, bei einem FactoryProvider auf das Resultat der Factory, und bei einem ValueProvider auf den Provider.
+The calls or the assignments in the queue are then executed on the actual result of the provider as soon as this is created. That is with a ClassProvider these are applied to the class instance, as soon as the instance is created, with a FactoryProvider on the result of the Factory, and with a ValueProvider on the Provider.
 
-Um nicht nur statische Werte, sondern auch andere Provider zu referenzieren kann die Funktion `injectorReference` verwendet werden. Diese gibt eine Referenz zu einem Provider zurück, welcher beim Ausführen der Setup-Calls ebenfalls vom DI Container angefordert wird.
+To reference not only static values, but also other providers, the function `injectorReference` can be used. This function returns a reference to a provider, which is also requested by the DI container when the setup calls are executed.
 
 ```typescript
 class Database {}
@@ -696,7 +693,7 @@ rootModule.setupProvider(UserRepository).db = injectorReference(Database);
 
 *Abstractions/Interfaces*
 
-Es können auch Setup-Calls einem Interface zugewiesen werden.
+Setup calls can also be assigned to an interface.
 
 ```typescript
 rootModule.setupProvider<DatabaseInterface>().logging = logger;

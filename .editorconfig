@@ -1,2 +1,3 @@
 [*.adoc]
 max_line_length = 100
+soft_wrap = true

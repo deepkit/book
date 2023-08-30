@@ -1,34 +1,35 @@
 [#serialisation]
 = Serialisation
 
-Serialisierung ist der Prozess der Umwandlung von Datentypen in ein Format, das sich beispielsweise für den Transport oder die Speicherung eignet. Die Deserialisierung ist der Prozess, der dies wieder rückgängig macht. Dies geschieht verlustfrei, d. h. die Daten können in und aus einem Serialisierungsziel konvertiert werden, ohne dass Datentypinformationen oder die Daten selbst verloren gehen.
+Serialization is the process of converting data types into a format suitable for transport or storage, for example. Deserialization is the process of undoing this. This is done loss-lessly, meaning that data can be converted to and from a serialization target without losing data type information or the data itself.
 
-In JavaScript erfolgt die Serialisierung normalerweise zwischen JavaScript-Objekten und JSON. JSON unterstützt nur String, Number, Boolean, Objekte und Arrays. JavaScript hingegen unterstützt viele weitere Typen wie BigInt, ArrayBuffer, typisierte Arrays, Date, benutzerdefinierte Klasseninstanzen und viele mehr. Um nun JavaScript-Daten mit JSON an einen Server zu übertragen, benötigen Sie einen Serialisierungsprozess (auf dem Client) und einen Deserialisierungsprozess (auf dem Server), oder umgekehrt, wenn der Server Daten als JSON an den Client sendet. Die Verwendungen von `JSON.parse` und `JSON.stringify` ist dabei oft nicht ausreichend, da diese nicht verlustfrei arbeitet.
+In JavaScript, serialization is usually between JavaScript objects and JSON. JSON supports only String, Number, Boolean, Objects, and Arrays. JavaScript, on the other hand, supports many other types such as BigInt, ArrayBuffer, typed arrays, Date, custom class instances, and many more. Now, to transmit JavaScript data to a server using JSON, you need a serialization process (on the client) and a deserialization process (on the server), or vice versa if the server sends data to the client as JSON. Using `JSON.parse` and `JSON.stringify` is often not sufficient for this, as it is not lossless.
 
-Dieser Serialisierungsprozess ist bei nicht trivialen Daten unbedingt notwendig, da JSON selbst schon bei Basistypen wie einem Datum seine Informationen verliert. Ein `new Date` wird schließlich als String in JSON serialisiert:
+This serialization process is absolutely necessary for non-trivial data, since JSON loses its information even for basic types like a date. A new Date is finally serialized as a string in JSON:
 
 ```typescript
 const json = JSON.stringify(new Date);
 //'"2022-05-13T20:48:51.025Z"
 ```
 
-Wie zu sehen ist, ist das Ergebnis von JSON.stringify ein JSON string. Deserialisiert man dieses nun wieder mit JSON.parse, erhält man nicht ein `Date` Objekt, sondern einen String.
+As you can see, the result of JSON.stringify is a JSON string. If you deserialize it again with JSON.parse, you will not get a date object, but a string.
 
 ```typescript
 const value = JSON.parse('"2022-05-13T20:48:51.025Z"');
 //"2022-05-13T20:48:51.025Z"
 ```
 
-Zwar gibt es diverse Workarounds, um JSON.parse das Deserialisieren von Date-Objekten beizubringen, so sind diese jedoch fehleranfällig und wenig performant. Um das typen-sichere Serialisieren und Deserialisieren für diesen Fall und vielen anderen Typen zu ermöglichen, ist ein Serialisierungsprozess notwendig.
+Although there are various workarounds to teach JSON.parse to deserialize Date objects, they are error-prone and poorly performing. To enable type-safe serialization and deserialization for this case and many other types, a serialization process is necessary.
 
-Es sind vier Hauptfunktionen verfügbar: `serialize`, `cast`/`deserialize` und `validatedDeserialize`. Unter der Haube dieser Funktionen wird der global verfügbare JSON-Serializer von `@deepkit/type` standardmäßig verwendet, es kann jedoch auch ein eigenes Serialisierungsziel genutzt werden.
+There are four main functions available: `serialize`, `cast`, `deserialize` and `validatedDeserialize`. Under the hood of these functions, the globally available JSON serializer from `@deepkit/type` is used by default, but a custom serialization target can also be used.
 
-Deepkit Type unterstützt benutzerdefinierte Serialisierungsziele, ist aber bereits mit einem mächtigen JSON-Serialisierungsziel ausgestattet, der Daten als JSON-Objekte serialisiert und anschließend mit JSON.stringify korrekt und sicher als JSON umgewandelt werden kann. Mit `@deepkit/bson` kann auch BSON als Serialisierungsziel verwendet werden. Wie ein eigenes Serialisierungsziel erstellt werden kann (zum Beispiel für einen Datenbanktreiber), kann in der Sektion xref:serialization.adoc#serialisation-custom-serialiser[Custom Serializer] erfahren werden.
+Deepkit Type supports user-defined serialization targets, but already comes with a powerful JSON serialization target that serializes data as JSON objects and then can be correctly and safely converted as JSON using JSON.stringify. With `@deepkit/bson`, BSON can also be used as a serialization target. How to create a custom serialization target (for example for a database driver) can be learned in the Custom Serializer section.
 
-Zu beachten ist, dass obwohl Serializer auch Daten auf ihre Kompatibilität geprüft werden, sind diese Validierungen anders als die Validierung in xref:validation.adoc[Validation]. Lediglich die Funktion `cast` ruft nach dem erfolgreichen Deserialisieren auch den vollen Validierungsprozess aus dem Kapitel xref:validation.adoc[Validation] auf, und wirft einen Fehler, wenn die Daten nicht valide sind.
+Note that although serializers also validate data for compatibility, these validations are different from the validation in xref:validation.adoc[Validation]. Only the `cast` function also calls the full validation process from the xref:validation.adoc[Validation] chapter after successful deserialization, and throws an error if the data is not valid.
 
-Alternativ kann auch `validatedDeserialize` verwendet werden, um nach dem Deserialisieren zu validieren. Eine weitere Alternative ist manuelle die Funktionen `validate` oder `validates` auf deserialisierte Daten von der Funktion `deserialize` aufzurufen, siehe xref:validation.adoc[Validation].
-Alle Funktionen aus der Serialisierung und Validation werfen bei Fehlern ein `ValidationError` aus `@deepkit/type`.
+Alternatively, `validatedDeserialize` can be used to validate after deserialization. Another alternative is to manually call the `validate` or `validates` functions on deserialized data from the `deserialize` function, see xref:validation.adoc[Validation].
+
+All functions from serialization and validation throw a `ValidationError` from `@deepkit/type` on errors.
 
 [#serialisation-cast]
 == Cast
@@ -61,12 +62,12 @@ const json = JSON.stringify(jsonObject);
 ```
 
 
-Die Funktion `serialize` wandelt die übergebenen Daten per default mit dem JSON-Serializer in ein JSON Objekt um, das heisst: String, Number, Boolean, Objekt, oder Array. Das Ergebnis davon kann dann sicher mittels JSON.stringify in ein JSON umgewandelt werden.
+The function `serialize` converts the passed data by default with the JSON serializer into a JSON object, that is: String, Number, Boolean, Object, or Array. The result of this can then be safely converted to a JSON using `JSON.stringify`.
 
 [#serialisation-deserialise]
 == Deserialisierung
 
-Die Funktion `deserialize` wandelt die übergebenen Daten per default mit dem JSON-Serializer in den entsprechenden angegebenen Typen um. Der JSON-Serializer erwartet dabei ein JSON-Objekt, das heisst: String, Number, Boolean, Objekt, oder Array. Dies erhält man in der Regel aus einem JSON.parse Aufruf.
+The function `deserialize` converts the passed data per default with the JSON serializer into the corresponding specified types. The JSON serializer expects a JSON object, i.e.: string, number, boolean, object, or array. This is usually obtained from a `JSON.parse` call.
 
 ```typescript
 import { deserialize } from '@deepkit/type';
@@ -90,9 +91,9 @@ const json = '{"id": 5, "created": "Sat Oct 13 2018 14:17:35 GMT+0200", "name": 
 const myModel = deserialize<MyModel>(JSON.parse(json));
 ```
 
-Wenn dabei bereits der richtige Datentyp übergeben wird (zum Beispiel bei `created` ein Date-Objekt), dann wird dieser genommen wie er ist.
+If the correct data type is already passed (for example, a Date object in the case of `created`), then this is taken as it is.
 
-Es kann als ersten Typenargument nicht nur eine Klasse, sondern jeder TypeScript Typ angegeben werden. So können auch Primitives oder sehr komplexe Typen übergeben werden:
+Not only a class, but any TypeScript type can be specified as the first type argument. So even primitives or very complex types can be passed:
 
 ```typescript
 deserialize<Date>('Sat Oct 13 2018 14:17:35 GMT+0200');
@@ -100,9 +101,9 @@ deserialize<string | number>(23);
 ```
 
 [#serialisation-loosely-convertion]
-=== Weiche Typenkonvertierung
+=== Soft Type Conversion
 
-In dem Deserialisierungsprozess ist eine weiche Typenkonvertierung implementiert. Das bedeutet, dass String und Number für String-Typen oder eine Number für einen String-Typen akzeptiert und automatisch umgewandelt werden kann. Dies ist zum Beispiel nützlich, wenn Daten über eine URL angenommen und an den Deserializer übergeben werden. Da es sich bei der URL immer um einen String handelt, versucht Deepkit Type, die Typen dennoch für Number und Boolean aufzulösen.
+In the deserialization process a soft type conversion is implemented. This means that String and Number for String types or a Number for a String type can be accepted and converted automatically. This is useful, for example, when data is accepted via a URL and passed to the deserializer. Since the URL is always a string, Deepkit Type still tries to resolve the types for Number and Boolean.
 
 ```typescript
 deserialize<boolean>('false')); //false
@@ -114,19 +115,19 @@ deserialize<number>('1')); //1
 deserialize<string>(1)); //'1'
 ```
 
-Folgende weichen Typenkonvertierungen sind in dem JSON-Serializer eingebaut:
+The following soft type conversions are built into the JSON serializer:
 
-* *number|bigint*: Number oder Bigint akzeptieren String, Number, und BigInt. Es werden `parseFloat` oder `BigInt(x)` bei einer notwendigen Umwandlung genutzt.
-* *boolean*: Boolean akzeptiert Number and String. 0, '0', 'false' wird interpretiert als `false`. 1, '1', 'true' wird interpretiert als `true`.
-* *string*: String akzeptiert Number, String, Boolean, und viele mehr. Alle Nicht-String Werte werden automatisch mit `String(x)` umgewandelt.
+* *number|bigint*: Number or Bigint accept String, Number, and BigInt. `parseFloat` or `BigInt(x)` are used in case of a necessary conversion.
+* *boolean*: Boolean accepts Number and String. 0, '0', 'false' is interpreted as `false`. 1, '1', 'true' is interpreted as `true`.
+* *string*: String accepts Number, String, Boolean, and many more. All non-string values are automatically converted with `String(x)`.
 
-Das Weiche Umwandeln kann auch deaktiviert werden:
+The soft conversion can also be deactivated:
 
 ```typescript
 const result = deserialize(data, {loosely: false});
 ```
 
-Es wird bei invaliden Daten dann nicht versucht diese umzuwandeln und stattdessen eine Fehlermeldung geworfen.
+In the case of invalid data, no attempt is made to convert it and instead an error message is thrown.
 
 == Type-Decorators
 
@@ -146,15 +147,15 @@ Es wird bei invaliden Daten dann nicht versucht diese umzuwandeln und stattdesse
 [#serialisation-custom-serialiser]
 == Benutzerdefinierter Serializer
 
-Standardmäßig wird `@deepkit/type` mit einem JSON-Serialisierer und einer Typ-Validierung für TypeScript-Typen geliefert. Sie können diesen erweitern und die Serialisierungsfunktionalität erweitern oder entfernen oder die Art und Weise der Validierung ändern, da die Validierung auch mit dem Serializer verbunden ist.
+By default, `@deepkit/type` comes with a JSON serializer and type validation for TypeScript types. You can extend this and add or remove the serialization functionality or change the way validation is done, as validation is also linked to the serializer.
 
-=== New Serialisierer
+=== New Serializer
 
-Ein Serializer ist einfach eine Instanz der Klasse `Serializer` mit registrierten Serializer-Vorlagen. Serializer-Vorlagen sind kleine Funktionen, die JavaScript-Code für den JIT-Serializer-Prozess erstellen. Für jeden Typ (String, Number, Boolean usw.) gibt es eine eigene Serializer-Vorlage, die für die Rückgabe von Code für die Datenkonvertierung oder -validierung zuständig ist. Dieser Code muss mit der JavaScript-Engine kompatibel sein, die der Benutzer verwendet.
+A serializer is simply an instance of the `Serializer` class with registered serializer templates. Serializer templates are small functions that create JavaScript code for the JIT serializer process. For each type (String, Number, Boolean, etc.) there is a separate Serializer template that is responsible for returning code for data conversion or validation. This code must be compatible with the JavaScript engine that the user is using.
 
-Nur während der Ausführung der Compiler-Vorlagenfunktion haben Sie (oder sollten Sie) vollen Zugriff auf den vollständigen Typ. Die Idee ist, dass Sie alle Informationen, die für die Konvertierung eines Typs erforderlich sind, direkt in den JavaScript-Code einbetten sollten, was zu hochgradig optimiertem Code (auch JIT-optimierter Code genannt) führt.
+Only during the execution of the compiler template function do you (or should you) have full access to the full type. The idea is that you should embed all the information needed to convert a type directly into the JavaScript code, resulting in highly optimized code (also called JIT-optimized code).
 
-Im folgenden Beispiel wird ein leerer Serializer erstellt.
+The following example creates an empty serializer.
 
 ```typescript
 import { EmptySerializer } from '@deepkit/type';
@@ -175,7 +176,7 @@ $ ts-node app.ts
 User { name: 'Peter', created: 0 }
 ```
 
-Wie Sie sehen können, wurde nichts umgewandelt (`created` ist immer noch eine Zahl, aber wir haben sie als `Date` definiert). Um das zu ändern, fügen wir eine Serializer-Vorlage für die Deserialisierung des Typs Datum hinzu.
+As you can see, nothing has been converted (`created` is still a number, but we have defined it as `date`). To change this, we add a serializer template for deserialization of type Date.
 
 ```typescript
 mySerializer.deserializeRegistry.registerClass(Date, (type, state) => {
@@ -191,9 +192,9 @@ $ ts-node app.ts
 User { name: 'Peter', created: 2021-06-10T19:34:27.301Z }
 ```
 
-Jetzt wandelt unser Serialisierer den Wert in ein Date-Objekt um.
+Now our serializer converts the value into a Date object.
 
-Um dasselbe für die Serialisierung zu tun, registrieren wir eine weitere Serialisierungsvorlage.
+To do the same for serialization, we register another serialization template.
 
 ```typescript
 mySerializer.serializeRegistry.registerClass(Date, (type, state) => {
@@ -209,15 +210,16 @@ console.log(serialize(user1, undefined, mySerializer));
 ```sh
 { name: 'Peter', created: '2021-06-10T19:34:27.301Z' }
 ```
-Unser neuer Serialisierer konvertiert das Datum im Serialisierungsprozess nun korrekt vom Date-Objekt in einen String.
 
-=== Beispiele
+Our new serializer now correctly converts the date from the Date object to a string in the serialization process.
 
-Um viele weitere Beispiele zu sehen, können Sie einen Blick in den Code des link:https://github.com/deepkit/deepkit-framework/blob/master/packages/type/src/serializer.ts#L1688[JSON-Serializers] werfen, der in Deepkit Type enthalten ist.
+=== Examples
 
-=== Erweitern eines Serialisierers
+To see many more examples, you can take a look at the code of the link:https://github.com/deepkit/deepkit-framework/blob/master/packages/type/src/serializer.ts#L1688[JSON-Serializers] included in Deepkit Type.
 
-Wenn Sie einen bereits vorhandenen Serialisierer erweitern möchten, können Sie dies über die Klassenvererbung tun. Dies funktioniert, weil Serialisierer so geschrieben werden sollten, dass sie ihre Vorlagen im Konstruktor registrieren.
+=== Expanding A Serializer
+
+If you want to extend an existing serializer, you can do so using class inheritance. This works because serializers should be written to register their templates in the constructor.
 
 ```typescript
 class MySerializer extends Serializer {

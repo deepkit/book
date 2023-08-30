@@ -1,8 +1,8 @@
 [#database]
 = Database
 
-Deepkit bietet ein ORM, das es ermöglicht, auf Datenbanken auf moderne Art und Weise zuzugreifen.
-Entities werden dabei einfach über TypeScript Typen definiert:
+Deepkit provides an ORM that allows databases to be accessed in a modern way.
+Entities are simply defined using TypeScript types:
 
 ```typescript
 import { entity, PrimaryKey, AutoIncrement, Unique, MinLength, MaxLength } from '@deepkit/type';
@@ -21,16 +21,16 @@ class User {
 }
 ```
 
-Dabei können beliebige TypeScript Typen und Validierung-Dekoratoren von Deepkit benutzt werden, um die Entity vollumfänglich zu definieren.
-Das Entity-Typensystem ist dabei so ausgelegt, dass diese Typen beziehungsweise Klassen ebenfalls in anderen Bereichen wie HTTP-Routen, RPC-Aktionen, oder Frontend benutzt werden können. Das verhindert, dass man zum Beispiel einen User mehrmals in der gesamten Applikation verteilt definiert hat.
+Any TypeScript types and validation decorators from Deepkit can be used to fully define the entity.
+The entity type system is designed in such a way that these types or classes can also be used in other areas such as HTTP routes, RPC actions or frontend. This prevents, for example, that one has defined a user several times distributed in the entire application.
 
 == Installation
 
-Da Deepkit ORM auf den Runtime Types basiert, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
+Since Deepkit ORM is based on Runtime Types, it is necessary to have `@deepkit/type` already installed correctly. See xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
-Falls dies erfolgreich geschehen ist, kann `@deepkit/orm` selbst und ein Datenbank-Adapter installiert werden.
+If this is done successfully, `@deepkit/orm` itself and a database adapter can be installed.
 
-Falls Klassen als Entities verwendet werden sollen, muss `experimentalDecorators` in der tsconfig.json aktiviert werden:
+If classes are to be used as entities, `experimentalDecorators` must be enabled in tsconfig.json:
 
 ```json
 {
@@ -40,7 +40,7 @@ Falls Klassen als Entities verwendet werden sollen, muss `experimentalDecorators
 }
 ```
 
-Sobald die Library installiert ist, kann ein Datenbank-Adapter installiert und die API davon direkt benutzt werden.
+Once the library is installed, a database adapter can be installed and the API of it can be used directly.
 
 === SQLite
 
@@ -97,11 +97,11 @@ import { MongoDatabaseAdapter } from '@deepkit/mongo';
 const database = new Database(new MongoDatabaseAdapter('mongodb://localhost/mydatabase'), [User]);
 ```
 
-== Benutzung
+== Use
 
-Es wird primär mit dem `Database` Objekt gearbeitet. Einmal instantiiert, kann es innerhalb der ganzen Anwendung genutzt werde, um Daten abzufragen oder zu manipulieren. Die Verbindung zur Datenbank wird dabei lazy initialisiert.
+Primarily the `Database` object is used. Once instantiated, it can be used throughout the application to query or manipulate data. The connection to the database is initialized lazy.
 
-Dem `Database` Objekt wird ein Adapter übergeben, welcher aus den Datenbank-Adaptern Libraries kommt.
+The `Database` object is passed an adapter, which comes from the database adapters libraries.
 
 ```typescript
 import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
@@ -138,10 +138,10 @@ main();
 
 == Entity
 
-Eine Entity ist entweder eine Klasse oder Object Literal (interface) und hat immer einen Primary Key.
-Die Entity wird mittels Typen-Dekoratoren aus `@deepkit/type` mit alle notwendigen Informationen dekoriert. Zum Beispiel wird ein Primary Key definiert sowie diverse Felder und ihre Validierungen-Einschränkungen. Dieser Felder spiegeln die Datenbank-Struktur ab, in der Regel eine Tabelle oder eine Collection.
+An entity is either a class or an object literal (interface) and always has a primary key.
+The entity is decorated with all necessary information using type decorators from `@deepkit/type`. For example, a primary key is defined as well as various fields and their validation constraints. These fields reflect the database structure, usually a table or a collection.
 
-Durch spezielle Typen-Dekoratoren wie `Mapped<'name'>` kann ein Feldnamen auch auf einen anderen Namen in der Datenbank abgebildet werden.
+Through special type decorators like `Mapped<'name'>` a field name can also be mapped to another name in the database.
 
 === Klasse
 
@@ -197,7 +197,7 @@ console.log('all users', allUsers);
 
 === Primitives
 
-Primitive Datentypen wie String, Number (bigint), und Boolean werden gängige Datenbank-Typen abgebildet. Es wird dabei lediglich der TypeScript Type genutzt.
+Primitive data types like String, Number (bigint), and Boolean are mapped to common database types. Only the TypeScript type is used.
 
 ```typescript
 
@@ -210,12 +210,12 @@ interface User {
 
 === Primary Key
 
-Jede Entity braucht genau einen Primary Key. Mehrere Primary Keys werden nicht unterstützt.
+Each entity needs exactly one primary key. Multiple primary keys are not supported.
 
-Der Basis-Typ eines Primary Keys kann dabei beliebig sein. Oft wird eine Nummer oder UUID verwendet.
-Für MongoDB wird gerne die MongoId bzw ObjectID verwendet.
+The base type of a primary key can be arbitrary. Often a number or UUID is used.
+For MongoDB the MongoId or ObjectID is often used.
 
-Bei Nummern bietet sich `AutoIncrement` an.
+For numbers `AutoIncrement` can be used.
 
 ```typescript
 import { PrimaryKey } from '@deepkit/type';
@@ -227,9 +227,9 @@ interface User {
 
 === Auto Increment
 
-Felder, die beim Einfügen automatisch inkrementiert werden sollen, werden mit dem `AutoIncrement` Dekorator annotiert. Alle Adapter unterstützen auto-increment Werte. Der MongoDB Adapter verwendet eine zusätzliche Collection, um den Zähler zu verfolgen.
+Fields that should be automatically incremented during insertion are annotated with the `AutoIncrement` decorator. All adapters support auto-increment values. The MongoDB adapter uses an additional collection to keep track of the counter.
 
-Ein Auto-Increment Feld ist ein automatischer Zähler und kann nur an einem Primary Key angewendet werden. Die Datenbank stellt automatisch sicher, dass eine ID nur einmal verwendet wird.
+An auto-increment field is an automatic counter and can only be applied to a primary key. The database automatically ensures that an ID is used only once.
 
 ```typescript
 import { PrimaryKey, AutoIncrement } from '@deepkit/type';
@@ -241,7 +241,7 @@ interface User {
 
 === UUID
 
-Felder, die vom Typ UUID (v4) sein sollten, werden mit dem Dekorator UUID annotiert. Der Laufzeittyp ist `string` und in der Datenbank selbst meist binär. Verwenden Sie die Funktion `uuid()`, um eine neue UUID v4 zu erzeugen.
+Fields that should be of type UUID (v4) are annotated with the decorator UUID. The runtime type is `string` and mostly binary in the database itself. Use the `uuid()` function to create a new UUID v4.
 
 ```typescript
 import { uuid, UUID, PrimaryKey } from '@deepkit/type';
@@ -253,9 +253,9 @@ class User {
 
 === MongoDB ObjectID
 
-Felder, die in MongoDB vom Typ ObjectID sein sollten, werden mit dem Dekorator `MongoId` annotiert. Der Laufzeittyp ist `string` und in der Datenbank selbst `ObjectId` (binär).
+Fields that should be of type ObjectID in MongoDB are annotated with the decorator `MongoId`. The runtime type is `string` and in the database itself `ObjectId` (binary).
 
-MongoID-Felder erhalten beim Einfügen automatisch einen neuen Wert. Es ist nicht zwingend nötig, den Feldnamen `_id` zu verwenden. Er kann einen beliebigen Namen haben.
+MongoID fields automatically get a new value when inserted. It is not mandatory to use the field name `_id`. It can have any name.
 
 ```typescript
 import { PrimaryKey, MongoId } from '@deepkit/type';
@@ -267,10 +267,10 @@ class User {
 
 === Optional / Nullable
 
-Optionale Felder werden mit `title?: string` oder `title: string | null` als TypeScript-Typ deklariert. Man sollte nur eine Variante davon verwenden, normalerweise die optionale `?` Syntax, die mit `undefined` funktioniert.
-Beide Varianten führen dazu, dass der Datenbank-Typ für alle SQL-Adapter `NULLABLE` ist. Der einzige Unterschied zwischen diesen Dekoratoren ist also, dass sie unterschiedliche Werte zur Laufzeit darstellen.
+Optional fields are declared as TypeScript type with `title?: string` or `title: string | null`. You should use only one variant of this, usually the optional `?` syntax, which works with `undefined`.
+Both variants result in the database type being `NULLABLE` for all SQL adapters. So the only difference between these decorators is that they represent different values at runtime.
 
-Im folgenden Beispiel ist das geänderte Feld optional und kann daher zur Laufzeit undefiniert sein, obwohl es in der Datenbank immer als NULL dargestellt wird.
+In the following example, the changed field is optional and can therefore be undefined at runtime, although it is always represented as NULL in the database.
 
 ```typescript
 import { PrimaryKey } from '@deepkit/type';
@@ -281,7 +281,7 @@ class User {
 }
 ```
 
-Dieses Beispiel zeigt, wie der nullable Typ funktioniert. Sowohl in der Datenbank als auch in der Javascript-Laufzeit wird NULL verwendet. Dies ist ausführlicher als `modified?: Date` und wird nicht häufig verwendet.
+This example shows how the nullable type works. NULL is used both in the database and in the javascript runtime. This is more verbose than `modified?: Date` and is not commonly used.
 
 ```typescript
 import { PrimaryKey } from '@deepkit/type';
@@ -309,7 +309,7 @@ class User {
 |ArrayBuffer/Uint8Array/...|blob|longblob|bytea|binary
 |===
 
-Mit `DatabaseField` ist es möglich, ein Feld auf einen beliebigen Datenbank-Typen zu mappen. Der Typ muss eine gültige SQL-Anweisung sein, die unverändert an das Migrationssystem übergeben wird.
+With `DatabaseField` it is possible to map a field to any database type. The type must be a valid SQL statement that is passed unchanged to the migration system.
 
 ```typescript
 import { DatabaseField } from '@deepkit/type';
@@ -319,7 +319,7 @@ interface User {
 }
 ```
 
-Um ein Feld für eine bestimmte Datenbank zu mappen, kann entweder `SQLite`, `MySQL`, oder `Postgres` benutzt werden.
+To map a field for a specific database, either `SQLite`, `MySQL`, or `Postgres` can be used.
 
 ==== SQLite
 
@@ -355,7 +355,7 @@ interface User {
 
 === Default Values
 
-Default-Werte werden
+
 
 === Default Expressions
 
@@ -367,7 +367,7 @@ Default-Werte werden
 
 == Session / Unit Of Work
 
-Eine Session ist so etwas wie eine Arbeitseinheit. Sie verfolgt alles, was Sie tun, und hält die Änderungen automatisch fest, sobald `commit()` aufgerufen wird. Es ist der bevorzugte Weg, um Änderungen in der Datenbank auszuführen, da es Anweisungen in einer Weise bündelt, die es sehr schnell macht. Eine Session ist sehr leichtgewichtig und kann zum Beispiel leicht in einem Request-Response-Lebenszyklus erstellt werden.
+A session is something like a unit of work. It keeps track of everything you do and automatically records the changes whenever `commit()` is called. It is the preferred way to execute changes in the database because it bundles statements in a way that makes it very fast. A session is very lightweight and can easily be created in a request-response lifecycle, for example.
 
 ```typescript
 import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
@@ -400,9 +400,9 @@ async function main() {
 main();
 ```
 
-Fügen Sie der Session mit `session.add(T)` neue Instanz hinzu oder entfernen Sie bereits vorhandene Instanzen mit `session.remove(T)`. Sobald Sie mit dem Session-Objekt fertig sind, dereferenzieren Sie es einfach überall, damit der Garbage-Collector es entfernen kann.
+Add new instance to the session with `session.add(T)` or remove existing instances with `session.remove(T)`. Once you are done with the Session object, simply dereference it everywhere so that the garbage collector can remove it.
 
-Änderungen werden bei Entity-Instanzen, die über das Session-Objekt geholt werden, automatisch erkannt.
+Changes are automatically detected for entity instances fetched via the Session object.
 
 ```typescript
 const users = await session.query(User).find();
@@ -415,11 +415,11 @@ await session.commit();//saves all users
 
 === Identity Map
 
-Sessions bieten eine Identity-Map, die sicherstellt, dass es immer nur ein Javascript-Objekt pro Datenbank-Eintrag gibt. Wenn Sie zum Beispiel `session.query(User).find()` zweimal innerhalb derselben Sitzung ausführen, erhalten Sie zwei verschiedene Arrays, aber mit denselben Entitätsinstanzen darin.
+Sessions provide an identity map that ensures there is only ever one javascript object per database entry. For example, if you run `session.query(User).find()` twice within the same session, you get two different arrays, but with the same entity instances in them.
 
-Wenn Sie mit `session.add(entity1)` eine neue Entität hinzufügen und diese erneut abrufen, erhalten Sie genau dieselbe Entitätsinstanz `entity1`.
+If you add a new entity with `session.add(entity1)` and retrieve it again, you get exactly the same entity instance `entity1`.
 
-Wichtig: Sobald Sie anfangen, Sessions zu verwenden, sollten Sie deren Methode `Session.query` anstelle von `Database.query` verwenden. Nur bei Session-Queries ist die Identitätszuordnungsfunktion aktiviert.
+Important: Once you start using sessions, you should use their `session.query` method instead of `database.query`. Only session queries have the identity mapping feature enabled.
 
 === Change Detection
 
@@ -427,9 +427,9 @@ Wichtig: Sobald Sie anfangen, Sessions zu verwenden, sollten Sie deren Methode `
 
 == Query
 
-Ein Query ist ein Objekt, das beschreibt, wie Daten aus der Datenbank abgerufen oder geändert werden sollen. Es hat mehrere Methoden um das Query zu beschreiben und Abbruchmethoden die diese ausführen. Der Datenbankadapter kann die Query-API auf viele Arten erweitern, um Datenbank spezifische Features zu unterstützen.
+A query is an object that describes how to retrieve or modify data from the database. It has several methods to describe the query and termination methods that execute them. The database adapter can extend the query API in many ways to support database specific features.
 
-Sie können ein Query erstellen, indem Sie `Database.query(T)` oder `Session.query(T)` verwenden. Wir empfehlen Sessions da es die Leistung verbessert.
+You can create a query using `Database.query(T)` or `Session.query(T)`. We recommend Sessions as it improves performance.
 
 ```typescript
 @entity.name('user')
@@ -451,7 +451,7 @@ const users = await database.query(User).select('username').find();
 
 === Filter
 
-Ein Filter kann angewendet werden, um die Ergebnismenge einzuschränken.
+A filter can be applied to limit the result set.
 
 ```typescript
 //simple filters
@@ -508,14 +508,14 @@ const users = await database.query(User).filter({
 
 === Select
 
-Um die Felder einzugrenzen, die von der Datenbank empfangen werden sollen, kann `select('field1')` verwendet werden.
+To narrow down the fields to be received from the database, `select('field1')` can be used.
 
 ```typescript
 const user = await database.query(User).select('username').findOne();
 const user = await database.query(User).select('id', 'username').findOne();
 ```
 
-Wichtig dabei ist, dass sobald ein Eingrenzungen der Felder über `select` stattfindet, die Ergebnisse keine Instanzen der Entity mehr sind, sondern lediglich Object-Literals.
+It is important to note that as soon as the fields are narrowed down using `select`, the results are no longer instances of the entity, but only object literals.
 
 ```
 const user = await database.query(User).select('username').findOne();
@@ -524,8 +524,8 @@ user instanceof User; //false
 
 === Order
 
-Mit `orderBy(field, order)` kann die Reihenfolge der Einträge geändert werden.
-Es kann mehrere Male `orderBy` ausgeführt werden, um die Reihenfolge immer weiter zu verfeinern.
+With `orderBy(field, order)` the order of the entries can be changed.
+Several times `orderBy` can be executed to refine the order more and more.
 
 ```typescript
 const users = await session.query(User).orderBy('created', 'desc').find();
@@ -534,13 +534,13 @@ const users = await session.query(User).orderBy('created', 'asc').find();
 
 === Pagination
 
-Mit den Methoden `itemsPerPage()` und `page()` können die Ergebnisse paginiert werden. Seite beginnt bei 1.
+The `itemsPerPage()` and `page()` methods can be used to paginate the results. Page starts at 1.
 
 ```typescript
 const users = await session.query(User).itemsPerPage(50).page(1).find();
 ```
 
-Mit den alternativen Methoden `limit` und `skip` können Sie manuell paginieren.
+With the alternative methods `limit` and `skip` you can paginate manually.
 
 ```typescript
 const users = await session.query(User).limit(5).skip(10).find();
@@ -549,9 +549,9 @@ const users = await session.query(User).limit(5).skip(10).find();
 [#database-join]
 === Join
 
-Standardmäßig werden Referenzen aus der Entity weder in Abfragen einbezogen noch geladen. Um ein Join in die Abfrage aufzunehmen, ohne den Verweis zu laden, verwenden Sie `join()` (left join) oder `innerJoin()`. Um einen Join in die Abfrage aufzunehmen und die Referenz zu laden, verwenden Sie `joinWith()` oder `innerJoinWith()`.
+By default, references from the entity are neither included in queries nor loaded. To include a join in the query without loading the reference, use `join()` (left join) or `innerJoin()`. To include a join in the query and load the reference, use `joinWith()` or `innerJoinWith()`.
 
-Alle folgenden Beispiele gehen von diesen Modellschemata aus:
+All the following examples assume these model schemas:
 
 ```typescript
 @entity.name('group')
@@ -591,7 +591,7 @@ for (const user of users) {
 }
 ```
 
-Um Join-Abfragen zu ändern, verwenden Sie dieselben Methoden, jedoch mit dem `use`-Präfix: `useJoin`, `useInnerJoin`, `useJoinWith` oder `useInnerJoinWith`. Um die Änderung der Join-Abfrage zu beenden, verwenden Sie `end()`, um so die übergeordnete Abfrage zurückzubekommen.
+To modify join queries, use the same methods, but with the `use` prefix: `useJoin`, `useInnerJoin`, `useJoinWith` or `useInnerJoinWith`. To end the join query modification, use `end()` to get back the parent query.
 
 ```typescript
 //select only users with a group with name 'admins' assigned (INNER JOIN)
@@ -608,9 +608,9 @@ for (const user of users) {
 
 === Aggregation
 
-Mit Aggregationsmethoden können Sie Datensätze zählen und Felder aggregieren.
+Aggregation methods allow you to count records and aggregate fields.
 
-Die folgenden Beispiele gehen von diesem Modellschema aus:
+The following examples assume this model scheme:
 
 ```typescript
 @entity.name('file')
@@ -627,7 +627,7 @@ class File {
 }
 ```
 
-`groupBy` ermöglicht es, das Ergebnis nach dem angegebenen Feld zu gruppieren.
+`groupBy` allows to group the result by the specified field.
 
 ```typescript
 await database.persist(
@@ -640,7 +640,7 @@ await database.persist(
 await session.query(File).groupBy('category').find();
 ```
 
-Es gibt mehrere Aggregationsmethoden: `withSum`, `withAverage`, `withCount`, `withMin`, `withMax`, `withGroupConcat`. Jede erfordert einen Feldnamen als erstes Argument und ein optionales zweites Argument, um den Alias zu ändern.
+There are several aggregation methods: `withSum`, `withAverage`, `withCount`, `withMin`, `withMax`, `withGroupConcat`. Each requires a field name as the first argument and an optional second argument to change the alias.
 
 ```typescript
 // first let's update some of the records:
@@ -659,9 +659,9 @@ await session.query(File).groupBy('category').withCount('id', 'amount').find();
 
 === Returning
 
-Mit `returning` können bei Änderungen via `patch` und `delete` zusätzliche Felder angefordert werden.
+With `returning` additional fields can be requested in case of changes via `patch` and `delete`.
 
-Vorsicht: Nicht in allen Datenbank-Adaptern sind die Felder atomar zurückgegeben. Verwenden Sie Transaktionen, um Datenkonsistenz sicherzustellen.
+Caution: Not all database adapters return fields atomically. Use transactions to ensure data consistency.
 
 ```typescript
 await database.query(User).patchMany({visits: 0});
@@ -675,7 +675,7 @@ const result = await database.query(User)
 
 === Find
 
-Gibt ein Array an Einträgen zurück, die zu dem angegebenen Filter passen.
+Returns an array of entries matching the specified filter.
 
 ```typescript
 const users: User[] = await database.query(User).filter({username: 'Peter'}).find();
@@ -683,8 +683,8 @@ const users: User[] = await database.query(User).filter({username: 'Peter'}).fin
 
 === FindOne
 
-Gibt ein Eintrag zurück, der zu dem angegebenen Filter passen.
-Wird kein Eintrag gefunden, wird ein `ItemNotFound` Fehler geworfen.
+Returns an item that matches the specified filter.
+If no item is found, an `ItemNotFound` error is thrown.
 
 ```typescript
 const users: User = await database.query(User).filter({username: 'Peter'}).findOne();
@@ -692,8 +692,8 @@ const users: User = await database.query(User).filter({username: 'Peter'}).findO
 
 === FindOneOrUndefined
 
-Gibt ein Eintrag zurück, der zu dem angegebenen Filter passen.
-Wird kein Eintrag gefunden, wird undefined zurückgegeben.
+Returns an entry that matches the specified filter.
+If no entry is found, undefined is returned.
 
 ```typescript
 const query = database.query(User).filter({username: 'Peter'});
@@ -702,7 +702,7 @@ const users: User|undefined = await query.findOneOrUndefined();
 
 === FindField
 
-Gibt eine Liste eines Feldes zurück, der zu dem angegebenen Filter passen.
+Returns a list of a field that match the specified filter.
 
 ```typescript
 const usernames: string[] = await database.query(User).findField('username');
@@ -710,8 +710,8 @@ const usernames: string[] = await database.query(User).findField('username');
 
 === FindOneField
 
-Gibt eine Liste eines Feldes zurück, der zu dem angegebenen Filter passen.
-Wird kein Eintrag gefunden, wird ein `ItemNotFound` Fehler geworfen.
+Returns a list of a field that match the specified filter.
+If no entry is found, an `ItemNotFound` error is thrown.
 
 ```typescript
 const username: string = await database.query(User).filter({id: 3}).findOneField('username');
@@ -719,10 +719,10 @@ const username: string = await database.query(User).filter({id: 3}).findOneField
 
 === Patch
 
-Patch ist eine Änderungsabfrage, die die in der Abfrage beschriebenen Datensätze patcht. Die Methoden
-`patchOne` und `patchMany` beenden die Abfrage und führen den Patch aus.
+Patch is a change query that patches the records described in the query. The methods
+`patchOne` and `patchMany` finish the query and execute the patch.
 
-`patchMany` ändert alle Einträge in der Datenbank, die zu dem angegebenen Filter passen. Ist kein Filter gesetzt, wird die gesamte Tabelle geändert. Nutzen Sie `patchOne`, um immer nur einen Eintrag zu verändern.
+`patchMany` changes all records in the database that match the specified filter. If no filter is set, the whole table will be changed. Use `patchOne` to change only one entry at a time.
 
 ```typescript
 await database.query(User).filter({username: 'Peter'}).patch({username: 'Peter2'});
@@ -735,8 +735,8 @@ await database.query(User).patchMany({visits: 0});
 
 === Delete
 
-`deleteMany` löscht alle Einträge in der Datenbank, die zu dem angegebenen Filter passen.
-Ist kein Filter gesetzt, wird die gesamte Tabelle gelöscht. Nutzen Sie `deleteOne`, um immer nur einene Eintrag zu löschen.
+`deleteMany` deletes all entries in the database that match the specified filter.
+If no filter is set, the whole table will be deleted. Use `deleteOne` to delete only one entry at a time.
 
 ```typescript
 const result = await database.query(User)
@@ -748,7 +748,7 @@ const result = await database.query(User).filter({id: 4}).deleteOne();
 
 === Has
 
-Gibt zurück, ob mindestens ein Eintrag in der Datenbank existiert.
+Returns whether at least one entry exists in the database.
 
 ```typescript
 const userExists: boolean = await database.query(User).filter({username: 'Peter'}).has();
@@ -756,7 +756,7 @@ const userExists: boolean = await database.query(User).filter({username: 'Peter'
 
 === Count
 
-Gibt die Anzahl der Einträge zurück.
+Returns the number of entries.
 
 ```typescript
 const userCount: number = await database.query(User).count();
@@ -764,7 +764,7 @@ const userCount: number = await database.query(User).count();
 
 === Lift
 
-Das Lifting einer Abfrage bedeutet, dass ihr neue Funktionen hinzugefügt werden. Dies wird in der Regel entweder von Plugins oder komplexen Architekturen verwendet, um größere Abfrageklassen in mehrere praktische, wiederverwendbare Klassen aufzuteilen.
+Lifting a query means adding new functionality to it. This is usually used either by plugins or complex architectures to split larger query classes into several convenient, reusable classes.
 
 ```typescript
 import { FilterQuery, Query } from '@deepkit/orm';
@@ -787,13 +787,13 @@ await session.query(User).lift(UserQuery).hasBirthday().find();
 
 == Relations
 
-Beziehungen ermöglichen es Ihnen, zwei Entitäten auf eine bestimmte Art und Weise zu verbinden. Dies geschieht in Datenbanken in der Regel über das Konzept der Fremdschlüssel. Deepkit ORM unterstützt Relationen für alle offiziellen Datenbankadapter.
+Relationships allow you to connect two entities in a certain way. This is usually done in databases using the concept of foreign keys. Deepkit ORM supports relations for all official database adapters.
 
-Eine Relation wird mit dem `Reference`-Dekorator annotiert. Normalerweise hat eine Relation auch eine umgekehrte Relation, die mit dem Typ `BackReference` annotiert wird, aber nur benötigt wird, wenn die umgekehrte Relation in einer Datenbankabfrage verwendet werden soll. Rückreferenzen sind nur virtuell.
+A relation is annotated with the `reference` decorator. Usually a relation also has a reverse relation, which is annotated with the `BackReference` type, but is only needed if the reverse relation is to be used in a database query. Back references are only virtual.
 
 === One To Many
 
-Die Entität, die einen Verweis speichert, wird in der Regel als die "besitzende Seite" oder diejenige, die den Verweis "besitzt", bezeichnet. Der folgende Code zeigt zwei Entitäten mit einer One-To-Many-Beziehung zwischen `User` und `Post`. Das bedeutet, dass ein `User` mehrere `Post` haben kann. Die Entität `Post` besitzt die Beziehung `Post->User`. In der Datenbank selbst gibt es nun ein Feld `Post."author"`, das den Primärschlüssel von `User` enthält.
+The entity that stores a reference is usually referred to as the `owning page` or the one that `owns` the reference. The following code shows two entities with a one-to-many relationship between `User` and `Post`. This means that one `User` can have multiple `Post`. The `post` entity has the `post->user` relationship. In the database itself there is now a field `Post. "author"` that contains the primary key of `User`.
 
 ```typescript
 import { SQLiteDatabaseAdapter } from '@deepkit/sqlite';
@@ -835,11 +835,11 @@ async function main() {
 main();
 ```
 
-Referenzen werden in Abfragen standardmäßig nicht ausgewählt. Siehe dazu <<database-join>>.
+References are not selected in queries by default. See <<database-join>> for details.
 
 === Many To One
 
-Ein Verweis hat in der Regel einen umgekehrten Verweis, der Many-to-One genannt wird. Es handelt sich nur um eine virtuelle Referenz, da sie nicht in der Datenbank selbst reflektiert wird. Eine Rückreferenz wird mit `BackReference` annotiert und wird hauptsächlich für Reflection und Query Joins verwendet. Wenn Sie eine `BackReference` von `User` zu `Post` hinzufügen, können Sie `Post` direkt aus `User`-Abfragen verbinden.
+A reference usually has a reverse reference called many-to-one. It is only a virtual reference, since it is not reflected in the database itself. A back reference is annotated `BackReference` and is mainly used for reflection and query joins. If you add a `BackReference` from `User` to `Post`, you can join `Post` directly from `User` queries.
 
 ```typescript
 @entity.name('user').collectionName('users')
@@ -864,9 +864,9 @@ const users = await database.query(User)
 
 === Many To Many
 
-Eine Many-to-many-Beziehung ermöglicht es Ihnen, viele Datensätze mit vielen anderen zu verbinden. Sie kann zum Beispiel für Benutzer in Gruppen verwendet werden. Ein Benutzer kann in keiner, einer oder vielen Gruppen sein. Folglich kann eine Gruppe 0, einen oder viele Benutzer enthalten.
+A many-to-many relationship allows you to associate many records with many others. For example, it can be used for users in groups. A user can be in none, one or many groups. Consequently, a group can contain 0, one or many users.
 
-Many-to-many-Beziehungen werden normalerweise über eine Pivot-Entität implementiert. Die Pivot-Entität enthält die eigentlichen eigenen Referenzen auf zwei andere Entitäten, und diese beiden Entitäten haben Rückreferenzen auf die Pivot-Entität.
+Many-to-many relationships are usually implemented using a pivot entity. The pivot entity contains the actual own references to two other entities, and these two entities have back references to the pivot entity.
 
 ```typescript
 @entity.name('user')
@@ -903,7 +903,7 @@ class UserGroup {
 }
 ```
 
-Mit diesen Entities können Sie nun Benutzer und Gruppen erstellen und sie mit der Pivot-Entität verbinden. Durch die Verwendung eines Rückverweises in User können wir die Gruppen direkt mit einer User-Abfrage abrufen.
+With these entities, you can now create users and groups and connect them to the pivot entity. By using a back reference in User, we can retrieve the groups directly with a User query.
 
 ```typescript
 const database = new Database(new SQLiteDatabaseAdapter(':memory:'), [User, Group, UserGroup]);
@@ -925,7 +925,7 @@ const users = await database.query(User)
     .find();
 ```
 
-Um die Verknüpfung eines Benutzers mit einer Gruppe aufzuheben, wird der Datensatz der UserGroup gelöscht:
+To unlink a user from a group, the UserGroup record is deleted:
 
 ```typescript
 const users = await database.query(UserGroup)
@@ -961,9 +961,9 @@ On Delete/Update: RESTRICT | CASCADE | SET NULL | NO ACTION | SET DEFAULT
 
 == Events
 
-Ereignisse sind eine Möglichkeit, sich in Deepkit ORM einzuklinken und ermöglichen es Ihnen, leistungsfähige Plugins zu schreiben. Es gibt zwei Kategorien von Ereignissen: Abfrage-Ereignisse und Unit-of-Work-Ereignisse. Plugin-Autoren verwenden in der Regel beide, um beide Möglichkeiten der Datenmanipulation zu unterstützen.
+Events are a way to hook into Deepkit ORM and allow you to write powerful plugins. There are two categories of events: Query events and Unit-of-Work events. Plugin authors typically use both to support both ways of manipulating data.
 
-Events werden über `Database.listen` un einem Event-Token registriert. Es kann auch kurzlebige Event-Listener auf Sessions registriert werden.
+Events are registered via `Database.listen` un an event token. Short-lived event listeners can also be registered on sessions.
 
 ```typescript
 import { Query, Database } from '@deepkit/orm';
@@ -981,9 +981,9 @@ session.eventDispatcher.listen(Query.onFetch, async (event) => {
 
 === Query Events
 
-Abfrageereignisse werden ausgelöst, wenn eine Abfrage über `Database.query()` oder `Session.query()` ausgeführt wird.
+Query events are triggered when a query is executed via `Database.query()` or `Session.query()`.
 
-Jedes Event hat seine eigenen zusätzlichen Eigenschaften wie den Typ der Entität, die Abfrage selbst und die Datenbanksitzung. Sie können die Abfrage überschreiben, indem Sie eine neue Abfrage auf `Event.query` setzen.
+Each event has its own additional properties such as the type of entity, the query itself and the database session. You can override the query by setting a new query to `Event.query`.
 
 ```typescript
 import { Query, Database } from '@deepkit/orm';
@@ -999,7 +999,7 @@ const unsubscribe = database.listen(Query.onFetch, async event => {
 unsubscribe();
 ```
 
-`Query` hat dabei mehrere Event-Tokens:
+"Query" has several event tokens:
 
 
 |===
@@ -1014,7 +1014,7 @@ unsubscribe();
 
 === Unit Of Work Events
 
-Unit-of-Work-Ereignisse werden ausgelöst, wenn eine neue Session änderungen absetzt.
+Unit-of-work events are triggered when a new session submits changes.
 
 |===
 |Event-Token |Description
@@ -1030,17 +1030,17 @@ Unit-of-Work-Ereignisse werden ausgelöst, wenn eine neue Session änderungen ab
 
 == Transactions
 
-Eine Transaktion ist eine sequentielle Gruppe von Anweisungen, Abfragen oder Operationen wie Select, Insert, Update oder Delete, die als eine einzige Arbeitseinheit ausgeführt werden, die bestätigt oder rückgängig gemacht werden kann.
+A transaction is a sequential group of statements, queries, or operations such as select, insert, update, or delete that are executed as a single unit of work that can be committed or rolled back.
 
-Deepkit unterstützt Transaktionen für alle offiziell unterstützten Datenbanken. Standardmäßig werden für jede Abfrage und Datenbanksitzung keine Transaktionen verwendet. Um Transaktionen zu aktivieren, gibt es zwei Hauptmethoden: Sessions und Callback.
+Deepkit supports transactions for all officially supported databases. By default, no transactions are used for any query or database session. To enable transactions, there are two main methods: sessions and callback.
 
 === Session Transactions
 
-Sie können für jede erstellte Session eine neue Transaktion starten und zuweisen. Dies ist die bevorzugte Art der Interaktion mit der Datenbank, da Sie das Session-Objekt einfach weitergeben können und alle Abfragen, die von dieser Session instanziiert werden, automatisch seiner Transaktion zugewiesen werden.
+You can start and assign a new transaction for each session you create. This is the preferred way of interacting with the database, as you can easily pass on the Session object and all queries instantiated by this session will be automatically assigned to its transaction.
 
-Ein typisches Muster ist, alle Operationen in einen try-catch-Block zu verpacken und `commit()` in der allerletzten Zeile auszuführen (das nur ausgeführt wird, wenn alle vorherigen Befehle erfolgreich waren) und `rollback()` im catch-Block, um alle Änderungen zurückzunehmen sobald ein Fehler auftritt.
+A typical pattern is to wrap all operations in a try-catch block and execute `commit()` on the very last line (which is only executed if all previous commands succeeded) and `rollback()` in the catch block to roll back all changes as soon as an error occurs.
 
-Obwohl es eine alternative API gibt (siehe unten), funktionieren alle Transaktionen nur mit Datenbanksitzungsobjekten. Um offene Änderungen aus der Unit-of-Work in einer Datenbanksitzung an die Datenbank zu übertragen, wird normalerweise `commit()` aufgerufen. In einer transaktionalen Sitzung überträgt `commit()` nicht nur alle ausstehenden Änderungen in die Datenbank, sondern schließt auch die Transaktion ab ("commits") und schließt damit die Transaktion. Alternativ können Sie `session.flush()` aufrufen, um alle anstehenden Änderungen ohne `Commit` und damit ohne Abschluss der Transaktion zu übertragen. Um eine Transaktion zu committen, ohne die Unit-of-Work zu leeren, verwenden Sie `session.commitTransaction()`.
+Although there is an alternative API (see below), all transactions work only with database session objects. To commit open changes from the unit-of-work in a database session to the database, `commit()` is normally called. In a transactional session, `commit()` not only commits all pending changes to the database, but also completes ("commits") the transaction, thus closing the transaction. Alternatively, you can call `session.flush()` to commit all pending changes without `commit` and thus without closing the transaction. To commit a transaction without flushing the unit-of-work, use `session.commitTransaction()`.
 
 ```typescript
 const session = database.createSession();
@@ -1060,17 +1060,17 @@ try {
 }
 ```
 
-Sobald `commit()` oder `rollback()` in einer Session ausgeführt wird, wird die Transaktion freigegeben. Sie müssen dann `useTransaction()` erneut aufrufen, wenn Sie in einer neuen Transaktion weiterarbeiten wollen.
+Once `commit()` or `rollback()` is executed in a session, the transaction is released. You must then call `useTransaction()` again if you want to continue in a new transaction.
 
-Bitte beachten Sie, dass sobald die erste Datenbankoperation in einer transaktionalen Session ausgeführt wird, wird die zugewiesene Datenbankverbindung dem aktuellen Sitzungsobjekt fest und exklusiv zugewiesen (sticky). Somit werden alle nachfolgenden Operationen auf derselben Verbindung (und somit in den meisten Datenbanken auf demselben Datenbankserver) ausgeführt. Erst wenn entweder die transaktionale Session beendet wird (commit oder rollback), wird die Datenbankverbindung wieder freigegeben. Es ist daher zu empfehlen, eine Transaktion nur so kurz wie nötig zu halten.
+Please note that once the first database operation is executed in a transactional session, the assigned database connection becomes fixed and exclusive to the current session object (sticky). Thus, all subsequent operations will be performed on the same connection (and thus, in most databases, on the same database server). Only when either the transactional session is terminated (commit or rollback), the database connection is released again. It is therefore recommended to keep a transaction only as short as necessary.
 
-Wenn eine Session bereits mit einer Transaktion verbunden ist, gibt ein Aufruf von `session.useTransaction()` immer das gleiche Objekt zurück. Verwenden Sie `session.isTransaction()`, um zu prüfen, ob der Sitzung eine Transaktion zugeordnet ist.
+If a session is already connected to a transaction, a call to `session.useTransaction()` always returns the same object. Use `session.isTransaction()` to check if a transaction is associated with the session.
 
-Verschachtelte Transaktionen werden nicht unterstützt.
+Nested transactions are not supported.
 
 === Transaktion Callback
 
-Eine Alternative zu transaktionalen Sessions ist `database.transaction(callback)`.
+An alternative to transactional sessions is `database.transaction(callback)`.
 
 ```typescript
 await database.transaction(async (session) => {
@@ -1081,11 +1081,11 @@ await database.transaction(async (session) => {
 });
 ```
 
-Die Methode `database.transaction(callback)` führt einen asynchronen Callback innerhalb einer neuen transaktionalen Session aus. Wenn der Callback erfolgreich ist (das heisst kein Fehler geworfen wird), wird die Session automatisch committed (und damit ihre Transaktion committed und alle Änderungen geleert). Wenn der Callback fehlschlägt, führt die Sitzung automatisch `rollback()` aus, und der Fehler wird weitergeleitet.
+The `database.transaction(callback)` method performs an asynchronous callback within a new transactional session. If the callback succeeds (that is, no error is thrown), the session is automatically committed (and thus its transaction committed and all changes flushed). If the callback fails, the session automatically executes `rollback()` and the error is propagated.
 
 === Isolations
 
-Viele Datenbanken unterstützen verschiedene Arten von Transaktionen. Um das Transaktionsverhalten zu ändern, können Sie verschiedene Methoden für das zurückgegebene Transaktionsobjekt von `useTransaction()` aufrufen. Die Schnittstelle dieses Transaktionsobjekts hängt von dem verwendeten Datenbankadapter ab. Zum Beispiel hat das von einer MySQL-Datenbank zurückgegebene Transaktionsobjekt andere Optionen als das von einer MongoDB-Datenbank zurückgegebene. Verwenden Sie die Code-Vervollständigung oder sehen Sie sich die Schnittstelle des Datenbankadapters an, um eine Liste der möglichen Optionen zu erhalten.
+Many databases support different types of transactions. To change the transaction behavior, you can call different methods for the returned transaction object from `useTransaction()`. The interface of this transaction object depends on the database adapter used. For example, the transaction object returned from a MySQL database has different options than the one returned from a MongoDB database. Use code completion or view the database adapter's interface to get a list of possible options.
 
 ```typescript
 const database = new Database(new MySQLDatabaseAdapter());
@@ -1109,9 +1109,9 @@ await database.transaction(async (session) => {
 });
 ```
 
-Während Transaktionen für MySQL, PostgreSQL und SQLite standardmäßig funktionieren, müssen Sie MongoDB zunächst als "Replikatsatz" einrichten.
+While transactions for MySQL, PostgreSQL, and SQLite work by default, you must first set up MongoDB as a "replica set".
 
-Um eine Standard-MongoDB-Instanz in ein Replikatset zu konvertieren, lesen Sie bitte die offizielle Dokumentation link:https://docs.mongodb.com/manual/tutorial/convert-standalone-to-replica-set/[Convert a Standalone to a Replica Set].
+To convert a standard MongoDB instance to a replica set, please refer to the official documentation link:https://docs.mongodb.com/manual/tutorial/convert-standalone-to-replica-set/[Convert a Standalone to a Replica Set].
 
 == Naming Strategy
 
@@ -1143,9 +1143,9 @@ include::./database/composite-primary-key.adoc[leveloffset=+1]
 
 === Soft-Delete
 
-Das Soft-Delete Plugin ermöglicht es, Datenbankeinträge versteckt zu halten, ohne sie tatsächlich zu löschen. Wenn ein Datensatz gelöscht wird, wird er nur als gelöscht markiert und nicht wirklich gelöscht. Alle Abfragen filtern automatisch nach dieser gelöschten Eigenschaft, sodass es sich für den Benutzer so anfühlt, als ob er tatsächlich gelöscht wäre.
+The Soft-Delete plugin allows to keep database records hidden without actually deleting them. When a record is deleted, it is only marked as deleted and not actually deleted. All queries automatically filter for this deleted property, so it feels to the user as if it is actually deleted.
 
-Um das Plugin zu verwenden, müssen Sie die SoftDelete-Klasse instanziieren und sie für jede Entität aktivieren.
+To use the plugin, you must instantiate the SoftDelete class and enable it for each entity.
 
 ```typescript
 import { entity, PrimaryKey, AutoIncrement } from '@deepkit/type';
@@ -1175,13 +1175,13 @@ softDelete.enable(User);
 softDelete.disable(User);
 ```
 
-==== Löschen
+==== Delete
 
-Um Datensätze sanft zu löschen, verwenden Sie die üblichen Methoden: `deleteOne` oder `deleteMany` in einer Abfrage, oder Sie verwenden die Session, um sie zu löschen. Das Soft-Delete Plugin erledigt den Rest automatisch im Hintergrund.
+To soft-delete records, use the usual methods: `deleteOne` or `deleteMany` in a query, or use the session to delete them. The soft-delete plugin will do the rest automatically in the background.
 
-==== Wiederherstellen
+==== Restore
 
-Gelöschte Datensätze können mithilfe einer aufgehobenen Abfrage über `SoftDeleteQuery` wiederhergestellt werden. Es hat `restoreOne` und `restoreMany`.
+Deleted records can be restored using a cancelled query via `SoftDeleteQuery`. It has `restoreOne` and `restoreMany`.
 
 ```typescript
 import { SoftDeleteQuery } from '@deepkit/orm';
@@ -1190,7 +1190,7 @@ await database.query(User).lift(SoftDeleteQuery).filter({ id: 1 }).restoreOne();
 await database.query(User).lift(SoftDeleteQuery).filter({ id: 1 }).restoreMany();
 ```
 
-Die Session unterstützt auch die Wiederherstellung von Elementen.
+The session also supports element recovery.
 
 ```typescript
 import { SoftDeleteSession } from '@deepkit/orm';
@@ -1204,7 +1204,7 @@ await session.commit();
 
 ==== Hard Delete
 
-Um Datensätze hart zu löschen, verwenden Sie eine gehobene Abfrage über SoftDeleteQuery. Dies stellt im Wesentlichen das alte Verhalten ohne das Plugin für eine einzelne Abfrage wieder her.
+To hard delete records, use a lifted query via SoftDeleteQuery. This essentially restores the old behavior without the single query plugin.
 
 ```typescript
 import { SoftDeleteQuery } from '@deepkit/orm';
@@ -1219,7 +1219,7 @@ await database.query(User).lift(SoftDeleteQuery).withSoftDeleted().deleteMany();
 
 ==== Query deleted.
 
-Bei einem "lifted" Query über `SoftDeleteQuery` können Sie auch gelöschte Datensätze einbeziehen.
+With a "lifted" query via `SoftDeleteQuery` you can also include deleted records.
 
 ```typescript
 import { SoftDeleteQuery } from '@deepkit/orm';
@@ -1233,7 +1233,7 @@ await database.query(s).lift(SoftDeleteQuery).isSoftDeleted().count()
 
 ==== Deleted by
 
-`deletedBy` kann über Abfrage und Sessions festgelegt werden.
+`deletedBy` can be set via query and sessions.
 
 ```typescript
 import { SoftDeleteSession } from '@deepkit/orm';

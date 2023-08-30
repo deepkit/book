@@ -1,12 +1,12 @@
 [#validation]
 = Validation
 
-Validation ist der Prozess um Daten auf Korrektheit zu prüfen. Korrektheit ist dann gegeben, wenn der Typ der Richtige ist und zusätzliche definierte Einschränkungen erfüllt sind. Dabei unterscheidet Deepkit generell zwischen Typenvalidierung und die Validierung von zusätzlichen Einschränkungen.
+Validation is the process of checking data for correctness. Correctness is given if the type is the correct one and additional defined constraints are fulfilled. Deepkit generally distinguishes between type validation and the validation of additional constraints.
 
-Es wird immer dann Validation benutzt, wenn Daten aus einer Quelle stammen, die als unsicher gilt. Unsicher bedeutet, dass keine garantierten Annahmen über die Typen oder Inhalte der Daten getroffen werden können und somit die Daten buchstäblichen jeden beliebigen Wert zur Laufzeit haben könnte.
-So sind Daten aus Usereingaben generell als nicht sicher einzustufen. Daten aus einem HTTP-Request (query parameter, body), CLI-Argumente, oder einer eingelesenen Datei müssen validiert werden. Wenn eine Variable als Nummer deklariert ist, muss sich auch eine Nummer darin befinden, ansonsten kann das Program abstürzen oder eine Sicherheitslücke entstehen.
+Validation is used whenever data comes from a source that is considered uncertain. Uncertain means that no guaranteed assumptions can be made about the types or contents of the data, and thus the data could have literally any value at runtime.
+For example, data from user input is generally not considered secure. Data from an HTTP request (query parameter, body), CLI arguments, or a read-in file must be validated. If a variable is declared as a number, there must also be a number in it, otherwise the program may crash or a security hole may occur.
 
-In einem Controller einer HTTP-Route zum Beispiel ist somit oberstes Gebot, jede Usereingabe (query parameter, body) zu prüfen. Hierbei ist besonders im Umfeld von TypeScript zu beachten, dass keine Type-Casts verwenden werden, da diese fundamental unsicher sind.
+In a controller of an HTTP route, for example, the top priority is to check every user input (query parameter, body). Especially in the TypeScript environment, it is important not to use type casts, as they are fundamentally insecure.
 
 ```typescript
 app.post('/user', function(request) {
@@ -14,25 +14,28 @@ app.post('/user', function(request) {
 });
 ```
 
-Dieser oft gesehene Code stellt ein Fehler da, der zum Programmabsturz oder zu einer Sicherheitslücke führen kann, da ein Type-Cast `as number` verwendet wurde, der keinerlei Sicherheiten zur Laufzeit bereitstellt. Der User kann als `limit` einfach einen String übergeben und das Program würde dann mit einem String in `limit` arbeiten, obwohl der Code darauf basiert, dass es eine Nummer sein muss. Um diese Sicherheit zur Laufzeit zu erhalten gibt es Validatoren und Type-Guards. Auch könnte ein Serializer benutzt werden, um `limit` in eine Nummer umzuwandeln. Hierzu findet sich in xref:serialization.adoc[Serialization] mehr Informationen.
+This often seen code is a bug that can lead to a program crash or a security vulnerability because a type cast `as number` was used that does not provide any security at runtime. The user can simply pass a string as `limit` and the program would then work with a string in `limit`, although the code is based on the fact that it must be a number. To maintain this security at runtime there are validators and type guards. Also, a serializer could be used to convert `limit` to a number. More information about this can be found in xref:serialization.adoc[Serialization].
 
-Validation ist essenzieller Bestandteil jeder Anwendung und sollte besser einmal zuviel als einmal zu wenig genutzt werden. Deepkit stellt viele Validationsoptionen bereit und hat eine high-performance Implementierung, sodass sich in den allermeisten Fällen kein Gedanke um die Ausführungszeit gemacht werden muss. Nutzen Sie soviel Validation wie möglich, im Zweifel einmal mehr, um auf der sicheren Seite zu stehen.
+Validation is an essential part of any application and it is better to use it once too often than once too little. Deepkit provides many validation options and has a high-performance implementation, so in most cases there is no need to worry about execution time. Use as much validation as possible, in case of doubt once more, to be on the safe side.
 
-Dabei haben viele Komponenten von Deepkit wie z.b. der HTTP-Router, die RPC-Abstraktion, aber auch die Datenbank Abstraktion selbst Validation eingebaut und wird automatisch ausgeführt, sodass es in vielen Fällen nicht nötig ist, dies manuell zu machen.
-In den dazugehörigen Kapiteln (xref:cli.adoc[CLI], xref:http.adoc[HTTP], xref:rpc.adoc[RPC], xref:database.adoc[Database]) ist genaustens erklärt, wann eine Validation automatisch geschieht. Stellen Sie dabei sicher, dass Ihnen bekannt ist, an welchen Stellen Einschränkungen beziehungsweise Typen definieren werden müssen und nutzen Sie kein `any`, damit diese Validierungen automatisch gut und sicher funktionieren. So können Sie sich eine ganze Menge manueller Arbeit sparen, um den Code sauber und sicher zu halten.
+In doing so, many components of Deepkit such as the HTTP router, the RPC abstraction, but also the database abstraction itself have validation built in and is performed automatically, so in many cases it is not necessary to do this manually.
+
+In the corresponding chapters (xref:cli.adoc[CLI], xref:http.adoc[HTTP], xref:rpc.adoc[RPC], xref:database.adoc[Database]) it is explained in detail when a validation happens automatically. Make sure that you know where restrictions or types have to be defined and don't use `any` to make these validations work well and safely automatically. This can save you a lot of manual work to keep the code clean and safe.
 
 [#validation-usage]
-== Benutzung
+== Use
 
-Die Basisfunktion des Validators ist es, ein Wert auf seinen Typ zu prüfen. Zum Beispiel ob eine Wert ein String ist. Dabei geht es nicht darum, was der String beinhaltet, sondern lediglich um seinen Typ. Typen gibt es viele in Typescript: string, number, boolean, bigint, objects, classes, interface, generics, mapped types, und viele mehr. Durch TypeScripts mächtiges Typensystem sind eine große Vielzahl von unterschiedlichsten Typen vorhanden.
+The basic function of the validator is to check a value for its type. For example, whether a value is a string. This is not about what the string contains, but only about its type. There are many types in Typescript: string, number, boolean, bigint, objects, classes, interface, generics, mapped types, and many more. Due to Typescript’s powerful type system, a large variety of different types are available.
 
-In JavaScript selbst können primitive Typen mit dem `typeof` operator analysiert werden. Für komplexere Typen wie interfaces, mapped types, oder generische Set/Map ist das nicht mehr so einfach möglich und es wird eine Validator-Library wie zum Beispiel `@deepkit/type` nötig. Deepkit ist dabei die einzige Lösung, die es erlaubt, alle TypenScript Typen direkt ohne Umwege zu validieren.
+In JavaScript itself, primitive types can be parsed with the `typeof` operator. For more complex types like interfaces, mapped types, or generic set/map this is not so easy anymore and a validator library like `@deepkit/type` becomes necessary. Deepkit is the only solution that allows to validate all TypesScript types directly without any detours.
 
-In Deepkit kann eine Typevalidierung entweder über die Funktion `validate`, `is`, oder `assert` vorgenommen werden.
-Die Funktion `is` ist dabei ein sogenannter Type-Guard und `assert` eine Type-Assertion. Beide werden erst in der nächsten Sektion erklärt.
-Die Funktion `validate` gibt ein Array von gefundenen Fehlern und bei Erfolg ein leeres Array zurück. Jeder Eintrag in diesem Array beschreibt dabei den genaue Fehlercode und die Fehlermeldung sowie auch den Pfad sobald komplexere Typen wie Objekte oder Arrays validiert werden.
 
-Die Benutzung aller drei Funktionen geschieht grob auf die selbe Weise. So wird als ersten Typenargument der Typ angegeben beziehungsweise referenziert und als erstes Funktionsargument die Daten übergeben.
+
+In Deepkit, type validation can be done using either the `validate`, `is`, or `assert` function.
+The function `is` is a so-called type guard and `assert` is a type assertion. Both will be explained in the next section.
+The function `validate` returns an array of found errors and on success an empty array. Each entry in this array describes the exact error code and the error message as well as the path when more complex types like objects or arrays are validated.
+
+All three functions are used in roughly the same way. The type is specified or referenced as the first type argument and the data is passed as the first function argument.
 
 ```typescript
 import { validate } from '@deepkit/type';
@@ -41,7 +44,7 @@ const errors = validate<string>('abc'); //[]
 const errors = validate<string>(123); //[{code: 'type', message: 'Not a string'}]
 ```
 
-Wird mit komplexeren Typen wie Klassen oder Interfaces gearbeitet, kann das Array auch mehrere Einträge beinhalten.
+If you work with more complex types like classes or interfaces, the array can also contain several entries.
 
 ```typescript
 import { validate } from '@deepkit/type';
@@ -62,7 +65,7 @@ validate<User>({});
 //]
 ```
 
-Der Validator unterstützt dabei auch tiefe rekursive Typen. Pfade werden dann mit einem Punkt getrennt angegeben.
+The validator also supports deep recursive types. Paths are then separated with a dot.
 
 ```typescript
 import { validate } from '@deepkit/type';
@@ -82,7 +85,7 @@ validate<User>({id: 1, username: 'Joe', supervisor: {}});
 //]
 ```
 
-Nutzen Sie dabei die Vorteile, die TypeScript ihnen bietet. So können komplexere Typen wie ein `User` an mehreren Stellen wiederverwendet werden, ohne diesen immer wieder erneut zu deklarieren. Ist zum Beispiel ein `User` ohne seine `id` zu valideren, können TypeScript Utitilies genutzt werden, um schnell und effizient abgeleitete Untertypen zu erstellen. Ganz im Sinne von DRY (Don't Repeat Yourself).
+Take advantage of the benefits that TypeScript offers you. For example, more complex types like a `user` can be reused in multiple places without having to declare it again and again. For example, if a `user` is to be validated without its `id`, TypeScript utitilies can be used to quickly and efficiently create derived subtypes. Very much in the spirit of DRY (Don't Repeat Yourself).
 
 ```typescript
 type UserWithoutId = Omit<User, 'id'>;
@@ -90,9 +93,9 @@ type UserWithoutId = Omit<User, 'id'>;
 validate<UserWithoutId>({username: 'Joe'}); //valid!
 ```
 
-Deepkit hat als einziges großes Framework die Möglichkeit, auf TypeScripte Typen auf diese Art und Weise zur Laufzeit zuzugreifen. Möchten Sie Typen in Frontend und Backend nutzen, können Typen in eine eigene Datei ausgelagert werden und so überall importiert werden. Nutzen Sie diese Möglichkeit zu Ihrem Vorteil, um den Code effizient und sauber zu halten.
+Deepkit is the only major framework that has the ability to access TypeScripts types in this way at runtime. If you want to use types in frontend and backend, types can be swapped out to a separate file and thus imported anywhere. Use this option to your advantage to keep the code efficient and clean.
 
-Ein Type-Cast (konträr zur Type-Guard) in TypeScript ist kein Konstrukt zur Laufzeit, sondern wird nur im Typensystem selbst behandelt. Es ist keine sichere Variante, um unbekannten Daten einen Typ zuzuweisen.
+A type cast (contrary to type guard) in TypeScript is not a construct at runtime, but is only handled in the type system itself. It is not a safe way to assign a type to unknown data.
 
 ```typescript
 const data: any = ...;
@@ -103,15 +106,14 @@ if (username.startsWith('@')) { //might crash
 }
 ```
 
-Der Code `as string` ist dabei nicht sicher. Die Variable `data` könnte buchstäblichen jeden Wert haben, so zum Beispiel `{username: 123}`, or gar `{}`, und hätte zur Folge, dass `username` nicht ein String ist, sondern etwas völlig anderes und daher der Code `username.startsWith('@')` zu einem Fehler führen wird, so dass im schlimmsten Fall das Programm abstürzt. Um zur Laufzeit garantiert festzustellen, dass `data` hier eine Eigenschaft `username` mit dem Type String hat, müssen Type-Guards verwendet werden.
+The `as string` code is not safe. The variable `data` could have literally any value, for example `{username: 123}`, or even `{}`, and would have the consequence that `username` is not a string, but something completely different and therefore the code `username.startsWith('@')` will lead to an error, so that in the worst case the program crashes. To guarantee at runtime that `data` here has a property `username` with the type string, type-guards must be used.
 
-Type-Guards sind Funktionen, die TypeScript einen Hinweis darüber geben, welche Type die übergeben Daten zur Laufzeit garantiert haben. Mit diesem Wissen ausgestattet, verfeinert ("narrowed") TypeScript dann den Typ im weiteren Codeverlauf.  Aus zum Beispiel `any` kann somit ein String, oder ein anderer Typ auf eine sichere Weise gemacht werden.
-Wenn also Daten vorliegen, von denen der Typ nicht bekannt ist (`any` oder `unknown`), hilft ein Type-Guard diesen basierend auf den Daten selbst genauer sicher einzugrenzen. Dabei ist der Type-Guard nur so sicher wie seine Implementieren. Machen Sie dabei einen Fehler, kann das schwere Folgen nach sich ziehen, da fundamentale Annahmen sich plötzlich als unwahr herausstellen.
+Type guards are functions that give TypeScript a hint about what type the passed data is guaranteed to have at runtime. Armed with this knowledge, TypeScript then "narrows" the type as the code progresses. For example, `any` can be made into a string, or any other type in a safe way. So if there is data of which the type is not known (`any` or `unknown`), a type guard helps to narrow it down more precisely based on the data itself. However, the type guard is only as safe as its implementation. If you make a mistake, this can have severe consequences, because fundamental assumptions suddenly turn out to be untrue.
 
 [#validation-type-guard]
 == Type-Guard
 
-Ein Type-Guard auf den obige genutzten Typen `User` könnte in einfachster Form wie folgt aussehen. Zu beachten ist, dass die obigen erklärten Besonderheiten mit NaN hier nicht Bestandteil sind und somit dieser Type-Guard nicht ganz korrekt ist.
+A type guard on the above used type `User` could look in simplest form as follows. Note that the above explained special features with NaN are not part here and thus this type guard is not quite correct.
 
 ```typescript
 function isUser(data: any): data is User {
@@ -125,7 +127,7 @@ isUser({}); //false
 isUser({id: 1, username: 'Joe'}); //true
 ```
 
-Ein Type-Guard gibt immer ein Boolean zurück und wird in der Regel direkt in einer If-Bedienung genutzt.
+A type guard always returns a Boolean and is usually used directly in an If operation.
 
 ```typescript
 const data: any = await fetch('/user/1');
@@ -135,7 +137,7 @@ if (isUser(data)) {
 }
 ```
 
-Für jeden Type-Guard eine eigene Funktion zu schreiben, besonders für komplexere Typen, und diese dann immer wieder anzupassen, wenn ein Typ sich verändert, ist äußerst mühsam, fehleranfällig, und nicht effizient. Daher bietet Deepkit die Funktion `is` an, welche automatisch für jeden beliebigen TypeScript Typen einen Type-Guard bereitstellt. Diese berücksichtigt dann auch automatisch Besonderheiten wie das oben erwähnte Problem mit NaN. Die Funktion `is` macht dabei dasselbe wie `validate`, nur gibt sie statt einem Array von Fehler schlicht ein Boolean zurück.
+Writing a separate function for each type guard, especially for more complex types, and then adapting it every time a type changes is extremely tedious, error-prone, and not efficient. Therefore, Deepkit provides the function `is`, which automatically provides a Type-Guard for any TypeScript type. This then also automatically takes into account special features such as the above-mentioned problem with NaN. The function `is` does the same as `validate`, but instead of an array of errors it simply returns a boolean.
 
 ```typescript
 import { is } from '@deepkit/type';
@@ -151,7 +153,7 @@ if (is<User>(data)) {
 }
 ```
 
-Ein öfter aufzufindendes Pattern ist, bei fehlerhafter Validierung direkt ein Fehler zurückzugeben, sodass nachfolgender Code nicht ausgeführt wird. Das kann an diversen Stellen genutzt werden, ohne den kompletten Flow des Codes abzuändern.
+A pattern that can be found more often is to return an error directly in case of incorrect validation, so that subsequent code is not executed. This can be used in various places without changing the complete flow of the code.
 
 ```typescript
 function addUser(data: any): void {
@@ -161,7 +163,7 @@ function addUser(data: any): void {
 }
 ```
 
-Alternativ kann eine TypeScript type assertion verwenden werden. Die Funktion `assert` wirft automatisch einen Fehler, wenn die gegebenen Daten nicht auf einen Typen korrekt validiert. Die spezielle Signatur der Funktion, welche TypeScript type assertions auszeichnet, hilft TypeScript dabei, die übergebene Variable automatisch zu verfeinern ("narrowing").
+Alternatively, a TypeScript type assertion can be used. The `assert` function automatically throws an error if the given data does not validate correctly to a type. The special signature of the function, which distinguishes TypeScript type assertions, helps TypeScript to automatically narrow the passed variable.
 
 ```typescript
 import { assert } from '@deepkit/type';
@@ -173,12 +175,12 @@ function addUser(data: any): void {
 }
 ```
 
-Nutzen Sie auch hier die Vorteile, die TypeScript ihnen bietet. Typen können wiederverwendet oder durch diverse TypeScript Funktionen angepasst werden.
+Here, too, take advantage of the benefits that TypeScript offers you. Types can be reused or customized using various TypeScript functions.
 
 [#validation-error-reporting]
 == Error Reporting
 
-Die Funktionen `is`, `assert` und `validates` geben ein Boolean als Resultat zurück. Um genaue Informationen über fehlgeschlagenen Validations-Regeln zu erhalten, kann die Funktion `validate` benutzt werden. Sie gibt ein leeres Array zurück, wenn alles erfolgreich validiert wurde. Bei Fehlern enthält das Array ein oder mehrere Einträge mit folgender Struktur:
+The functions `is`, `assert` and `validates` return a boolean as result. To get exact information about failed validation rules, the `validate` function can be used. It returns an empty array if everything was validated successfully. In case of errors the array will contain one or more entries with the following structure:
 
 ```typescript
 interface ValidationErrorItem {
@@ -197,7 +199,7 @@ interface ValidationErrorItem {
 }
 ```
 
-Die Funktion erhält als erstes Typen-Argument ein beliebigen TypeScript Typ und als erstes Argument die zu validierende Daten.
+The function receives as first type argument any TypeScript type and as first argument the data to validate.
 
 ```typescript
 import { validate } from '@deepkit/type';
@@ -209,7 +211,7 @@ validate<number>(123); //[]
 validate<number>('Hello'); //[{code: 'type', message: 'Not a number', path: ''}]
 ```
 
-Es können hierbei auch komplexe Typen wie Interfaces, Klassen, oder Generics benutzt werden.
+Complex types such as interfaces, classes, or generics can also be used.
 
 ```typescript
 import { validate } from '@deepkit/type';
@@ -226,16 +228,16 @@ validate<User>({id: 1, username: 'Peter'}); //[]
 ```
 
 [#validation-constraints]
-== Einschränkungen
+== Constraints
 
-Zusätzlich zum Prüfen der Typen können weitere beliebige Einschränkungen an einen Typen hinzugefügt werden. Das Prüfen von diesen zusätzlichen Inhalts-Einschränkungen erfolgt automatisch, nachdem die Typen selbst geprüft wurden. Dies geschieht in allen Validierungsfunktionen wie `validate`, `is`, and `assert`. Eine Einschränkung kann dabei zum Beispiel sein, dass ein String eine bestimmte minimale oder maximale Länge haben muss.
-Diese Einschränkungen werden über die Typen-Decorators an den eigentlichen Typen hinzugefügt. Dabei gibt es eine ganze Vielzahl von Dekorationen, die genutzt werden können. Eigene Decorators können bei erweitertem Bedarf nach Belieben selbst definiert und genutzt werden.
+In addition to checking the types, other arbitrary constraints can be added to a type. The validation of these additional content constraints is done automatically after the types themselves have been validated. This is done in all validation functions like `validate`, `is`, and `assert`.
+A restriction can be, for example, that a string must have a certain minimum or maximum length. These restrictions are added to the actual types via the type decorators. There is a whole variety of decorators that can be used. Own decorators can be defined and used at will in case of extended needs.
 
 ```typescript
 type Username = string & MinLength<3>;
 ```
 
-Mit `&` können beliebig viele Typen-Decorators an den eigentlichen Typ hinzugefügt werden. Das Ergebnis, hier `Username`, kann dann in allen Validierungsfunktionen aber auch in anderen Typen genutzt werden.
+With `&` any number of type decorators can be added to the actual type. The result, here `username`, can then be used in all validation functions but also in other types.
 
 ```typescript
 is<Username>('ab'); //false, because minimum length is 3
@@ -250,21 +252,21 @@ is<User>({id: 1, username: 'ab'}); //false, because minimum length is 3
 is<User>({id: 1, username: 'Joe'}); //true
 ```
 
-Die Funktion `validate` gibt dabei nützliche Fehlermeldungen, die von den Einschränkungen kommen.
+The function `validate` gives useful error messages coming from the constraints.
 
 ```typescript
 const errors = validate<Username>('xb');
 //[{ code: 'minLength', message: `Min length is 3` }]
 ```
 
-Diese Informationen können zum Beispiel wunderbar auch an einem Formular automatisch dargestellt und mittels des `code` übersetzt werden. Durch den vorhandenen Pfad bei Objekten und Arrays können so Felder in einem Formular den passenden Fehler rausfiltern und anzeigen.
+This information can be represented for example wonderfully also at a form automatically and be translated by means of the `code`. Through the existing path for objects and arrays, fields in a form can filter out and display the appropriate error.
 
 ```typescript
 validate<User>({id: 1, username: 'ab'});
 //{ path: 'username', code: 'minLength', message: `Min length is 3` }
 ```
 
-Ein oft nützlicher Anwendungsfall ist auch eine E-Mail mit einer RegExp-Einschränkung zu definieren. Einmal den Typ definiert, kann er überall benutzt werden.
+An often useful use case is also to define an email with a RegExp constraint. Once the type is defined, it can be used anywhere.
 
 ```typescript
 export const emailRegexp = /^\S+@\S+$/;
@@ -274,7 +276,7 @@ is<Email>('abc'); //false
 is<Email>('joe@example.com'); //true
 ```
 
-Es können beliebig viele Einschränkungen hinzugefügt werden.
+Any number of constraints can be added.
 
 ```typescript
 type ID = number & Positive & Maximum<1000>;
@@ -289,7 +291,7 @@ is<ID>(1001); //true
 
 ==== Validate<typeof myValidator>
 
-Validierung mitteils einer benutzerdefinierten Validierungsfunktion. Siehe nächste Sektion Benutzerdefinierte Validator für mehr Informationen.
+Validation using a custom validator function. See next section Custom Validator for more information.
 
 ```typescript
 	type T = string & Validate<typeof myValidator>
@@ -434,9 +436,9 @@ Ensures that the number is a integer in the correct range. Is automatically a `n
 
 See Special types: integer/floats for more information
 
-=== Benutzerdefinierte Validator
+=== Custom validator
 
-Wenn die eingebauten Validatoren nicht ausreichen, können eigene Validierungsfunktionen erstellt und über den `Validate`-Decorator verwendet werden.
+If the built-in validators are not sufficient, custom validation functions can be created and used via the `Validate` decorator.
 
 ```typescript
 import { ValidatorError, Validate, Type, validates, validate }
@@ -460,11 +462,11 @@ console.log(validates<Article>({id: 1, title: ' Pe     '})); //false
 console.log(validate<Article>({id: 1, title: ' Pe     '})); //[ValidationErrorItem]
 ```
 
-Beachten Sie, dass Ihre benutzerdefinierte Validierungsfunktion ausgeführt wird, nachdem alle eingebauten Typen-Validierungen aufgerufen wurden. Wenn ein Validator fehlschlägt, werden alle nachfolgenden Validatoren für den aktuellen Typen ausgelassen. Pro Typen ist nur ein Fehler möglich.
+Note that your custom validation function is executed after all built-in type validators have been called. If a validator fails, all subsequent validators for the current type are skipped. Only one failure is possible per type.
 
 ==== Generic Validator
 
-In der Validator-Funktion ist das Typen-Objekt verfügbar, das verwendet werden kann, um weitere Informationen über den Typen zu erhalten, der den Validator verwendet. Es gibt auch eine Möglichkeit, eine beliebige Validator-Option zu definieren, die an den Validate-Typen übergeben werden muss und den Validator konfigurierbar macht. Mit diesen Informationen und ihren übergeordneten Referenzen können leistungsfähige generische Validatoren erstellt werden.
+In the Validator function the type object is available which can be used to get more information about the type using the validator. There is also a possibility to define an arbitrary validator option that must be passed to the validate type and makes the validator configurable. With this information and its parent references, powerful generic validators can be created.
 
 ```typescript
 import { ValidatorError, Validate, Type, is, validate }

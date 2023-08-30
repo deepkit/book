@@ -1,20 +1,20 @@
 [#runtime-types-bytecode]
 = Bytecode
 
-Um im Detail zu lernen, wie Deepkit die Typeninformationen im JavaScript enkodiert und ausliest, ist dieses Kapitel gedacht. Es erklärt, wie die Typen konkret in Bytecode umgewandelt, im JavaScript emittiert, und anschließen zur Laufzeit interpretiert werden.
+To learn in detail how Deepkit encodes and reads the type information in JavaScript, this chapter is intended. It explains how the types are actually converted into bytecode, emitted in JavaScript, and then interpreted at runtime.
 
 == Typen-Compiler
 
-Der Type-Compiler (in @deepkit/type-compiler) ist dafür Verantwortlich, die definierten Typen in den TypeScript Dateien auszulesen und in ein Bytecode zu kompilieren. Dieser Bytecode hat alles, was nötig ist, um die Typen in der Laufzeit auszuführen.
-Zum Zeitpunkt dieses Buches ist der Type-Compiler ein sogenannter TypeScript Transformer. Dieser Transformer ist ein Plugin für den TypeScript Compiler selbst und wandelt ein TypeScript AST (Abstract Syntax Tree) in ein anderen TypeScript AST um. Deepkit's Typen-Compiler liest in diesem Prozess den AST aus, produziert den dazugehörigen Bytecode, und fügt diesen in den AST ein.
+The type compiler (in @deepkit/type-compiler) is responsible for reading the defined types in the TypeScript files and compiling them into a bytecode. This bytecode has everything needed to execute the types in runtime.
+At the time of this writing, the type compiler is a so-called TypeScript transformer. This transformer is a plugin for the TypeScript compiler itself and converts a TypeScript AST (Abstract Syntax Tree) into another TypeScript AST. Deepkit's type compiler reads the AST in this process, produces the corresponding bytecode, and inserts it into the AST.
 
-TypeScript selbst erlaubt es nicht, dieses Plugin aka Transformer über eine tsconfig.json zu konfigurieren. Es ist entweder nötig, die TypeScript Compiler API direkt zu benutzen, oder ein Buildsystem wie Webpack mit `ts-loader`. Um diesen unangenehmen Weg den Benutzern von Deepkit zu ersparen, installiert sich der Deepkit Typen-Compiler automatisch selbst in `node_modules/typescript` sobald `@deepkit/type-compiler` installiert wird. Dies macht es möglich, dass alle Buildtools, die auf das lokal installierte TypeScript (das in `node_modules/typescript`) zugreifen, automatisch den Typen-Compiler aktiviert haben. Dadurch funktioniert tsc, Angular, webpack, ts-node, und einige andere Tools automatisch mit Deepkit's Typen-Compiler.
+TypeScript itself does not allow you to configure this plugin aka transformer via a tsconfig.json. It is either necessary to use the TypeScript compiler API directly, or a build system like Webpack with `ts-loader`. To save this inconvenient way for Deepkit users, the Deepkit type compiler automatically installs itself in `node_modulestypescript` whenever `@deepkit/type-compiler` is installed. This makes it possible for all build tools that access the locally installed TypeScript (the one in `node_modulestypescript`) to automatically have the type compiler enabled. This makes tsc, Angular, webpack, ts-node, and some other tools work automatically with Deepkit's type compiler.
 
-Ist das automatische Ausführen von NPM install scripts nicht aktiviert und wird so das lokal installierte Typescript nicht modifiziert, so muss dieser Prozess manuell ausgeführt werden, sofern man das möchte. Alternative kann auch der Typen-Compiler manuell in einen Buildtool wie zum Beispiel webpack genutzt werden. Siehe dazu die Sektion Installation weiter oben.
+If automatic running of NPM install scripts is not enabled and thus the locally installed typescript is not modified, this process must be run manually if you want to. Alternatively, the types compiler can be used manually in a build tool such as webpack. See the Installation section above.
 
 == Bytecode Encoding
 
-Der Bytecode ist eine Folge von Befehlen für eine Virtuelle Maschine und ist im JavaScript selbst als Array mit Referenzen und String (dem eigentlichen Bytecode) enkodiert.
+The bytecode is a sequence of commands for a virtual machine and is encoded in the JavaScript itself as an array of references and string (the actual bytecode).
 
 ```typescript
 //TypeScript
@@ -24,7 +24,7 @@ type TypeA = string;
 const typeA = ['&'];
 ```
 
-Die vorhandenen Befehle selbst sind jeweils ein Byte groß und in `@deepkit/type-spec` als `ReflectionOp` Enum zu finden. Zum Zeitpunkt dieses Buches ist der Befehlssatz über 81 Befehle gross.
+The existing commands themselves are each one byte in size and can be found in `@deepkit/type-spec` as `ReflectionOp` enums. At the time of this writing, the command set is over 81 commands in size.
 
 ```typescript
 enum ReflectionOp {
@@ -41,7 +41,7 @@ enum ReflectionOp {
 }
 ```
 
-Eine Folge von Befehlen wird enkodiert als einen String um Speicherplatz zu sparen. So wird ein Typ `string[]` als Bytecode Program `[string, array]` konzeptionell dargestellt, welches die Bytes `[5, 37]` hat und mit folgendem Algorithmus enkodiert:
+A sequence of commands is encoded as a string to save memory. So a type `string[]` is conceptualized as a bytecode program `[string, array]` which has the bytes `[5, 37]` and encoded with the following algorithm:
 
 ```typescript
 function encodeOps(ops: ReflectionOp[]): string {
@@ -49,7 +49,7 @@ function encodeOps(ops: ReflectionOp[]): string {
 }
 ```
 
-Entsprechend wird aus einer 5 ein `&`-Zeichen und aus einer 37 ein `F`-Zeichen. Zusammen wird daraus `&F` und in Javascript als `['&F']` emittiert.
+Accordingly, a 5 becomes an `&` character and a 37 becomes an `F` character. Together they become `&F` and are emitted in Javascript as `['&F']`.
 
 ```typescript
 //TypeScript
@@ -59,7 +59,7 @@ export type TypeA = string[];
 export const __ΩtypeA = ['&F'];
 ```
 
-Um Namenskonflikte vorzubeugen, erhält jeder Typ ein "__Ω" als Prefix. Für jeden explizit definierten Typen, der exportiert oder von einem exportierten Typen genutzt wird, wird ein Bytecode  das JavaScript emittiert. Auch Klassen und Funktionen erhalten einen Bytecode direkt als Eigenschaft.
+To prevent naming conflicts, each type is given a "_Ω" prefix. For each explicitly defined type that is exported or used by an exported type, a bytecode is emitted the JavaScript. Classes and functions also receive a bytecode directly as a property.
 
 ```typescript
 //TypeScript
@@ -70,6 +70,6 @@ function log(message) {}
 log.__type = ['message', 'log', 'P&2!$/"'];
 ```
 
-== Virtuelle Maschine
+== Virtual Machine
 
-Eine virtuelle Maschine (in `@deepkit/type` die Klasse Processor) zur Laufzeit ist dafür zuständig den encodierten Bytecode zu dekodieren und auszuführen. Sie gibt immer ein Typen-Objekt zurück, siehe weiter oben die Sektion Reflection.
+A virtual machine (in `@deepkit/type` the class Processor) at runtime is responsible for decoding and executing the encoded bytecode. It always returns a type object, see the Reflection section above.

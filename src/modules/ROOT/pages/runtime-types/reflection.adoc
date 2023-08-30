@@ -1,7 +1,31 @@
 [#runtime-types-reflection]
 = Reflection
 
-Um mit den Typeninformationen selbst direkt zu arbeiten, gibt es dabei zwei grundlegende Varianten: Type-Objekte und Reflection-Klassen. Die Reflection-Klassen werden weiter unten behandelt. Die Funktion `typeOf` gibt Typen-Objekte zurück, die ganz simple object literals sind. Es beinhaltet immer ein `kind` welches eine Nummer ist und mittels dem Enum `ReflectionKind` seine Bedeutung erlangt. `ReflectionKind` ist in dem Paket `@deepkit/type` wie folgt definiert:
+To work directly with the type information itself, there are two basic variants: Type objects and Reflection classes. Type objects are regular JS objects returned by `typeOf<T>()`. Reflection classes are discussed below.
+
+
+The function `typeOf` works for all types, including interfaces, object literals, classes, functions, and type aliases. It returns a type object that contains all the information about the type. You can pass any type as a type argument, including generics.
+
+```typescript
+import { typeOf } from '@deepkit/type';
+
+typeOf<string>(); //{kind: 5}
+typeOf<number>(); //{kind: 6}
+
+typeOf<{id: number}>(); //{kind: 4, types: [{kind: 6, name: 'id'}]}
+
+class User {
+    id: number
+}
+
+typeOf<User>(); //{kind: 4, types: [...]}
+
+function test(id: number): string {}
+
+typeOf<typeof test>(); //{kind: 12, parameters: [...], return: {kind: 5}}
+```
+
+The type object is a simple object literal that contains a `kind` property that indicates the type of the type object. The `kind` property is a number and gets its meaning from the enum `ReflectionKind`. `ReflectionKind` is defined in the `@deepkit/type` package as follows:
 
 ```typescript
 enum ReflectionKind {
@@ -22,7 +46,7 @@ enum ReflectionKind {
 }
 ```
 
-Es gibt eine ganze Reihe von möglichen Typen-Objekten, die zurückgegeben werden können. Die einfachsten sind dabei `never`, `any`, `unknown`, `void, null,` und `undefined`, welche wie folgt dargestellt werden:
+There are a number of possible type objects that can be returned. The simplest ones are `never`, `any`, `unknown`, `void, null,` and `undefined`, which are represented as follows:
 
 ```typescript
 {kind: 0}; //never
@@ -33,7 +57,7 @@ Es gibt eine ganze Reihe von möglichen Typen-Objekten, die zurückgegeben werde
 {kind: 11}; //undefined
 ```
 
-Die Nummer 0 zum Beispiel ist der erste Eintrag des `ReflectionKind` Enums, in diesem Fall `never`, die Nummer 1 der zweite Eintrag, hier `any`, und so weiter. Entsprechend sind primitive Typen wie `string`, `number`, `boolean` wie folgt dargestellt:
+For example, number 0 is the first entry of the `ReflectionKind` enum, in this case `never`, number 1 is the second entry, here `any`, and so on. Accordingly, primitive types like `string`, `number`, `boolean` are represented as follows:
 
 ```typescript
 typeOf<string>(); //{kind: 5}
@@ -41,7 +65,7 @@ typeOf<number>(); //{kind: 6}
 typeOf<boolean>(); //{kind: 7}
 ```
 
-Diese recht simplen Typen haben keine weiteren Informationen an dem Typen-Objekt, da sie direkt als Typen-Argument zu `typeOf` übergeben wurden. Werden jedoch Typen über Typen-Aliase übergeben, sind zusätzliche Informationen an dem Typen-Objekt zu finden.
+These rather simple types have no further information at the type object, because they were passed directly as type argument to `typeOf`. However, if types are passed via type aliases, additional information can be found at the type object.
 
 ```typescript
 type Title = string;
@@ -49,7 +73,7 @@ type Title = string;
 typeOf<Title>(); //{kind: 5, typeName: 'Title'}
 ```
 
-In diesem Fall ist der Name des Type-Alias `Title` ebenfalls vorhanden. Ist ein Type-Alias ein Generic, werden die übergebenen Typen ebenfalls an dem Typen-Objekt verfügbar.
+In this case, the name of the type alias 'Title' is also available. If a type alias is a generic, the types passed will also be available at the type object.
 
 ```typescript
 type Title<T> = T extends true ? string : number;
@@ -58,7 +82,7 @@ typeOf<Title<true>>();
 {kind: 5, typeName: 'Title', typeArguments: [{kind: 7}]}
 ```
 
-Ist der übergebene Type das Ergebnis eines Index-Access Operators, ist der Container und der Index-Type vorhanden:
+If the type passed is the result of an index access operator, the container and the index type are present:
 
 ```typescript
 interface User {
@@ -73,7 +97,7 @@ typeOf<User['username']>();
 }}
 ```
 
-Interfaces und Object-Literals sind beide als Reflection.objectLiteral ausgegeben und beinhalten die Properties und Methoden in dem `types` array.
+Interfaces and object literals are both output as Reflection.objectLiteral and contain the properties and methods in the `types` array.
 
 ```typescript
 interface User {
@@ -103,7 +127,7 @@ type User  = {
 typeOf<User>(); //returns the same object as above
 ```
 
-Index Signatures sind ebenfalls in dem `types` array.
+Index signatures are also in the `types` array.
 
 ```typescript
 interface BagOfNumbers {
@@ -129,7 +153,7 @@ type BagOfNumbers  = {
 typeOf<BagOfNumbers>(); //returns the same object as above
 ```
 
-Klassen sind ähnliche zu Object Literals und haben ihre Properties und Methods ebenfalls unter einem `types` array zusätzlich zu `classType` welches eine Referenz auf die Klasse selbst ist.
+Classes are similar to object literals and also have their properties and methods under a `types` array in addition to `classType` which is a reference to the class itself.
 
 ```typescript
 class User {
@@ -155,14 +179,14 @@ typeOf<User>();
 }
 ```
 
-Beachte, dass der Type von Reflection.propertySignature zu Reflection.property und Reflection.methodSignature zu Reflection.method geändert wurde. Da Properties und Methoden an Klassen zusätzliche Attribute aufweisen, sind diese Informationen ebenfalls abrufbar. Letztere beinhalten zusätzlich `visibility`, `abstract`, und `default`.
-Typen-Objekte von Klassen beinhalten nur die Properties und Methoden der Klasse selbst und nicht der Super-Klassen. Das ist konträr zu Typen-Objekten von interfaces/object-literals, welche alle property signatures und method signatures aller Elternteile aufgelöst in `types` haben. Um die Property und Methoden der Super-Klassen aufzulösen, kann entweder ReflectionClass und dessen `ReflectionClass.getProperties()` (siehe nachfolgende Abschnitte) oder `resolveTypeMembers()` von `@deepkit/type` genutzt werden.
+Note that the type of Reflection.propertySignature has changed to Reflection.property and Reflection.methodSignature has changed to Reflection.method. Since properties and methods on classes have additional attributes, this information can also be retrieved. The latter additionally include `visibility`, `abstract`, and `default`.
+Type objects of classes contain only the properties and methods of the class itself and not of super-classes. This is contrary to type objects of interfacesobject-literals, which have all property signatures and method signatures of all parents resolved into `types`. To resolve the property and methods of the super-classes, either ReflectionClass and its `ReflectionClass.getProperties()` (see following sections) or `resolveTypeMembers()` of `@deepkit/type` can be used.
 
-Es gibt eine ganze Hülle und Fülle von Typen-Objekten. So zum Beispiel für literal, template literals, promise, enum, union, array, tuple, und viele mehr. Um herauszufinden, welche es alle gibt und welche Informationen bereitstehen, empfiehlt es sich `Type` von `@deepkit/type` zu importieren. Es ist ein `union` mit allen Möglichen Subtypes wie z.b. TypeAny, TypeUnknonwn, TypeVoid, TypeString, TypeNumber, TypeObjectLiteral, TypeArray, TypeClass, und viele mehr. Dort ist dann die genaue Struktur zu finden.
+There is a whole plethora of type objects. For example for literal, template literals, promise, enum, union, array, tuple, and many more. To find out which ones all exist and what information is available, it is recommended to import `Type` from `@deepkit/type`. It is a `union` with all possible subtypes like TypeAny, TypeUnknonwn, TypeVoid, TypeString, TypeNumber, TypeObjectLiteral, TypeArray, TypeClass, and many more. There you can find the exact structure.
 
 == Type Cache
 
-Type-Objekte sind für Type-Aliase, Funktionen, und Klassen gecached sobald keine Generic-Argument übergeben ist. Das heisst konkret, dass ein Aufruf zu `typeOf<MyClass>()` immer das selbe Objekt zurückgibt.
+Type objects are cached for type aliases, functions, and classes as soon as no generic argument is passed. This means that a call to `typeOf<MyClass>()` always returns the same object.
 
 ```typescript
 type MyType = string;
@@ -170,7 +194,7 @@ type MyType = string;
 typeOf<MyType>() === typeOf<MyType>(); //true
 ```
 
-Sobald jedoch eine Generic-Type benutzt wird, werden immer neue Objekte erzeugt, selbst wenn der übergebene Typen immer dasselbe ist. Das ist so, da theoretisch unendlich viele Kombinationen möglich sind und so ein Cache effektiv ein Memory-Leak darstellen würde.
+However, as soon as a generic type is used, new objects are always created, even if the type passed is always the same. This is because an infinite number of combinations are theoretically possible and such a cache would effectively be a memory leak.
 
 ```typescript
 type MyType<T> = T;
@@ -179,7 +203,7 @@ typeOf<MyType<string>>() === typeOf<MyType<string>>();
 //false
 ```
 
-Sobald ein Typ jedoch in einen rekursiven Typen mehrfach instantiiert wird, ist dieser gecacht. Die Dauer des Cache ist allerdings nur auf den Moment der Berechnung des Types limitiert und ist danach nicht mehr existent. Auch ist zwar das Type-Objekt gecacht, doch wird eine neue Referenz zurückgegeben und ist nicht das exakt selbe Objekt.
+However, as soon as a type is instantiated multiple times in a recursive type, it is cached. However, the duration of the cache is limited only to the moment the type is computed and does not exist thereafter. Also, although the Type object is cached, a new reference is returned and is not the exact same object.
 
 ```typescript
 type MyType<T> = T;
@@ -191,9 +215,9 @@ type Object = {
 typeOf<Object>();
 ```
 
-`MyType<string>` ist gecacht solange `Object` berechnet wird. Die PropertySignature von `a` und `b` haben dadurch zwar denselben `type` aus dem Cache, sind jedoch nicht dasselbe Type-Objekt.
+`MyType<string>` is cached as long as `Object` is computed. The PropertySignature of `a` and `b` thus have the same `type` from the cache, but are not the same Type object.
 
-Alle nicht-root Type-Objekte haben eine parent Eigenschaft, welche in der Regel auf den umschließenden Elternteil zeigen. Dies ist wertvoll, um zum Beispiel herauszufinden, ob ein Type bestandteil eines union ist oder nicht.
+All non-root Type objects have a parent property, which usually points to the enclosing parent. This is valuable, for example, to find out whether a Type is part of a union or not.
 
 ```typescript
 type ID = string | number;
@@ -208,18 +232,18 @@ typeOf<ID>();
 }
 ```
 
-`Ref 1` zeigt dabei auf das eigentliche union Type-Objekt.
+'Ref 1' points to the actual union type object.
 
-Bei zwischengespeicherten Type-Objekten wie oben exemplarisch aufgezeigt, sind die `parent` Eigenschaften nicht immer die echten Elternteile. So zum Beispiel bei einer Klasse, die mehrfach genutzt wird, zeigen zwar unmittelbaren Typen in `types` (TypePropertySignature und TypeMethodSignature) auf das korrekte TypeClass, aber die `type` dieser Signature-Typen zeigen auf die Signature-Typen des TypeClass des Cache-Eintrages. Das ist wichtig zu wissen, um so nicht unendlich die parent-Struktur auszulesen, sondern nur der unmittelbare Elternteil. Die Tatsache, dass der parent nicht unendliche Genauigkeit hat, ist Performance-Gründen geschuldet.
+For cached Type objects as exemplified above, the `parent` properties are not always the real parents. For example, for a class that is used multiple times, although immediate types in `types` (TypePropertySignature and TypeMethodSignature) point to the correct TypeClass, the `type` of these signature types point to the signature types of the TypeClass of the cached entry. This is important to know so as not to infinitely read the parent structure, but only the immediate parent. The fact that the parent does not have infinite precision is due to performance reasons.
 
 == JIT Cache
 
-Im weiteren Verlauf werden einige Funktionen und Features beschrieben, die oft auf die Type-Objekte basieren. Um einige davon performant umzusetzen, braucht es einen JIT-Cache (just in time) pro Type-Objekt. Die kann via `getJitContainer(type)` bereitgestellt werden. Diese Funktion gibt ein simples Objekt zurück, auf den beliebig Daten gespeichert werden können. Solange keine Referenz auf das Objekt gehalten wird, löscht es sich automatisch durch den GC sobald das Type-Objekt selbst auch nicht mehr referenziert wird.
+In the further course some functions and features are described, which are often based on the type objects. To implement some of them in a performant way, a JIT (just in time) cache per type object is needed. This can be provided via `getJitContainer(type)`. This function returns a simple object on which arbitrary data can be stored. As long as no reference to the object is held, it will be deleted automatically by the GC as soon as the Type object itself is also no longer referenced.
 
 
-== Reflection-Klassen
+== Reflection Classes
 
-Zusätzlich zu der `typeOf<>()` Funktion gibt es diverse Reflection-Klassen, die eine OOP-Alternative zu den Type-Objekten bieten. Die Reflection-Klassen sind nur für Klassen, Interface/Object-literale und Funktionen und deren direkte Unter-Typen (Properties, Methods, Parameter) vorhanden. Alle tieferen Typen müssen wieder mit den Type-Objekten ausgelesen werden.
+In addition to the `typeOf<>()` function, there are various reflection classes that provide an OOP alternative to the Type objects. The reflection classes are only available for classes, InterfaceObject literals and functions and their direct sub-types (Properties, Methods, Parameters). All deeper types must be read again with the Type objects.
 
 ```typescript
 import { ReflectionClass } from '@deepkit/type';
@@ -241,21 +265,21 @@ reflection.getProperty('id').isOptional(); //false
 ```
 
 
-== Typeninformation empfangen
+== Receive type information
 
-Um selbst Funktionen bereitzustellen, die auf Typen operieren, kann es nützlich sein, dem User anzubieten, einen Typen manuell zu übergeben. Zum Beispiel könnte bei einer Validierungsfunktion es sinnvoll sein, als ersten Type-Argument den zu wünschenden Typen bereitzustellen und als erstes Funktionsargument die zu validierende Daten.
+In order to provide functions that operate on types, it can be useful to offer the user to pass a type manually. For example, in a validation function, it might be useful to provide the type to be requested as the first type argument and the data to be validated as the first function argument.
 
 ```typescript
 validate<string>(1234);
 ```
 
-Damit diese Funktion den Typ `string` erhält, muss es dieses dem Typen-Compiler mitteilen.
+In order for this function to get the type `string`, it must tell this to the type compiler.
 
 ```typescript
 function validate<T>(data: any, type?: ReceiveType<T>): void;
 ```
 
-`ReceiveType` mit der Referenz auf den ersten Typenargumenten `T` signalisiert dem Typen-Compiler, dass jeder Aufruf zu `validate` den Type an zweiter Stelle (da `type` an zweiter Stelle deklariert ist) stellen soll. Um zur Laufzeit dann die Informationen auszulesen, wird die Funktion `resolveReceiveType` genutzt.
+`ReceiveType` with the reference to the first type arguments `T` signals the type compiler that each call to `validate` should put the type in second place (since `type` is declared in second place). To then read out the information at runtime, the `resolveReceiveType` function is used.
 
 ```typescript
 import { resolveReceiveType, ReceiveType } from '@deepkit/type';
@@ -265,4 +289,4 @@ function validate<T>(data: any, type?: ReceiveType<T>): void {
 }
 ```
 
-Es ist nützlich, das Ergebnis derselben Variable zuzuweisen, um nicht unnötig eine neue anzulegen. In `type` ist nun entweder ein Typen-Objekt abgelegt oder es wird ein Fehler geworfen, wenn zum Beispiel kein Typen-Argument übergeben wurde, Deepkit's Typen-Compiler nicht richtig installiert wurde, oder das Emitieren von Typeninformationen nicht aktiviert ist (siehe dazu die Sektion Installation weiter oben).
+It is useful to assign the result to the same variable to avoid creating a new one unnecessarily. In `type` now either a type object is stored or an error is thrown, if for example no type argument was passed, Deepkit's type compiler was not installed correctly, or the emitting of type information is not activated (see the section Installation above).

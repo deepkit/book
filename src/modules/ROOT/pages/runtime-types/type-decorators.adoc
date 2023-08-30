@@ -1,16 +1,17 @@
 [#runtime-type-decorators]
 = Typen-Decorators
 
-Typen-Decorators sind normale TypeScript-Typen, die Meta-Informationen beinhalten, um zur Laufzeit das Verhalten diverser Funktionen zu verändern. Deepkit liefert bereits einige Typen-Decorators mit, die einige Anwendungsfälle abdecken. So kann zum Beispiel eine Klassen-Eigenschaft als Primary-Key, als Referenz, oder Index markiert werden. Die Datenbank Library kann diese Information zur Laufzeit nutzen, um so die korrekten SQL Queries ohne vorherige Code-Generation zu erstellen.
-Es können auch Validator-Einschränkungen wie zum Beispiel `MaxLength`, `Maximum`, oder `Positive` an einen beliebigen Typen hinzugefügt werden. Auch kann dem Serializer mitgeteilt werden, wie ein bestimmter Wert zu serialisieren bzw deserialisieren ist. Zusätzlich ist es möglich, komplett eigene Type-Decorators zu erstellen und zur Laufzeit auszulesen, um so sehr individuell das Typensystem zur Laufzeit zu verwenden.
+Type decorators are normal TypeScript types that contain meta-information to change the behavior of various functions at runtime. Deepkit already provides some type decorators that cover some use cases. For example, a class property can be marked as primary key, reference, or index. The database library can use this information at runtime to create the correct SQL queries without prior code generation.
 
-Deepkit kommt mit einer ganzen Reihe von Typen-Decorators, die alle direkt aus `@deepkit/type` benutzt werden können. Sie sind designt, nicht aus mehreren Libraries zu kommen, um so Code nicht direkt an eine bestimmte Library wie zum Beispiel Deepkit RPC oder Deepkit Database zu koppeln. Das erlaubt das einfachere Wiederverwenden von Typen, auch im Frontend, obwohl zum Beispiel Datenbank Typen-Decorators genutzt werden.
+Validator constraints such as `MaxLength`, `Maximum`, or `Positive` can also be added to any type. It is also possible to tell the serializer how to serialize or deserialize a particular value. In addition, it is possible to create completely custom type decorators and read them at runtime, in order to use the type system at runtime in a very individual way.
 
-Folgend ist eine Liste von vorhandenen Type-Decorators. Der Validator und Serializer von `@deepkit/type` und `@deepkit/bson` sowie Deepkit Database von `@deepkit/orm` nutzten diese Informationen unterschiedlich. Siehe die entsprechenden Kapitel, um mehr darüber zu erfahren.
+Deepkit comes with a whole set of type decorators, all of which can be used directly from `@deepkit/type`. They are designed not to come from multiple libraries, so as not to tie code directly to a particular library such as Deepkit RPC or Deepkit Database. This allows easier reuse of types, even in the frontend, although database type decorators are used for example.
+
+Following is a list of existing type decorators. The validator and serializer of `@deepkit/type` and `@deepkit/bson` and Deepkit Database of `@deepkit/orm` used this information differently. See the corresponding chapters to learn more about this.
 
 == Integer/Float
 
-Integer und Floats sind als Basis als `number` definiert und hat mehrere Untervarianten:
+Integer and floats are defined as a base as `number` and has several sub-variants:
 
 [%autowidth]
 [cols="1,1"]
@@ -39,8 +40,8 @@ interface User {
 }
 ```
 
-Hier ist zur Laufzeit die `id` des Users eine Number, wird jedoch in der Validierung und Serialisierung als Integer interpretiert.
-Das heisst, dass hier zum Beispiel keine Floats in Validation genutzt werden dürfen und der Serializer Floats automatisch in Integer umwandeln.
+Here the `id` of the user is a number at runtime, but is interpreted as an integer in the validation and serialization.
+This means that here, for example, no floats may be used in validation and the serializer automatically converts floats into integers.
 
 ```typescript
 import { is, integer } from '@deepkit/type';
@@ -49,7 +50,7 @@ is<integer>(12); //true
 is<integer>(12.5); //false
 ```
 
-Die Untertypen können genauso benutzt werden und sind sinnvoll, wenn ein bestimmter Nummernbereich erlaubt werden soll.
+The subtypes can be used in the same way and are useful if a specific range of numbers is to be allowed.
 
 ```typescript
 import { is, int8 } from '@deepkit/type';
@@ -64,7 +65,7 @@ is<int8>(2500); //false
 
 == UUID
 
-UUID v4 wird in der Datenbank in der Regel als Binary abgespeichert und in JSON als String.
+UUID v4 is usually stored as a binary in the database and as a string in JSON.
 
 ```typescript
 import { is, UUID } from '@deepkit/type';
@@ -294,30 +295,30 @@ TODO: PrimaryKey, AutoIncrement, Reference, BackReference, Index, Unique, Databa
 
 TODO
 
-Siehe xref:validation.adoc#validation-constraint-types[Validation Constraint Types].
+See xref:validation.adoc#validation-constraint-types[Validation Constraint Types].
 
-=== Benutzerdefinierte Type-Decorators
+=== Custom Type Decorators
 
-Ein Typen-Decorator kann wie folgt definiert werden:
+aTypeDecoratorCanBeDefinedAsFollows
 
 ```typescript
 type MyAnnotation = {__meta?: ['myAnnotation']};
 ```
 
-Als Konvention ist definiert, dass ein Typen-Decorator ein Object-Literal mit einem einzigen optionalen Property `__meta` ist, das ein Tuple als Typ hat. Der erste Eintrag in diesem Tuple ist sein eindeutiger Name und alle weiteren Tuple Einträge beliebige Optionen. So kann ein Typen-Decorator mit zusätzlichen Optionen ausgestattet werden.
+By convention, a type decorator is defined to be an object literal with a single optional property `__meta` that has a tuple as its type. The first entry in this tuple is its unique name and all subsequent tuple entries are arbitrary options. This allows a type decorator to be equipped with additional options.
 
 ```typescript
 type AnnotationOption<T extends {title: string}> = {__meta?: ['myAnnotation', T]};
 ```
 
-Genutzt wird der Typen-Decorator mit dem Intersection-Operator `&`. Es können beliebig viele Typen-Decorators an einem Typen genutzt werden.
+The type decorator is used with the intersection operator `&`. Any number of type decorators can be used on one type.
 
 ```typescript
 type Username = string & MyAnnotation;
 type Title = string & & MyAnnotation & AnnotationOption<{title: 'Hello'}>;
 ```
 
-Ausgelesen können die Typen-Decorators über die Typen-Objekte von `typeOf<T>()` und `metaAnnotation`:
+The type decorators can be read out via the type objects of `typeOf<T>()` and `metaAnnotation`:
 
 ```typescript
 import { typeOf, metaAnnotation } from '@deepkit/type';
@@ -326,8 +327,8 @@ const type = typeOf<Username>();
 const annotation = metaAnnotation.getForName(type, 'myAnnotation'); //[]
 ```
 
-Das Resultat in `annotation` ist entweder ein Array mit Optionen, wenn der Typen-Decorator `myAnnotation` genutzt wurde oder `undefined` wenn nicht. Hat der Typen-Decorator zusätzliche Optionen wie in `AnnotationOption` zu sehen, sind die übergebenen Werte in dem Array zu finden.
-Bereits mitgelieferte Typen-Decorators wie `MapName`, `Group`, `Data`, etc haben ihre eigenen Annotation-Objekt:
+The result in `annotation` is either an array with options if the type decorator `myAnnotation` was used or `undefined` if not. If the type decorator has additional options as seen in `AnnotationOption`, the passed values can be found in the array.
+Already supplied type decorators like `MapName`, `Group`, `Data`, etc have their own annotation object:
 
 ```typescript
 import { typeOf, Group, groupAnnotation } from '@deepkit/type';
@@ -337,4 +338,4 @@ const type = typeOf<Username>();
 groupAnnotation.getAnnotations(type); //['a', 'b']
 ```
 
-Siehe xref:runtime-types.adoc#runtime-types-reflection[Runtime Types Reflection], um mehr darüber zu erfahren.
+See xref:runtime-types.adoc#runtime-types-reflection[Runtime Types Reflection] to learn more.

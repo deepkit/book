@@ -1,11 +1,11 @@
 [#http]
 = HTTP
 
-HTTP-Abfragen zu bearbeiten ist mitunter die bekannteste Aufgabe für einen Server. Er wandelt dabei einen Input (HTTP-Request) in einen Output (HTTP-Response) um und führt dabei eine bestimmte Aufgabe aus. Ein Client kann dabei über einem HTTP-Request auf vielfältige Art und Weisen Daten an den Server senden, die korrekt ausgelesen und behandelt werden müssen. So sind neben dem HTTP-Body auch HTTP-Query oder HTTP-Header Werte möglich. Wie Daten konkret verarbeitet werden, hängt vom Server ab. Er ist es, der definiert, wo und wie die Werte vom Client zu senden sind.
+Processing HTTP requests is one of the most well-known tasks for a server. It converts an input (HTTP request) into an output (HTTP response) and performs a specific task. A client can send data to the server via an HTTP request in a variety of ways, which must be read and handled correctly. In addition to the HTTP body, HTTP query or HTTP header values are also possible. How data is actually processed depends on the server. It is the server that defines where and how the values are to be sent by the client.
 
-Hierbei ist oberste Priorität nicht nur das korrekt auszuführen, was der User erwartet, sondern jeglichen Input aus dem HTTP-Request korrekt umzuwandeln (deserialisieren) und zu validieren.
+The top priority here is not only to correctly execute what the user expects, but to correctly convert (deserialize) and validate any input from the HTTP request.
 
-Die Pipeline, in der ein HTTP-Request auf dem Server durchläuft, kann vielfältig und komplex sein. Viele einfache HTTP-Libraries übergeben für eine bestimmte Route lediglich den HTTP-Request und die HTTP-Response, und erwarten vom Entwickler, den HTTP-Response direkt zu bearbeiten. Eine Middleware-API erlaubt dabei die Pipeline beliebig zu erweitern.
+The pipeline through which an HTTP request passes on the server can be varied and complex. Many simple HTTP libraries pass only the HTTP request and the HTTP response for a given route, and expect the developer to process the HTTP response directly. A middleware API allows the pipeline to be extended as needed.
 
 _Express Beispiel_
 
@@ -16,13 +16,13 @@ http.get('/user/:id', (request, response) => {
 });
 ```
 
-Dies ist für simple Anwendungsfälle sehr gut zugeschnitten, wird aber schnell unübersichtlich, wenn die Anwendung wächst, da alle Ein- und Ausgaben manuell serialisiert beziehungsweise deserialisiert und validiert werden müssen. Auch muss überlegt werden wie Objekte und Services wie zum Beispiel eine Datenbank Abstraktion aus der Anwendung selbst erhaltenen werden können. Es zwingt den Developer eine Architektur selbst obendrauf zu setzen, die diese zwingenden Funktionalitäten abbildet.
+This is very well tailored for simple use cases, but quickly becomes confusing as the application grows, since all inputs and outputs must be manually serialized or deserialized and validated. Also, consideration must be given to how objects and services such as a database abstraction can be obtained from the application itself. It forces the developer to put an architecture on top of it that maps these mandatory functionalities.
 
-Deepkit's HTTP Library nutzt die Stärke von TypeScript und Dependency Injection. Serialisierung/Deserialisierung und Validierung von jeglichen Werten passieren automatisch anhand der definierten Typen. Auch erlaubt es das Definieren von Routen entweder über eine funktionale API wie in dem Beispiel oben oder über Controller-Klassen, um die unterschiedlichen Bedürfnisse einer Architektur abzudecken.
+Deepkit's HTTP Library leverages the power of TypeScript and Dependency Injection. SerializationDeserialization and validation of any values happen automatically based on the defined types. It also allows defining routes either via a functional API as in the example above or via controller classes to cover the different needs of an architecture.
 
-Es kann dabei entweder mit einem bereits vorhandenen HTTP-Server wie Node's `http` Modul oder mit dem Deepkit Framework genutzt werden. Beide API-Varianten haben Zugriff auf den Dependency Injection Container und können so bequem Objekte wie eine Datenbank-Abstraktion und Konfigurationen aus der Anwendung beziehen.
+It can be used either with an existing HTTP server like Node's `http` module or with the Deepkit framework. Both API variants have access to the dependency injection container and can thus conveniently retrieve objects such as a database abstraction and configurations from the application.
 
-_Deepkit Beispiel_
+_Deepkit Example_
 
 ```typescript
 import { Positive } from '@deepkit/type';
@@ -48,17 +48,17 @@ class UserController {
 
 == Installation
 
-Da CLI-Programme in Deepkit auf den Runtime Types basieren, ist es notwendig `@deepkit/type` bereits korrekt installiert zu haben. Siehe dazu xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
+Since CLI programs in Deepkit are based on runtime types, it is necessary to have `@deepkit/type` already installed correctly. See for this xref:runtime-types.adoc#runtime-types-installation[Runtime Type Installation].
 
-Falls dies erfolgreich geschehen ist, kann @deepkit/app installiert werden oder das Deepkit Framework welches die Library bereits unter der Haube benutzt.
+If this is done successfully, `@deepkit/app` can be installed or the Deepkit framework which already uses the library under the hood.
 
 ```sh
 npm install @deepkit/http
 ```
 
-Zu beachten ist, dass `@deepkit/http` für die Controller API auf TypeScript-Decorators basiert und dieses Feature entsprechend mit `experimentalDecorators` aktiviert werden muss, sobald die Controller API verwendet wird.
+Note that `@deepkit/http` for the controller API is based on TypeScript decorators and this feature must be enabled accordingly with `experimentalDecorators` once the controller API is used.
 
-_Datei: tsconfig.json_
+_File: tsconfig.json_
 
 ```json
 {
@@ -72,11 +72,11 @@ _Datei: tsconfig.json_
 }
 ```
 
-Sobald die Library installiert ist, kann die API davon direkt benutzt werden.
+Once the library is installed, the API of it can be used directly.
 
-== Funktionale API
+== Functional API
 
-Die funktionale API basiert auf Funktionen und können über die Router Registry, der über den DI Container der App bezogen werden kann, registriert werden.
+The functional API is based on functions and can be registered via the router registry, which can be obtained via the DI container of the app.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -96,7 +96,7 @@ router.get('/', () => {
 app.run();
 ```
 
-Die Router Registry kann auch in Event Listener oder im Bootstrap bezogen werden, sodass basierend auf Modulen, Konfigurationen und sonstigen Providern diverse Routen registriert werden.
+The router registry can also be obtained in Event Listener or in the bootstrap, so that based on modules, configurations and other providers various routes are registered.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -112,7 +112,7 @@ const app = new App({
 });
 ```
 
-Sobald Module verwendet werden, können funktionale Routen ebenfalls von Modulen dynamisch bereitgestellt werden.
+Once modules are used, functional routes can also be provided dynamically by modules.
 
 ```typescript
 import { App, createModule } from '@deepkit/app';
@@ -134,11 +134,11 @@ const app = new App({
 });
 ```
 
-Siehe xref:framework.adoc#framework-modules[Framework Modules], um mehr über App Module zu erfahren.
+See xref:framework.adoc#framework-modules[Framework Modules], to learn more about App Modules.
 
 == Controller API
 
-Die Controller API basiert auf Klassen und kann dabei über die App-API unter der Option `controllers` registriert werden.
+The controller API is based on classes and can be registered via the App-API under the option `controllers`.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -158,7 +158,7 @@ new App({
 }).run();
 ```
 
-Sobald Module verwendet werden, können Controller ebenfalls von Modulen bereitgestellt werden.
+Once modules are used, controllers can also be provided by modules.
 
 ```typescript
 import { App, createModule } from '@deepkit/app';
@@ -182,7 +182,7 @@ const app = new App({
 });
 ```
 
-Um dynamisch (je nach Konfigurationoption zum Beispiel) Controller bereitzustellen, kann der `process`-Hook verwendet werden.
+To provide controllers dynamically (depending on the configuration option, for example), the `process` hook can be used.
 
 ```typescript
 class MyModuleConfiguration {
@@ -206,11 +206,11 @@ class MyModule extends createModule({
 }
 ```
 
-Siehe xref:framework.adoc#framework-modules[Framework Modules], um mehr über App Module zu erfahren.
+See xref:framework.adoc#framework-modules[Framework Modules], to learn more about App Modules.
 
 == HTTP Server
 
-Sofern Deepkit Framework genutzt wird, ist dort ein HTTP Server bereits eingebaut. Die HTTP-Library kann jedoch auch ohne den Einsatz des Deepkit Frameworks mit einem eigenen HTTP-Server genutzt werden.
+If Deepkit Framework is used, an HTTP server is already built in. However, the HTTP library can also be used with its own HTTP server without using the Deepkit framework.
 
 ```typescript
 import { Server } from 'http';
@@ -240,7 +240,7 @@ todo: fetch API, validation, und cast.
 [#http-route-name]
 == Route Names
 
-Routen können einen eindeutigen Namen erhalten, welcher bei einer Weiterleitung referenziert werden kann. Je nach API unterscheidet sich die Art wie ein Name definiert wird.
+Routes can be given a unique name that can be referenced when forwarding. Depending on the API, the way a name is defined differs.
 
 ```typescript
 //functional API
@@ -260,7 +260,7 @@ class UserController {
 }
 ```
 
-Von allen Routen mit einem Namen kann die URL durch `Router.resolveUrl()` angefordert werden.
+From all routes with a name the URL can be requested by `Router.resolveUrl()`.
 
 ```typescript
 import { HttpRouter } from '@deepkit/http';
@@ -270,9 +270,9 @@ router.resolveUrl('userDetail', {id: 2}); //=> '/user/2'
 
 == Dependency Injection
 
-Die Router-Funktionen sowie die Controller-Klassen und Controller-Methoden können beliebige Abhängigkeiten definieren, die durch den Dependency Injection Container aufgelöst werden. So ist es zum Beispiel möglich bequem an eine Datenbank-Abstraktion oder Logger zu kommen.
+The router functions as well as the controller classes and controller methods can define arbitrary dependencies, which are resolved by the dependency injection container. For example, it is possible to conveniently get to a database abstraction or logger.
 
-Wenn zum Beispiel eine Datenbank als Provider zur Verfügung gestellt wurde, kann diese injiziert werden:
+For example, if a database has been provided as a provider, it can be injected:
 
 ```typescript
 class Database {
@@ -286,7 +286,7 @@ const app = new App({
 });
 ```
 
-_Funktionaler API:_
+_Functional API:_
 
 ```typescript
 router.get('/user/:id', async (id: number, database: Database) => {
@@ -315,22 +315,19 @@ class UserController {
 }
 ```
 
-Siehe xref:dependency-injection.adoc[Dependency Injection] für mehr Informationen.
+See xref:dependency-injection.adoc[Dependency Injection] to learn more.
 
 == Input
 
-Alle nachfolgenden Input-Variationen funktionen bei der funktionalen wie auch der Controller API gleich. Sie erlauben es, Daten aus einen HTTP-Request typen-sicher und entkoppelt auszulesen.
-Dies führt nicht nur zu einer deutlichen erhöhten Sicherheit, sondern auch einfacheres Unit-Testen,
-da streng genommen nicht einmal ein HTTP-Request Objekt existieren muss, um die Route zu testen.
+All of the following input variations function in the same way for both the functional and the controller API. They allow data to be read from an HTTP request in a type-safe and decoupled manner. This not only leads to significantly increased security, but also simplifies unit testing, since strictly speaking, not even an HTTP request object needs to exist to test the route.
 
-Alle Parameter werden dabei automatisch in den definierten TypeScript-Typen umgewandelt (deserialisiert) und validiert. Dies geschieht über das `@deepkit/type` Paket und seinen xref:serialization.adoc[Serialization] und xref:validation.adoc[Validation] Features.
+All parameters are automatically converted (deserialized) to the defined TypeScript type and validated. This is done via the `@deepkit/type` package and its xref:serialization.adoc[Serialization] and xref:validation.adoc[Validation] features.
 
-Der Einfachheit halber sind nachfolgend alle Beispiel mit der funktionalen API abgebildet.
+For simplicity, all examples with the functional API are shown below.
 
 === Path Parameters
 
-Path Parameter sind Werte, die aus der URL der Route extrahiert werden. Der Typ des Wertes richtet sich nach dem Typen an dem dazugehörigen Parameter der Funktion beziehungsweise Methode.
-Die Umwandlung geschieht automatisch mit dem Feature xref:serialization.adoc#serialisation-loosely-convertion[Weiche Typenkonvertierung].
+Path parameters are values extracted from the URL of the route. The type of the value depends on the type at the associated parameter of the function or method. The conversion is done automatically with the feature xref:serialization.adoc#serialisation-loosely-convertion[Soft Type Conversion].
 
 ```typescript
 router.get('/:text', (text: string) => {
@@ -343,7 +340,7 @@ $ curl http://localhost:8080/galaxy
 Hello galaxy
 ```
 
-Ist ein Path Parameter als ein anderer Typ als String definiert, so wird dieser korrekt umgewandelt.
+If a Path parameter is defined as a type other than string, it will be converted correctly.
 
 ```typescript
 router.get('/user/:id', (id: number) => {
@@ -356,7 +353,7 @@ $ curl http://localhost:8080/user/23
 23 number
 ```
 
-Es können auch zusätzliche Validierung-Einschränken auf den Typen angewendet werden.
+Additional validation constraints can also be applied to the types.
 
 ```typescript
 import { Positive } from '@deepkit/type';
@@ -366,10 +363,9 @@ router.get('/user/:id', (id: number & Positive) => {
 });
 ```
 
-Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in
-xref:http.adoc#http-validation[HTTP Validation] zu finden.
+All validation types from `@deepkit/type` can be applied. For more on this, see xref:http.adoc#http-validation[HTTP Validation]].
 
-Die Path Parameter haben standardmäßig bei dem URL-Matching `[^/]+` als Regular-Expression gesetzt. Das RegExp dazu kann wie folgt angepasst werden:
+The Path parameters have `[^]+` set as a regular expression by default in the URL matching. The RegExp for this can be customized as follows:
 
 ```typescript
 import { HttpRegExp } from '@deepkit/http';
@@ -380,11 +376,11 @@ router.get('/user/:id', (id: HttpRegExp<number & Positive, '[0-9]+'>) => {
 });
 ```
 
-Dies ist nur in Ausnahmefällen nötig, da oft die Typen in Kombination mit Validierung-Typen selbst bereits mögliche Werte korrekt einschränken.
+This is only necessary in exceptional cases, because often the types in combination with validation types themselves already correctly restrict possible values.
 
 === Query Parameters
 
-Query Parameter sind Werte aus der URL hinter dem `?`-Zeichen und können mit dem Typ `HttpQuery<T>` ausgelesen werden. Der Name des Parameters entspricht dabei dem Namen des Query-Parameters.
+Query parameters are values from the URL after the `?` character and can be read with the `HttpQuery<T>` type. The name of the parameter corresponds to the name of the query parameter.
 
 ```typescript
 import { HttpQuery } from '@deepkit/http';
@@ -399,7 +395,7 @@ $ curl http://localhost:8080/\?text\=galaxy
 Hello galaxy
 ```
 
-Auch Query Parameter sind automatisch deserialisiert und validiert.
+Query parameters are also automatically deserialized and validated.
 
 ```typescript
 import { HttpQuery } from '@deepkit/http';
@@ -417,13 +413,13 @@ $ curl http://localhost:8080/\?text\=ga
 error
 ```
 
-Alle Validierung-Typen aus `@deepkit/type` können angewendet werden. Hierzu ist mehr in xref:http.adoc#http-validation[HTTP Validation] zu finden.
+All validation types from `@deepkit/type` can be applied. For more on this, see xref:http.adoc#http-validation[HTTP Validation].
 
-*Warnung*: Parameterwerte werden nicht escaped/sanitized. Ihre direkte Rückgabe in einer Zeichenkette in einer Route als HTML öffnet eine Sicherheitslücke (XSS). Stelle sicher, dass niemals externen Eingabe vertraut werden und filtere/sanitize/konvertiere Daten, wo nötig.
+Warning: Parameter values are not escaped/sanitized. Their direct return in a string in a route as HTML opens a security hole (XSS). Make sure that external input is never trusted and filtere/sanitize/convert data where necessary.
 
 === Query Model
 
-Bei sehr vielen Query Parametern kann es schnell unübersichtlich werden. Um hier wieder Ordnung hereinzubringen, kann ein Model (Klasse oder Interface) genutzt werden, die alle möglichen Query-Parameter zusammenfasst.
+With a large number of query parameters, it can quickly become confusing. To bring order back in here, a model (class or interface) can be used, which summarizes all possible query parameters.
 
 ```typescript
 import { HttpQueries } from '@deepkit/http';
@@ -443,12 +439,11 @@ $ curl http://localhost:8080/\?text\=galaxy&page=1
 Hello galaxy at page 1
 ```
 
-Die Properties in dem angegebenen Model können alle TypeScript-Typen und Validierung-Typen beinhalten, die `@deepkit/type` unterstützt. Sieh dazu das Kapitel xref:serialization.adoc[Serialization] und xref:validation.adoc[Validation].
+The properties in the specified model can contain all TypeScript types and validation types that `@deepkit/type` supports. See the chapter xref:serialization.adoc[Serialization] and xref:validation.adoc[Validation].
 
 === Body
 
-Für HTTP-Methoden, die einen HTTP-Body erlauben, kann auch ein body model festgelegt werden.
-Der Body-Inhaltstyp von dem HTTP-Request muss entweder `application/x-www-form-urlencoded`, `multipart/form-data` oder `application/json` sein, damit Deepkit dies automatisch in JavaScript Objekte umwandeln kann.
+For HTTP methods that allow an HTTP body, a body model can also be specified. The body content type of the HTTP request must be either `application/x-www-form-urlencoded`, `multipart/form-data` or `application/json` so that Deepkit can automatically convert this to JavaScript objects.
 
 ```typescript
 import { HttpBody } from '@deepkit/type';
@@ -468,7 +463,7 @@ router.post('/', (body: HttpBody<HelloWorldBody>) => {
 
 ==== Manual Validation Handling
 
-Um manuell die Validierung des Body-Models zu übernehmen, kann ein spezieller Typ `HttpBodyValidation<T>` benutzt werden. Er erlaubt es, auch invalide Body-Daten zu empfangen und ganz spezifisch auf Fehlermeldungen zu reagieren.
+To manually take over the validation of the body model, a special type `HttpBodyValidation<T>` can be used. It allows to receive also invalid body data and to react very specifically to error messages.
 
 ```typescript
 import { HttpBodyValidation } from '@deepkit/type';
@@ -488,13 +483,13 @@ router.post('/', (body: HttpBodyValidation<HelloWorldBody>) => {
 })
 ```
 
-Sobald `valid()` den Wert `false` zurückgibt, können die Werte in dem angegebenen Model in einem fehlerhaften Zustand sein. Das bedeutet, dass die Validierung fehlgeschlagen ist. Wenn `HttpBodyValidation` nicht verwendet wird und eine fehlerhafte HTTP-Request eingeht, würde die Anfrage direkt abgebrochen werden und der Code in der Funktion nie ausgeführt. Verwende `HttpBodyValidation` nur dann, wenn zum Beispiel Fehlermeldungen bezüglich des Bodys manuell in derselben Route verwertet werden sollen.
+As soon as `valid()` returns `false`, the values in the specified model may be in a faulty state. This means that the validation has failed. If `HttpBodyValidation` is not used and an incorrect HTTP request is received, the request would be directly aborted and the code in the function would never be executed. Use `HttpBodyValidation` only if, for example, error messages regarding the body should be manually processed in the same route.
 
-Die Properties in dem angegebenen Model können alle TypeScript-Typen und Validierung-Typen beinhalten, die `@deepkit/type` unterstützt. Sieh dazu das Kapitel xref:serialization.adoc[Serialization] und xref:validation.adoc[Validation].
+The properties in the specified model can contain all TypeScript types and validation types that `@deepkit/type` supports. See the chapter xref:serialization.adoc[Serialization] and xref:validation.adoc[Validation].
 
 ==== File Upload
 
-Ein spezieller Property-Typ an dem Body-Model kann genutzt werden, um dem Client zu erlauben, Dateien hochzuladen. Es können beliebig viele `UploadedFile` verwendet werden.
+A special property type on the body model can be used to allow the client to upload files. Any number of `UploadedFile` can be used.
 
 ```typescript
 import { UploadedFile, HttpBody } from '@deepkit/http';
@@ -526,14 +521,14 @@ $ curl http://localhost:8080/ -X POST -H "Content-Type: multipart/form-data" -F 
 }
 ```
 
-Standardmäßig speichert der Router alle hochgeladenen Dateien in einen Temp-Ordner und entfernt diese, sobald der Code in der Route ausgeführt wurde. Es ist daher notwendig, die Datei in dem angegebenen Pfad in `path` auszulesen und an einen permanenten Ort zu speichern (lokale Festplatte, Cloud Storage, Datenbank).
+By default, Router saves all uploaded files to a temp folder and removes them once the code in the route has been executed. It is therefore necessary to read the file in the specified path in `path` and save it to a permanent location (local disk, cloud storage, database).
 
 [#http-validation]
 == Validation
 
-Validation in einem HTTP-Server ist ein zwingend notwendige Funktionalität, da fast immer mit Daten gearbeitet wird, die nicht vertrauenswürdig sind. Um an so mehr Stellen Daten validiert werden, umso stabiler ist der Server. Die Validierung in HTTP-Routen kann bequem über Typen und Validierung-Einschränkungen genutzt werden und wird mit einem hoch-optimierten Validator aus `@deepkit/type` geprüft, sodass es nicht zu Performanceproblemen diesbezüglich kommen kann. Es ist daher dringend empfehlenswert diese Validierungsfähigkeiten auch zu nutzen. Besser ein Mal zu viel, als ein Mal zu wenig.
+Validation in an HTTP server is a mandatory functionality, because almost always work with data that is not trustworthy. The more places data is validated, the more stable the server is. Validation in HTTP routes can be conveniently used via types and validation constraints and is checked with a highly optimized validator from `@deepkit/type`, so there are no performance problems in this regard. It is therefore highly recommended to use these validation capabilities as well. Better one time too much, than one time too little.
 
-Alle Inputs wie Path-Parameter, Query-Parameter, und Body-Parameter werden automatisch auf den angegebenen TypeScript-Typ validiert. Sind zusätzliche Einschränkungen über Typen von `@deepkit/type` angegeben, werden diese ebenfalls geprüft.
+All inputs such as path parameters, query parameters, and body parameters are automatically validated for the specified TypeScript type. If additional constraints are specified via types of `@deepkit/type`, these are also checked.
 
 ```typescript
 import { HttpQuery, HttpQueries, HttpBody } from '@deepkit/http';
@@ -560,15 +555,15 @@ router.post('/', (body: HttpBody<MyQuery>) => {
 }
 ```
 
-Siehe xref:validation.adoc[Validation] für mehr Informationen dazu.
+See xref:validation.adoc[Validation] for more information on this.
 
 == Output
 
-Eine Route kann verschiedene Datenstrukturen zurückgeben. Einige von ihnen werden auf besondere Weise behandelt, wie z. B. Weiterleitungen und Templates, und andere, wie einfache Objekte, werden einfach als JSON gesendet.
+A route can return various data structures. Some of them are handled in a special way, such as redirects and templates, and others, such as simple objects, are simply sent as JSON.
 
 === JSON
 
-Per Default werden normale JavaScript-Werte als JSON mit dem Header `application/json; charset=utf-8` an den Client zurückgesendet.
+By default, normal JavaScript values are returned to the client as JSON with the header `applicationjson; charset=utf-8`.
 
 ```typescript
 router.get('/', () => {
@@ -577,7 +572,7 @@ router.get('/', () => {
 });
 ```
 
-Ist ein expliziter Return-Typ bei der Funktion oder Methode angegeben, werden entsprechend dieses Typen die Daten in JSON mit dem Deepkit JSON Serializer serialisiert.
+If an explicit return type is specified for the function or method, the data is serialized to JSON with the Deepkit JSON Serializer according to this type.
 
 ```typescript
 interface ResultType {
@@ -592,7 +587,7 @@ router.get('/', (): ResultType => {
 
 === HTML
 
-Um HTML zu senden, gibt es zwei Möglichkeiten. Entweder wird das Objekt `HtmlResponse` oder Template-Engine mit TSX verwendet.
+To send HTML there are two possibilities. Either the object `HtmlResponse` or Template Engine with TSX is used.
 
 ```typescript
 import { HtmlResponse } from '@deepkit/http';
@@ -610,11 +605,11 @@ router.get('/', () => {
 });
 ```
 
-Die Template-Engine Variante mit TSX hat dabei den Vorteil, dass genutzte Variablen automatisch HTML-escaped werden. Siehe dazu xref:template.adoc[Template].
+The template engine variant with TSX has the advantage that used variables are automatically HTML-escaped. See also xref:template.adoc[Template].
 
 === Custom Content
 
-Es ist neben HTML und JSON auch möglich Text- oder Binäre-Daten mit einer bestimmten Content-Type zu senden. Dies geschieht über das Objekt `Response`
+Besides HTML and JSON it is also possible to send text or binary data with a specific content type. This is done via the object `Response`.
 
 ```typescript
 import { Response } from '@deepkit/http';
@@ -626,7 +621,7 @@ router.get('/', () => {
 
 === HTTP Errors
 
-Es ist durch das Werfen von diversen HTTP-Errors möglich, die Verarbeitung eines HTTP-Requests sofort zu unterbrechen und den entsprechenden HTTP-Status des Errors auszugeben.
+By throwing various HTTP errors, it is possible to immediately interrupt the processing of an HTTP request and output the corresponding HTTP status of the error.
 
 ```typescript
 import { HttpNotFoundError } from '@deepkit/http';
@@ -638,7 +633,7 @@ router.get('/user/:id', async (id: number, database: Database) => {
 });
 ```
 
-Per default werden alle Errors als JSON dem Client zurückgegeben. Dieses Verhalten kann man beliebig im Event-System unter dem Event `httpWorkflow.onControllerError` anpassen. Siehe dazu die Sektion xref:http.adoc#http-events[HTTP Events].
+By default, all errors are returned to the client as JSON. This behavior can be customized in the event system under the event `httpWorkflow.onControllerError`. See the section xref:http.adoc#http-events[HTTP Events].
 
 |===
 |Error class |Status
@@ -657,18 +652,18 @@ Per default werden alle Errors als JSON dem Client zurückgegeben. Dieses Verhal
 |HttpNotImplementedError|501
 |===
 
-Der Error `HttpAccessDeniedError` stellt hierbei eine besonderheit dar. Sobald er geworfen wird, springt der HTTP Workflow (sieh xref:http.adoc#http-events[HTTP Events]) nicht zu `controllerError` sondern zu `accessDenied`.
+The error `HttpAccessDeniedError` is a special case. As soon as it is thrown, the HTTP workflow (see xref:http.adoc#http-events[HTTP Events]) does not jump to `controllerError` but to `accessDenied`.
 
-Benutzerdefinierte HTTP-Errors können mit `createHttpError` angelegt und geworfen werden.
+Custom HTTP errors can be created and thrown with `createHttpError`.
 
 ```typescript
 export class HttpMyError extends createHttpError(412, 'My Error Message') {
 }
 ```
 
-=== Zusätzliche Header
+=== Additional headers
 
-Um den Header einer HTTP-Response zu verändert, kann auf den Objekten `Response`, `JSONResponse`, und `HTMLResponse` zusätzliche Methoden aufgerufen werden.
+To modify the header of an HTTP response, additional methods can be called on the `Response`, `JSONResponse`, and `HTMLResponse` objects.
 
 ```typescript
 import { Response } from '@deepkit/http';
@@ -682,7 +677,7 @@ router.get('/', () => {
 
 === Redirect
 
-Um eine 301 oder 302 Weiterleitung als Antwort zurückzugeben, kann `Redirect.toRoute` oder `Redirect.toUrl` verwendet werden.
+To return a 301 or 302 redirect as a response, `Redirect.toRoute` or `Redirect.toUrl` can be used.
 
 ```typescript
 import { Redirect } from '@deepkit/http';
@@ -696,7 +691,7 @@ router.get({path: '/registration/complete'}, () => {
 });
 ```
 
-Die Methode `Redirect.toRoute` verwendet hierbei den Namen der Route. Wie ein Routen-Name gesetzt werden kann, ist in der Sektion xref:http.adoc#http-route-name[HTTP Route Name] einzusehen. Wenn diese referenzierte Route (Query oder Pfad) Parameter beinhaltet, können diese über das zweite Argument angegeben werden:
+The `Redirect.toRoute` method uses the route name here. How to set a route name can be seen in the section xref:http.adoc#http-route-name[HTTP Route Name]. If this referenced route (query or path) contains parameters, they can be specified via the second argument:
 
 ```typescript
 router.get({path: '/user/:id', name: 'user_detail'}, (id: number) => {
@@ -709,7 +704,7 @@ router.post('/user', (user: HttpBody<User>) => {
 });
 ```
 
-Alternativ kann auf eine URL mit `Redirect.toUrl` weitergeleitet werden.
+Alternatively, you can redirect to a URL with `Redirect.toUrl`.
 
 ```typescript
 router.post('/user', (user: HttpBody<User>) => {
@@ -718,11 +713,11 @@ router.post('/user', (user: HttpBody<User>) => {
 });
 ```
 
-Standardmäßig benutzen beide einen 302-Weiterleitung. Dies kann über das Argument `statusCode` angepasst werden.
+By default, both use a 302 forwarding. This can be customized via the `statusCode` argument.
 
 == Scope
 
-Alle HTTP-Controller und funktionalen Routen werden innerhalb des `http` Dependency Injection Scope verwaltet. HTTP-Controller werden entsprechend für jeden HTTP-Request neu instantiiert. Das bedeutet auch, dass beide auf Provider, die für den Scope `http` registriert sind, zugreifen können. So sind zusätzlich `HttpRequest` und `HttpResponse` aus `@deepkit/http` als Abhängigkeit nutzbar. Wenn Deepkit Framework benutzt, ist auch `SessionHandler` aus `@deepkit/framework` verfügbar.
+All HTTP controllers and functional routes are managed within the `http` dependency injection scope. HTTP controllers are instantiated accordingly for each HTTP request. This also means that both can access providers registered for the `http` scope. So additionally `HttpRequest` and `HttpResponse` from `@deepkit/http` are usable as dependencies. If deepkit framework is used, `SessionHandler` from `@deepkit/framework` is also available.
 
 ```typescript
 import { HttpResponse } from '@deepkit/http';
@@ -735,20 +730,20 @@ router.get('/', (response: HttpResponse) => {
 });
 ```
 
-Es kann durchaus nützlich sein, Provider in den `http` Scope zu platzieren, um zum Beispiel Services für jeden HTTP-Request neu zu instantiieren. Sobald der HTTP-Request bearbeitet wurde, wird der `http` scoped DI Container gelöscht und so alle seine Provider Instanzen vom Garbage Collector (GC) aufgeräumt.
+It can be useful to place providers in the `http` scope, for example to instantiate services for each HTTP request. Once the HTTP request has been processed, the `http` scoped DI container is deleted, thus cleaning up all its provider instances from the garbage collector (GC).
 
-Siehe xref:dependency-injection.adoc#di-scopes[Dependency Injection Scopes], um zu erfahren, wie Provider in den `http` Scope platziert werden können.
+See xref:dependency-injection.adoc#di-scopes[Dependency Injection Scopes] to learn how to place providers in the `http` scope.
 
 [#http-events]
 == Events
 
-Das HTTP-Modul basiert auf einer Workflow-Engine, die verschiedene Event-Tokens bereitstellt, mit denen sich in den gesamten Prozess der Verarbeitung eines HTTP-Requests eingeklinkt werden kann.
+The HTTP module is based on a workflow engine that provides various event tokens that can be used to hook into the entire process of processing an HTTP request.
 
-Die Workflow-Engine ist dabei eine endliche State-Machine, die für jeden HTTP-Request eine neu State-Machine Instanz anlegt und dann von Position zu Position springt. Die erste Position ist dabei der `start` und die letzte die `response`. In jede Position kann zusätzlicher Code ausgeführt werden.
+The workflow engine is a finite state machine that creates a new state machine instance for each HTTP request and then jumps from position to position. The first position is the `start` and the last the `response`. Additional code can be executed in each position.
 
 image::http-workflow.png[]
 
-Jedes Event-Token hat seinen eigenen Event-Typen mit zusätzlichen Informationen.
+Each event token has its own event type with additional information.
 
 |===
 |Event-Token |Description
@@ -765,11 +760,11 @@ Jedes Event-Token hat seinen eigenen Event-Typen mit zusätzlichen Informationen
 |httpWorkflow.onResponse|When the controller action has been called. This is the place where the result is converted to a response.
 |===
 
-Da alle HTTP-Events auf der Workflow-Engine basieren, kann deren Verhalten abgeändert werden, indem das angegebene Event benutzt wird und dort mit der `event.next()` Methode weitergesprungen wird.
+Since all HTTP events are based on the workflow engine, its behavior can be modified by using the specified event and jumping there with the `event.next()` method.
 
-Das HTTP-Modul verwendet seine eigenen Event-Listener auf diese Event-Tokens, um die Bearbeitung von HTTP-Requests zu implementieren. Alle diese Event-Listener haben eine Priorität von 100, d.h. wenn Sie auf ein Event hören, wird Ihr Listener standardmäßig zuerst ausgeführt (da die Standardpriorität 0 ist). Fügen Sie eine Priorität von über 100 hinzu, um nach den Event-Listener des HTTP-Modules zu laufen.
+The HTTP module uses its own event listeners on these event tokens to implement HTTP request processing. All these event listeners have a priority of 100, which means that when you listen for an event, your listener is executed first by default (since the default priority is 0). Add a priority above 100 to run after the HTTP module's event listeners.
 
-Nehmen wir zum Beispiel an, Sie wollen das Ereignis abfangen, bei dem ein Controller aufgerufen wird. Wenn ein bestimmter Controller aufgerufen werden soll, prüfen wir, ob der Benutzer Zugriff darauf hat. Wenn der Benutzer Zugriff hat, fahren wir fort. Aber falls nicht, springen wir zur nächsten Workflow-Position `accessDenied`. Dort wird dann das Prozedere eines Access-Denied automatisch weiterverarbeitet.
+For example, suppose you want to catch the event when a controller is invoked. If a particular controller is to be invoked, we check if the user has access to it. If the user has access, we continue. But if not, we jump to the next workflow item `accessDenied`. There, the procedure of an access-denied is then automatically processed further.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -840,7 +835,6 @@ No access to this area
 
 HTTP middlewares allow you to hook into the request/response cycle as an alternative to HTTP events. Its API allows you to use all middlewares from the Express/Connect framework.
 
-Middleware
 A middleware can either be a class (which is instantiated by the dependency injection container) or a simple function.
 
 ```typescript
@@ -1114,7 +1108,7 @@ const ApiModule = new AppModule({
 
 == Resolver
 
-Der Router unterstützt eine Möglichkeit zur Auflösung komplexer Parametertypen. Wenn zum Beispiel eine Route wie `/user/:id` gegeben ist, kann diese `id` mithilfe eines Resolvers in ein `User`-Objekt außerhalb der Route aufgelöst werden. Dies führt zu einer weiteren Abkopplung von der HTTP-Abstraktion und des Routen-Codes, und vereinfacht so weiter das Testen und die Modularität.
+Router supports a way to resolve complex parameter types. For example, given a route such as `/user/:id`, this `id` can be resolved to a `user` object outside the route using a resolver. This further decouples HTTP abstraction and route code, further simplifying testing and modularity.
 
 ```typescript
 import { App } from '@deepkit/app';
@@ -1146,9 +1140,9 @@ new App({
     .run();
 ```
 
-Der Decorator in `@http.resolveParameter` gibt dabei an, welche Klasse mit dem `UserResolver` aufgelöst werden soll. Sobald nun die angegebene Klasse `User` als Parameter in der Funktion beziehungsweise Methode angegeben ist, wird der Resolver genutzt, um diese bereitzustellen.
+The decorator in `@http.resolveParameter` specifies which class is to be resolved with the `UserResolver`. As soon as the specified class `User` is specified as a parameter in the function or method, the resolver is used to provide it.
 
-Ist `@http.resolveParameter` an der Klasse angegeben, erhalten all Methoden dieser Klasse diesen Resolver. Der Decorator kann auch pro Methode angewendet werden:
+If `@http.resolveParameter` is specified at the class, all methods of this class get this resolver. The decorator can also be applied per method:
 
 ```typescript
 class MyWebsite {
@@ -1159,7 +1153,7 @@ class MyWebsite {
 }
 ```
 
-Auch kann die funktionale API genutzt werden:
+Also, the functional API can be used:
 
 ```typescript
 
@@ -1171,6 +1165,6 @@ router.add(
 );
 ```
 
-Das Objekt `User` muss hierbei nicht zwingend von einem Parameter abhängen. So könnte er genauso gut von einer Session bzw. einem HTTP-Header abhängen, und nur dann bereitgestellt werden, wenn der Benutzer eingeloggt ist. In `RouteParameterResolverContext` sind viele Informationen über den HTTP-Request verfügbar, sodass viele Anwendungsfälle abbildbar sind.
+The `User` object does not necessarily have to depend on a parameter. It could just as well depend on a session or an HTTP header, and only be provided when the user is logged in. In `RouteParameterResolverContext` a lot of information about the HTTP request is available, so that many use cases can be mapped.
 
-Im Prinzip ist es auch möglich, komplexe Parametertypen über den Dependency Injection Container aus dem Scope `http` bereitstellen zu lassen, da diese ebenfalls in der Routen-Funktion bzw. Methode verfügbar sind. Dies hat jedoch den Nachteil, dass kein asynchrone Funktionsaufrufe verwendet werden können, da der DI container durchweg synchron ist.
+In principle, it is also possible to have complex parameter types provided via the Dependency Injection container from the `http` scope, since these are also available in the route function or method. However, this has the disadvantage that no asynchronous function calls can be used, since the DI container is synchronous throughout.

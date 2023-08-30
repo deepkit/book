@@ -80,7 +80,7 @@ export class Translation {
             index++;
         }
         params.append('auth_key', process.env.DEEPL_KEY);
-        params.append('source_lang', 'DE');
+        params.append('source_lang', 'EN');
         params.append('target_lang', languageMap[this.targetLanguage].toUpperCase());
 
         const response = await fetch('https://api.deepl.com/v2/translate', {
@@ -126,7 +126,7 @@ export function extractOrApplyTranslations(translation: Translation) {
     this.process(function process(this: Asciidoctor.Extensions.TreeProcessor, doc: Asciidoctor.AbstractBlock, depth: number = 0) {
         const context: string = (doc as any).context;
 
-        if (translation.targetLanguage !== 'german') {
+        if (translation.targetLanguage !== 'english') {
             // console.log(' '.repeat(4 * depth), context);
 
             if (translation.isListItem(doc)) {
