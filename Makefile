@@ -12,7 +12,7 @@ web-build: ebook-build
 	./node_modules/.bin/sass src/assets/style.scss > src/assets/style.css
 
 web: web-build
-    ./node_modules/.bin/tsc
+	./node_modules/.bin/tsc
 	./node_modules/.bin/antora --stacktrace playbook.yml
 
 all:

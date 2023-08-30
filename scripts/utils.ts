@@ -83,7 +83,7 @@ export class Translation {
         params.append('source_lang', 'EN');
         params.append('target_lang', languageMap[this.targetLanguage].toUpperCase());
 
-        const response = await fetch('https://api.deepl.com/v2/translate', {
+        const response = await fetch('https://api-free.deepl.com/v2/translate', {
             method: 'post',
             body: params
         });
