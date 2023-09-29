@@ -295,13 +295,13 @@ new App({
 Read the xref:dependency-injection.adoc[Dependency Injection] chapter to learn more.
 
 [#confiruration]
-== Konfiguration
+== Configuration
 
 In Deepkit framework, modules and your application can have configuration options. For example, a configuration can consist of database URLs, passwords, IPs, and so on. Services, HTTPRPCCLI controllers, and template functions can read these configuration options via dependency injection.
 
 A configuration can be defined by defining a class with properties. This is a type-safe way to define a configuration for your entire application, and its values are automatically serialized and validated.
 
-=== Beispiel
+=== Example
 
 ```typescript
 import { MinLength } from '@deepkit/type';
@@ -359,7 +359,7 @@ export class MyModule extends createModule({
 }) {}
 ```
 
-Die Werte für die Konfigurationsoptionen können entweder im Konstruktor des Moduls, mit der Methode `.configure()` oder über Konfigurationslader (z.B. Umgebungsvariablenlader) bereitgestellt werden.
+The values for the configuration options can be provided either in the constructor of the module, with the `.configure()` method or via configuration loaders (e.g. environment variable loaders).
 
 ```typescript
 import { MyModule } from './module.ts';
