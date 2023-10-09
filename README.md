@@ -1,5 +1,7 @@
 # Deepkit Book
 
+NOTE: This is not up to date anymore. New docs and website are at https://deepkit.io/documentation.
+
 This book purpose is to transport the value of isomorphic TypeScript, Deepkit, and Enterprise design patterns. 
 It is written in AsciiDoc and available as HTML, PDF, and later e-book.
 
